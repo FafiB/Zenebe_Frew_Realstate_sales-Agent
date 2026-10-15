@@ -1,5 +1,12 @@
 import React, { useEffect, useMemo, useState } from "react";
 
+const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL || "").replace(/\/+$/, "");
+const apiUrl = (path) => `${API_BASE_URL}${path}`;
+const apiAssetUrl = (url) => {
+  if (!url || /^(?:[a-z][a-z\d+.-]*:)?\/\//i.test(url) || url.startsWith("data:")) return url;
+  return apiUrl(url.startsWith("/") ? url : `/${url}`);
+};
+
 const fallbackHomes = [
   {
     id: 1,
@@ -106,7 +113,7 @@ function PropertyCard({ home, saved, onSave, onOpen, settings }) {
     <article className="property-card">
       <button className="image-button" onClick={() => onOpen(home)} aria-label={`View ${home.title}`}>
         {home.image_url
-          ? <img src={home.image_url} alt={home.title} loading="lazy" />
+          ? <img src={apiAssetUrl(home.image_url)} alt={home.title} loading="lazy" />
           : <span className="no-property-image">Property video</span>}
         <span className="status-pill">{home.status || "For sale"}</span>
         <span className="type-pill">{home.property_type}</span>
@@ -149,11 +156,12 @@ function InquiryModal({ home, onClose, settings }) {
     setError("");
     const form = new FormData(event.currentTarget);
     try {
-      const csrfResponse = await fetch("/api/csrf/");
+      const csrfResponse = await fetch(apiUrl("/api/csrf/"), { credentials: "include" });
       if (!csrfResponse.ok) throw new Error("We couldn't prepare the secure form. Please try again.");
       const { csrfToken } = await csrfResponse.json();
-      const response = await fetch("/api/inquiries/", {
+      const response = await fetch(apiUrl("/api/inquiries/"), {
         method: "POST",
+        credentials: "include",
         headers: { "Content-Type": "application/json", "X-CSRFToken": csrfToken },
         body: JSON.stringify({
           name: form.get("name"),
@@ -192,7 +200,7 @@ function InquiryModal({ home, onClose, settings }) {
             <p className="eyebrow">LET’S TALK HOMES</p>
             <h2 id="inquiry-title">{home ? (home.status === "Sold" ? "Looking for a home like this?" : "Curious about this home?") : "Tell us what home means to you."}</h2>
             {home && <p className="modal-home-name">{home.title}</p>}
-            {home?.video_url && <video className="property-video" src={home.video_url} controls playsInline preload="metadata">Your browser does not support property video playback.</video>}
+            {home?.video_url && <video className="property-video" src={apiAssetUrl(home.video_url)} controls playsInline preload="metadata">Your browser does not support property video playback.</video>}
             <form className="inquiry-form" onSubmit={submitInquiry}>
               <label>Your name<input name="name" required autoComplete="name" placeholder="Jane Smith" /></label>
               <label>Email address<input name="email" required type="email" autoComplete="email" placeholder="jane@example.com" /></label>
@@ -240,7 +248,7 @@ function App() {
 
   useEffect(() => {
     const controller = new AbortController();
-    fetch("/api/site-settings/", { signal: controller.signal })
+    fetch(apiUrl("/api/site-settings/"), { signal: controller.signal })
       .then((response) => {
         if (!response.ok) throw new Error("Site branding could not be loaded.");
         return response.json();
@@ -249,7 +257,8 @@ function App() {
         ...current,
         ...data,
         brand_name: data.brand_name || "Zenebe Frew Real Estate",
-        logo_url: data.logo_url || "",
+        logo_url: apiAssetUrl(data.logo_url || ""),
+        agent_photo_url: apiAssetUrl(data.agent_photo_url || ""),
       })))
       .catch((error) => {
         if (error.name !== "AbortError") console.error("Could not load site branding:", error);
@@ -283,13 +292,17 @@ function App() {
 
   useEffect(() => {
     const controller = new AbortController();
-    fetch(`/api/properties/${soldPage ? "?status=sold" : ""}`, { signal: controller.signal })
+    fetch(apiUrl(`/api/properties/${soldPage ? "?status=sold" : ""}`), { signal: controller.signal })
       .then((response) => {
         if (!response.ok) throw new Error("Listings service is unavailable.");
         return response.json();
       })
       .then((data) => {
-        if (Array.isArray(data) && data.length) setHomes(data);
+        if (Array.isArray(data) && data.length) setHomes(data.map((home) => ({
+          ...home,
+          image_url: apiAssetUrl(home.image_url),
+          video_url: apiAssetUrl(home.video_url),
+        })));
         else if (Array.isArray(data)) setHomes([]);
       })
       .catch((error) => {

@@ -239,6 +239,39 @@ class PropertyApiTests(TestCase):
         self.assertEqual(response.status_code, 201)
         self.assertEqual(Inquiry.objects.get().property, self.home)
 
+    @override_settings(
+        CORS_ALLOWED_ORIGINS=["https://front.example.com"],
+        CORS_ALLOW_CREDENTIALS=True,
+        CSRF_TRUSTED_ORIGINS=["https://front.example.com"],
+        CSRF_COOKIE_SAMESITE="None",
+        CSRF_COOKIE_SECURE=True,
+    )
+    def test_cross_origin_inquiry_uses_cors_and_csrf(self):
+        client = self.client_class(enforce_csrf_checks=True)
+        origin = "https://front.example.com"
+        csrf_response = client.get("/api/csrf/", HTTP_ORIGIN=origin)
+        self.assertEqual(csrf_response["Access-Control-Allow-Origin"], origin)
+        self.assertEqual(csrf_response["Access-Control-Allow-Credentials"], "true")
+        self.assertEqual(csrf_response.cookies["csrftoken"]["samesite"], "None")
+        self.assertTrue(csrf_response.cookies["csrftoken"]["secure"])
+
+        response = client.post(
+            "/api/inquiries/",
+            data=json.dumps({
+                "name": "Taylor Example",
+                "email": "taylor@example.com",
+                "phone": "",
+                "message": "Could I see this home?",
+                "property": self.home.id,
+            }),
+            content_type="application/json",
+            HTTP_ORIGIN=origin,
+            HTTP_X_CSRFTOKEN=csrf_response.json()["csrfToken"],
+        )
+        self.assertEqual(response.status_code, 201)
+        self.assertEqual(response["Access-Control-Allow-Origin"], origin)
+        self.assertEqual(Inquiry.objects.count(), 1)
+
     def test_inquiry_requires_csrf_token(self):
         client = self.client_class(enforce_csrf_checks=True)
         response = client.post(

@@ -45,6 +45,24 @@ Property currency defaults to Ethiopian Birr (ETB); currency and area units are 
 
 The frontend uses sample property cards when the backend is unavailable, and the seed command provides starter listings. Replace these with the agent's real listings before publishing. Inquiries require the Django backend. Past sales are managed by setting a listing's status to **Sold** in Django Admin. Uploaded media is stored under `backend/media/`; configure production media serving when deploying.
 
+## Deploy the frontend and backend separately
+
+The React frontend can be deployed from the repository root to Vercel with build command `npm run build` and output directory `dist`. Set the Vercel environment variable `VITE_API_BASE_URL` to the public Django service origin, for example `https://your-service.koyeb.app`, then redeploy the frontend. The frontend uses this origin for API requests and uploaded media URLs; leave it unset for local development, where Vite proxies requests to Django.
+
+Deploy Django from the `backend` root directory on a Python web-service host. Install dependencies with `pip install -r requirements.txt`, then run `python manage.py migrate && python manage.py collectstatic --noinput` as part of the build/release process. Start the service with `gunicorn config.wsgi:application --bind 0.0.0.0:$PORT`.
+
+Configure these backend environment variables:
+
+- `DEBUG=false`
+- `SECRET_KEY` — a strong, private random value
+- `ALLOWED_HOSTS` — the backend host name only, without scheme or path (for example `your-service.koyeb.app`)
+- `CORS_ALLOWED_ORIGINS` — the exact frontend origin, including scheme (for example `https://your-site.vercel.app`). Separate multiple origins with commas.
+- `DATABASE_URL` — a persistent PostgreSQL connection URL
+
+The configured CORS origins are also trusted for Django CSRF checks, and secure cross-site CSRF cookies are enabled when `DEBUG=false`. Create a Django administrator on the hosted service using its shell: `python manage.py createsuperuser`.
+
+Local SQLite and uploaded files are suitable for development only. Production uploads need persistent or object storage; this project currently stores uploaded media on the service filesystem, which many hosts do not persist between deployments. Configure persistent media storage before relying on uploaded photos or videos.
+
 ## Before deploying
 
 Set a private `SECRET_KEY`, set `DEBUG = False`, configure `ALLOWED_HOSTS`, use a production database, and serve the built frontend and Django API through a production web server. Replace the sample listings and image URLs with the agent’s real inventory and licensed photography.
