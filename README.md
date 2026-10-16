@@ -63,6 +63,8 @@ Configure these backend environment variables:
 
 The configured frontend origins are also trusted for Django CSRF checks, and secure cross-site CSRF cookies are enabled when `DEBUG=false`. For example, set `ALLOWED_HOSTS` to the Koyeb backend hostname and `FRONTEND_URL` to the Vercel frontend origin. Create a Django administrator on the hosted service using its shell: `python manage.py createsuperuser`.
 
+For Vercel deployments, connect a persistent PostgreSQL database through Vercel's Storage/Marketplace integration, then make sure its `DATABASE_URL` environment variable is available to the backend service in Production (and Preview, if used). Production now fails clearly at startup if `DATABASE_URL` is missing instead of silently using SQLite, which is not persistent or reliable for serverless deployments. Before signing into Django Admin, run `python manage.py migrate` and `python manage.py createsuperuser` against that same production database from a trusted environment with the backend dependencies and production `DATABASE_URL` configured. Never commit or share the database URL.
+
 Local SQLite and uploaded files are suitable for development only. Production uploads need persistent or object storage; this project currently stores uploaded media on the service filesystem, which many hosts do not persist between deployments. Configure persistent media storage before relying on uploaded photos or videos.
 
 ## Before deploying

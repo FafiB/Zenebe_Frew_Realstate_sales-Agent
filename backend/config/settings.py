@@ -83,6 +83,9 @@ TEMPLATES = [
 WSGI_APPLICATION = "config.wsgi.application"
 
 database_url = os.environ.get("DATABASE_URL")
+if not DEBUG and not database_url:
+    raise RuntimeError("Set DATABASE_URL to a persistent PostgreSQL database when DEBUG is false.")
+
 DATABASES = {
     "default": dj_database_url.config(
         default=f"sqlite:///{BASE_DIR / 'db.sqlite3'}",
