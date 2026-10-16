@@ -9,16 +9,22 @@ SECRET_KEY = os.environ.get("SECRET_KEY", "django-insecure-development-key-chang
 if not DEBUG and SECRET_KEY == "django-insecure-development-key-change-before-deployment":
     raise RuntimeError("Set SECRET_KEY in the environment when DEBUG is false.")
 
-ALLOWED_HOSTS = [
-    host.strip()
-    for host in os.environ.get("ALLOWED_HOSTS", "127.0.0.1,localhost").split(",")
-    if host.strip()
-]
-configured_origins = [
-    origin.strip().rstrip("/")
-    for origin in os.environ.get("CORS_ALLOWED_ORIGINS", "").split(",")
-    if origin.strip()
-]
+def environment_list(name, default=""):
+    return [item.strip() for item in os.environ.get(name, default).split(",") if item.strip()]
+
+
+def configured_frontend_origins():
+    return list(dict.fromkeys(
+        origin.rstrip("/")
+        for origin in [
+            *environment_list("CORS_ALLOWED_ORIGINS"),
+            *environment_list("FRONTEND_URL"),
+        ]
+    ))
+
+
+ALLOWED_HOSTS = environment_list("ALLOWED_HOSTS", "127.0.0.1,localhost")
+configured_origins = configured_frontend_origins()
 CSRF_TRUSTED_ORIGINS = list(dict.fromkeys(
     ["http://127.0.0.1:5173", "http://localhost:5173", *configured_origins]
 ))

@@ -55,11 +55,12 @@ Configure these backend environment variables:
 
 - `DEBUG=false`
 - `SECRET_KEY` — a strong, private random value
-- `ALLOWED_HOSTS` — the backend host name only, without scheme or path (for example `your-service.koyeb.app`)
-- `CORS_ALLOWED_ORIGINS` — the exact frontend origin, including scheme (for example `https://your-site.vercel.app`). Separate multiple origins with commas.
+- `ALLOWED_HOSTS` — the backend host name only, without scheme or path (for example `your-api.koyeb.app`). This is the hostname users access for the Django API, not the Vercel frontend domain.
+- `FRONTEND_URL` — the exact frontend origin, including scheme (for example `https://your-site.vercel.app`). This is automatically added to both CORS and trusted CSRF origins. Separate multiple origins with commas if you use more than one frontend domain.
+- `CORS_ALLOWED_ORIGINS` — optional additional frontend origins, including scheme; separate multiple origins with commas.
 - `DATABASE_URL` — a persistent PostgreSQL connection URL
 
-The configured CORS origins are also trusted for Django CSRF checks, and secure cross-site CSRF cookies are enabled when `DEBUG=false`. Create a Django administrator on the hosted service using its shell: `python manage.py createsuperuser`.
+The configured frontend origins are also trusted for Django CSRF checks, and secure cross-site CSRF cookies are enabled when `DEBUG=false`. For example, set `ALLOWED_HOSTS` to the Koyeb backend hostname and `FRONTEND_URL` to the Vercel frontend origin. Create a Django administrator on the hosted service using its shell: `python manage.py createsuperuser`.
 
 Local SQLite and uploaded files are suitable for development only. Production uploads need persistent or object storage; this project currently stores uploaded media on the service filesystem, which many hosts do not persist between deployments. Configure persistent media storage before relying on uploaded photos or videos.
 

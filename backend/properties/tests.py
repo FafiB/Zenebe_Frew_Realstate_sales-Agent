@@ -1,6 +1,7 @@
 import json
 import tempfile
 from io import BytesIO
+from unittest.mock import patch
 
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.contrib.auth import get_user_model
@@ -9,10 +10,24 @@ from django.test import override_settings
 from django.test import TestCase
 from PIL import Image
 
+from config.settings import configured_frontend_origins
 from .models import Inquiry, Property, SiteSettings
 
 
 class PropertyApiTests(TestCase):
+    @patch.dict(
+        "os.environ",
+        {
+            "CORS_ALLOWED_ORIGINS": " https://extra.example.com,https://site.example.com/ ",
+            "FRONTEND_URL": "https://site.example.com/",
+        },
+    )
+    def test_frontend_url_is_normalized_and_added_to_cors_origins(self):
+        self.assertEqual(
+            configured_frontend_origins(),
+            ["https://extra.example.com", "https://site.example.com"],
+        )
+
     def setUp(self):
         self.home = Property.objects.create(
             title="The Garden House",

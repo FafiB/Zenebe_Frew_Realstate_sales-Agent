@@ -102,6 +102,16 @@ function Icon({ name, size = 18 }) {
   return <svg {...shared}>{paths[name]}</svg>;
 }
 
+function readSavedHomes() {
+  try {
+    const stored = JSON.parse(localStorage.getItem("saved-homes") || "[]");
+    return Array.isArray(stored) ? stored : [];
+  } catch (error) {
+    console.error("Could not read saved homes from this browser:", error);
+    return [];
+  }
+}
+
 function PropertyCard({ home, saved, onSave, onOpen, settings }) {
   const price = new Intl.NumberFormat(undefined, {
     style: "currency",
@@ -241,7 +251,9 @@ function App() {
   const [query, setQuery] = useState("");
   const [type, setType] = useState("");
   const [sort, setSort] = useState("featured");
-  const [saved, setSaved] = useState([]);
+  const [saved, setSaved] = useState(readSavedHomes);
+  const [savedOnly, setSavedOnly] = useState(false);
+  const [savedAnnouncement, setSavedAnnouncement] = useState("");
   const [selectedHome, setSelectedHome] = useState(null);
   const [apiNotice, setApiNotice] = useState("");
   const [menuOpen, setMenuOpen] = useState(false);
@@ -280,6 +292,14 @@ function App() {
   const featuredHomes = homes.filter((home) => home.featured).slice(0, 2);
   const heroImage = homes[0]?.image_url || fallbackHomes[0].image_url;
   const [darkMode, setDarkMode] = useState(() => localStorage.getItem("site-theme") === "dark");
+
+  useEffect(() => {
+    try {
+      localStorage.setItem("saved-homes", JSON.stringify(saved));
+    } catch (error) {
+      console.error("Could not save your shortlist in this browser:", error);
+    }
+  }, [saved]);
 
   useEffect(() => {
     document.documentElement.dataset.theme = darkMode ? "dark" : "light";
@@ -325,6 +345,20 @@ function App() {
     if (sort === "price-high") matching.sort((a, b) => b.price - a.price);
     return matching;
   }, [homes, query, type, sort]);
+  const visibleHomes = savedOnly
+    ? filteredHomes.filter((home) => saved.includes(home.id))
+    : filteredHomes;
+
+  function toggleSaved(id) {
+    const home = homes.find((item) => item.id === id);
+    const alreadySaved = saved.includes(id);
+    setSaved((current) => alreadySaved
+      ? current.filter((item) => item !== id)
+      : [...current, id]);
+    setSavedAnnouncement(alreadySaved
+      ? `${home?.title || "Home"} removed from your saved homes.`
+      : `${home?.title || "Home"} added to your saved homes.`);
+  }
 
   function searchSubmit(event) {
     event.preventDefault();
@@ -365,7 +399,7 @@ function App() {
             {apiNotice && <p className="api-notice" role="status">{apiNotice}</p>}
             {homes.length ? (
               <div className="property-grid">
-                {homes.map((home) => <PropertyCard key={home.id} home={home} settings={branding} saved={saved.includes(home.id)} onSave={(id) => setSaved((current) => current.includes(id) ? current.filter((item) => item !== id) : [...current, id])} onOpen={setSelectedHome} />)}
+                {homes.map((home) => <PropertyCard key={home.id} home={home} settings={branding} saved={saved.includes(home.id)} onSave={toggleSaved} onOpen={setSelectedHome} />)}
               </div>
             ) : (
               <div className="empty-results"><span>⌂</span><h3>Helen’s sold homes will be shared here.</h3><p>Past sales added in the admin will appear on this page.</p><a className="text-link" href="/#contact">Ask Helen a question <Icon name="arrow" size={16} /></a></div>
@@ -419,7 +453,15 @@ function App() {
               <p className="section-intro">Explore current properties and find the one that fits your next move.</p>
             </div>
             <div className="listing-controls">
-              <span>{filteredHomes.length} properties</span>
+              <span>{visibleHomes.length} {visibleHomes.length === 1 ? "property" : "properties"}</span>
+              <button
+                className={`saved-filter${savedOnly ? " is-active" : ""}`}
+                type="button"
+                onClick={() => setSavedOnly((current) => !current)}
+                aria-pressed={savedOnly}
+              >
+                <Icon name="heart" size={15} /> Saved <span className="saved-count">{saved.length}</span>
+              </button>
               <label className="sort-control"><span className="sr-only">Sort homes</span>
                 <select value={sort} onChange={(event) => setSort(event.target.value)}>
                   <option value="featured">Featured first</option>
@@ -430,12 +472,13 @@ function App() {
             </div>
           </div>
           {apiNotice && <p className="api-notice" role="status">{apiNotice}</p>}
-          {filteredHomes.length ? (
+          <p className="sr-only" aria-live="polite">{savedAnnouncement}</p>
+          {visibleHomes.length ? (
             <div className="property-grid">
-              {filteredHomes.map((home) => <PropertyCard key={home.id} home={home} settings={branding} saved={saved.includes(home.id)} onSave={(id) => setSaved((current) => current.includes(id) ? current.filter((item) => item !== id) : [...current, id])} onOpen={setSelectedHome} />)}
+              {visibleHomes.map((home) => <PropertyCard key={home.id} home={home} settings={branding} saved={saved.includes(home.id)} onSave={toggleSaved} onOpen={setSelectedHome} />)}
             </div>
           ) : (
-            <div className="empty-results"><span>⌂</span><h3>No properties match your search.</h3><p>Try another area or clear your search to see all available listings.</p><button className="text-link" onClick={() => { setQuery(""); setType(""); }}>Show all listings <Icon name="arrow" size={16} /></button></div>
+            <div className="empty-results"><span>⌂</span><h3>{savedOnly ? "Your shortlist is ready when you are." : "No properties match your search."}</h3><p>{savedOnly ? "Tap the heart on any home to keep it close while you explore." : "Try another area or clear your search to see all available listings."}</p><button className="text-link" onClick={() => { setQuery(""); setType(""); setSavedOnly(false); }}>Show all listings <Icon name="arrow" size={16} /></button></div>
           )}
           <div className="center-action"><a href="/sold-homes" className="text-link">Browse past sales <Icon name="arrow" size={16} /></a></div>
         </section>
