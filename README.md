@@ -22,7 +22,7 @@ python manage.py runserver
 
 The API is available at `http://127.0.0.1:8000/api/`. The admin is at `http://127.0.0.1:8000/admin/`.
 
-In Django Admin, open **Site branding** to change the brokerage name and logo, update Helen's profile, and upload her photo in **Helen's profile photo**. The uploaded portrait replaces the initials placeholder in the About section. Configure phone, WhatsApp, TikTok, Facebook, Instagram, Telegram, currency, and area units there as well. The header, footer, and browser title use the admin-managed brokerage name; five floating social circles appear on every page, and activate when their accounts are configured. Property listings support House, Condo, Townhouse, Apartment, and Shop types, uploaded photos, video uploads (MP4, WebM, MOV, or M4V), and direct video URLs. A video tour appears in the listing detail dialog. Featured properties populate the **Projects** section.
+In Django Admin, open **Site branding** to change the brokerage name and logo, update Helen's profile, and upload her photo in **Helen's profile photo**. The uploaded portrait replaces the initials placeholder in the About section. Configure phone, WhatsApp, TikTok, Facebook, Instagram, Telegram, currency, and area units there as well. The header, footer, and browser title use the admin-managed brokerage name; five floating social circles appear on every page, and activate when their accounts are configured. Property listings support Apartment and Shop types, uploaded photos, video uploads (MP4, WebM, MOV, or M4V), and direct video URLs. A video tour appears in the listing detail dialog. Featured properties populate the **Projects** section.
 
 ## Start the React frontend
 

@@ -46,9 +46,6 @@ class SiteSettings(models.Model):
 
 class Property(models.Model):
     class PropertyType(models.TextChoices):
-        HOUSE = "House", "House"
-        CONDO = "Condo", "Condo"
-        TOWNHOUSE = "Townhouse", "Townhouse"
         APARTMENT = "Apartment", "Apartment"
         SHOP = "Shop", "Shop"
 

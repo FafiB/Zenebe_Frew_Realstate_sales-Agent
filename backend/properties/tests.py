@@ -30,13 +30,13 @@ class PropertyApiTests(TestCase):
 
     def setUp(self):
         self.home = Property.objects.create(
-            title="The Garden House",
+            title="The Garden Apartment",
             location="Silver Lake, Los Angeles",
             price=1200000,
             beds=3,
             baths="2.0",
             area=1800,
-            property_type="House",
+            property_type=Property.PropertyType.APARTMENT,
             status="For sale",
             image_url="https://example.com/home.jpg",
         )
@@ -49,16 +49,25 @@ class PropertyApiTests(TestCase):
             beds=2,
             baths="1.0",
             area=1200,
-            property_type="Condo",
+            property_type=Property.PropertyType.SHOP,
             status="Sold",
             image_url="https://example.com/sold.jpg",
         )
+        Property.objects.create(
+            title="Legacy House Listing",
+            location="Addis Ababa",
+            price=900000,
+            beds=2,
+            baths="1.0",
+            area=1200,
+            property_type="House",
+        )
         response = self.client.get("/api/properties/")
         self.assertEqual(response.status_code, 200)
-        self.assertEqual([item["title"] for item in response.json()], ["The Garden House"])
+        self.assertEqual([item["title"] for item in response.json()], ["The Garden Apartment"])
 
     def test_filters_by_location_and_type(self):
-        response = self.client.get("/api/properties/?location=Silver&type=House")
+        response = self.client.get("/api/properties/?location=Silver&type=Apartment")
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(response.json()), 1)
         self.assertEqual(response.json()[0]["id"], self.home.id)
@@ -75,7 +84,9 @@ class PropertyApiTests(TestCase):
                 property_type=property_type,
             )
 
-            response = self.client.get(f"/api/properties/?type={property_type}")
+            response = self.client.get(
+                f"/api/properties/?location=Addis%20Ababa&type={property_type}"
+            )
             self.assertEqual(response.status_code, 200)
             self.assertEqual(
                 [item["property_type"] for item in response.json()],
@@ -164,16 +175,19 @@ class PropertyApiTests(TestCase):
         self.assertContains(response, "image_file")
         self.assertContains(response, "video_file")
         self.assertContains(response, "video_url")
+        self.assertContains(response, "Apartment")
+        self.assertContains(response, "Shop")
+        self.assertNotContains(response, ">House<")
 
     def test_sold_listings_are_available_for_past_sales_page(self):
         sold_home = Property.objects.create(
-            title="Sold Garden House",
+            title="Sold Garden Apartment",
             location="Pasadena",
             price=900000,
             beds=2,
             baths="1.0",
             area=1200,
-            property_type="House",
+            property_type=Property.PropertyType.APARTMENT,
             status=Property.ListingStatus.SOLD,
             image_url="https://example.com/sold.jpg",
         )
@@ -183,19 +197,19 @@ class PropertyApiTests(TestCase):
 
     def test_unknown_status_does_not_expose_sold_listings(self):
         Property.objects.create(
-            title="Sold Garden House",
+            title="Sold Garden Apartment",
             location="Pasadena",
             price=900000,
             beds=2,
             baths="1.0",
             area=1200,
-            property_type="House",
+            property_type=Property.PropertyType.APARTMENT,
             status=Property.ListingStatus.SOLD,
             image_url="https://example.com/sold.jpg",
         )
         response = self.client.get("/api/properties/?status=unknown")
         self.assertEqual(response.status_code, 200)
-        self.assertEqual([item["title"] for item in response.json()], ["The Garden House"])
+        self.assertEqual([item["title"] for item in response.json()], ["The Garden Apartment"])
 
     def test_property_video_url_is_included_in_listing_api(self):
         self.home.video_url = "https://example.com/tour.mp4"
@@ -229,7 +243,7 @@ class PropertyApiTests(TestCase):
             beds=2,
             baths="2.0",
             area=120,
-            property_type="Condo",
+            property_type=Property.PropertyType.APARTMENT,
             video_url="https://example.com/tour.mp4",
         )
         self.assertEqual(home.image_url, "")

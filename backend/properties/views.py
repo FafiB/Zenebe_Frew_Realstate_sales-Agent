@@ -82,7 +82,10 @@ def properties(request):
         ),
         Property.ListingStatus.FOR_SALE,
     )
-    listings = Property.objects.filter(status=status)
+    listings = Property.objects.filter(
+        status=status,
+        property_type__in=Property.PropertyType.values,
+    )
     location = request.GET.get("location", "").strip()
     property_type = request.GET.get("type", "").strip()
     if location:

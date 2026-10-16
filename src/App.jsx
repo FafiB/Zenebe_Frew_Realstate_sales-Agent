@@ -10,44 +10,44 @@ const apiAssetUrl = (url) => {
 const fallbackHomes = [
   {
     id: 1,
-    title: "The Sunday House",
-    location: "Silver Lake, Los Angeles",
-    price: 1845000,
+    title: "The Morning Light",
+    location: "Bole, Addis Ababa",
+    price: 18500000,
     beds: 3,
     baths: 2,
-    area: 2180,
-    property_type: "House",
+    area: 168,
+    property_type: "Apartment",
     status: "For sale",
-    image_url: "https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?auto=format&fit=crop&w=1100&q=85",
-    description: "A sun-drenched California bungalow with an open, easy flow, original details, and a garden made for slow Sundays.",
+    image_url: "https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?auto=format&fit=crop&w=1600&q=90",
+    description: "A sunlit, beautifully finished apartment with generous living spaces and room to settle in.",
     featured: true,
   },
   {
     id: 2,
-    title: "Olive & Oak",
-    location: "Pasadena, Los Angeles",
-    price: 1295000,
-    beds: 4,
-    baths: 3,
-    area: 2640,
-    property_type: "House",
+    title: "Bole Avenue Retail",
+    location: "Bole, Addis Ababa",
+    price: 24000000,
+    beds: 0,
+    baths: 1,
+    area: 112,
+    property_type: "Shop",
     status: "For sale",
-    image_url: "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=1100&q=85",
-    description: "A graceful Spanish-style home with a welcoming courtyard, warm oak floors, and room to gather.",
+    image_url: "https://images.unsplash.com/photo-1604328698692-f76ea9498e76?auto=format&fit=crop&w=1600&q=90",
+    description: "A bright, flexible retail space in a lively neighborhood, ready for your next business idea.",
     featured: true,
   },
   {
     id: 3,
-    title: "A Little Above It All",
-    location: "Los Feliz, Los Angeles",
-    price: 875000,
+    title: "City View Residence",
+    location: "Kazanchis, Addis Ababa",
+    price: 14800000,
     beds: 2,
-    baths: 2,
-    area: 1480,
-    property_type: "Condo",
+    baths: 1,
+    area: 124,
+    property_type: "Apartment",
     status: "For sale",
-    image_url: "https://images.unsplash.com/photo-1600566753086-00f18fb6b3ea?auto=format&fit=crop&w=1100&q=85",
-    description: "A light-filled hillside retreat with leafy views, a generous terrace, and a little more room to breathe.",
+    image_url: "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=1600&q=90",
+    description: "A calm, contemporary city home with open views, thoughtful details, and an easy everyday feel.",
     featured: true,
   },
 ];
@@ -56,16 +56,12 @@ function Brand({ settings, footer = false }) {
   const [logoFailed, setLogoFailed] = useState(false);
   const brandName = settings.brand_name || "Zenebe Frew Real Estate";
   const nameParts = brandName.split("&");
-  const mark = nameParts.length > 1
-    ? `${nameParts[0].trim().charAt(0)}&${nameParts.slice(1).join("&").trim().charAt(0)}`
-    : brandName.trim().split(/\s+/).slice(0, 2).map((word) => word.charAt(0)).join("");
-
   return (
     <a className={`brand${footer ? " footer-brand" : ""}`} href="/" aria-label={`${brandName} home`}>
       {settings.logo_url && !logoFailed ? (
         <img className="brand-logo" src={settings.logo_url} alt="" onError={() => setLogoFailed(true)} />
       ) : (
-        <span className="brand-mark">{mark}</span>
+        <span className="brand-mark" aria-hidden="true"><Icon name="home" size={19} /></span>
       )}
       <span className="brand-name">
         {nameParts.length > 1 ? <>{nameParts[0].trim()} <i>&amp;</i> {nameParts.slice(1).join("&").trim()}</> : brandName}
@@ -88,6 +84,8 @@ function Icon({ name, size = 18 }) {
   };
   const paths = {
     search: <><circle cx="11" cy="11" r="7" /><path d="m20 20-4-4" /></>,
+    home: <><path d="m3 10 9-7 9 7" /><path d="M5 9v11h14V9M9 20v-6h6v6" /></>,
+    phone: <path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.4 19.4 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7l.5 2.8a2 2 0 0 1-.6 1.7L7.1 10a16 16 0 0 0 6 6l1.8-1.9a2 2 0 0 1 1.7-.6l2.8.5a2 2 0 0 1 1.6 1.9Z" />,
     pin: <><path d="M20 10c0 5-8 12-8 12S4 15 4 10a8 8 0 1 1 16 0Z" /><circle cx="12" cy="10" r="2.5" /></>,
     bed: <><path d="M3 18v-7a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v7M3 14h18M6 9V6a2 2 0 0 1 2-2h3v5" /></>,
     bath: <><path d="M9 6 7.5 4.5a2.12 2.12 0 0 0-3 3L6 9M3 12h18v2a5 5 0 0 1-5 5h-4a5 5 0 0 1-5-5v-2Zm3 7-1 2m12-2 1 2" /></>,
@@ -145,8 +143,14 @@ function PropertyCard({ home, saved, onSave, onOpen, settings }) {
         <span className="property-location"><Icon name="pin" size={15} />{home.location}</span>
         {home.description && <span className="property-description">{home.description}</span>}
         <span className="property-specs">
-          <span><Icon name="bed" size={16} />{home.beds} beds</span>
-          <span><Icon name="bath" size={16} />{home.baths} baths</span>
+          {home.property_type === "Apartment" ? (
+            <>
+              <span><Icon name="bed" size={16} />{home.beds} beds</span>
+              <span><Icon name="bath" size={16} />{home.baths} baths</span>
+            </>
+          ) : (
+            <span className="property-use">Retail space</span>
+          )}
           <span><Icon name="area" size={16} />{Number(home.area).toLocaleString()} {settings.area_unit || "sqft"}</span>
         </span>
         <span className="property-card-link">View details <Icon name="arrow" size={15} /></span>
@@ -159,6 +163,16 @@ function InquiryModal({ home, onClose, settings }) {
   const [sending, setSending] = useState(false);
   const [sent, setSent] = useState(false);
   const [error, setError] = useState("");
+  const phoneDigits = (settings.contact_phone || "").replace(/[^\d+]/g, "");
+  const whatsappDigits = (settings.whatsapp_number || "").replace(/\D/g, "");
+  const directContacts = [
+    phoneDigits && { name: "Call", detail: settings.contact_phone, href: `tel:${phoneDigits}`, mark: "☎" },
+    whatsappDigits && { name: "WhatsApp", detail: settings.whatsapp_number, href: `https://wa.me/${whatsappDigits}`, mark: "W" },
+    settings.telegram_url && { name: "Telegram", detail: "Message Helen", href: settings.telegram_url, mark: "➤" },
+    settings.facebook_url && { name: "Facebook", detail: "Visit profile", href: settings.facebook_url, mark: "f" },
+    settings.instagram_url && { name: "Instagram", detail: "Visit profile", href: settings.instagram_url, mark: "◎" },
+    settings.tiktok_url && { name: "TikTok", detail: "Visit profile", href: settings.tiktok_url, mark: "♪" },
+  ].filter(Boolean);
 
   async function submitInquiry(event) {
     event.preventDefault();
@@ -211,6 +225,32 @@ function InquiryModal({ home, onClose, settings }) {
             <h2 id="inquiry-title">{home ? (home.status === "Sold" ? "Looking for a home like this?" : "Curious about this home?") : "Tell us what home means to you."}</h2>
             {home && <p className="modal-home-name">{home.title}</p>}
             {home?.video_url && <video className="property-video" src={apiAssetUrl(home.video_url)} controls playsInline preload="metadata">Your browser does not support property video playback.</video>}
+            <div className="direct-contact">
+              <div className="direct-contact-heading">
+                <span>Prefer to talk directly?</span>
+                <p>Choose a contact option. No form needed.</p>
+              </div>
+              {directContacts.length ? (
+                <div className="direct-contact-actions">
+                  {directContacts.map((contact) => (
+                    <a
+                      className={`direct-contact-button direct-${contact.name.toLowerCase()}`}
+                      href={contact.href}
+                      key={contact.name}
+                      target={contact.href.startsWith("http") ? "_blank" : undefined}
+                      rel={contact.href.startsWith("http") ? "noreferrer" : undefined}
+                    >
+                      <span className="direct-contact-mark" aria-hidden="true">{contact.mark}</span>
+                      <span><strong>{contact.name}</strong><small>{contact.detail}</small></span>
+                      <Icon name="arrow" size={16} />
+                    </a>
+                  ))}
+                </div>
+              ) : (
+                <p className="direct-contact-unavailable">Helen’s phone and social links will appear here when they’re added to Site branding.</p>
+              )}
+            </div>
+            <div className="inquiry-divider"><span>Or leave a note</span></div>
             <form className="inquiry-form" onSubmit={submitInquiry}>
               <label>Your name<input name="name" required autoComplete="name" placeholder="Jane Smith" /></label>
               <label>Email address<input name="email" required type="email" autoComplete="email" placeholder="jane@example.com" /></label>
@@ -311,6 +351,19 @@ function App() {
   }, [branding.brand_name]);
 
   useEffect(() => {
+    const contactSection = document.getElementById("contact");
+    if (!contactSection) return undefined;
+    const observer = new IntersectionObserver(([entry]) => {
+      document.documentElement.classList.toggle("contact-in-view", entry.isIntersecting);
+    }, { threshold: 0.15 });
+    observer.observe(contactSection);
+    return () => {
+      observer.disconnect();
+      document.documentElement.classList.remove("contact-in-view");
+    };
+  }, []);
+
+  useEffect(() => {
     const controller = new AbortController();
     fetch(apiUrl(`/api/properties/${soldPage ? "?status=sold" : ""}`), { signal: controller.signal })
       .then((response) => {
@@ -329,7 +382,7 @@ function App() {
         if (error.name !== "AbortError") {
           setApiNotice(soldPage
             ? "Helen’s past sales could not be loaded. Please try again when the listings service is available."
-            : "Showing a few of our favorite homes. Connect the Django server to see live listings.");
+            : "You’re viewing a selection of featured spaces. Check back for the latest listings.");
         }
       });
     return () => controller.abort();
@@ -410,29 +463,30 @@ function App() {
       ) : (
       <main>
         <section className="hero">
-          <div className="hero-image" style={{ backgroundImage: `linear-gradient(90deg, rgba(7,24,48,.79) 0%, rgba(12,35,64,.53) 49%, rgba(13,35,63,.13) 100%), url("${heroImage}")` }} />
+          <div className="hero-image" style={{ backgroundImage: `linear-gradient(90deg, rgba(7,24,48,.88) 0%, rgba(12,35,64,.68) 48%, rgba(13,35,63,.23) 100%), url("${heroImage}")` }} />
           <div className="hero-content">
-            <span className="hero-kicker"><span /> YOUR NEXT MOVE, MADE CLEARER</span>
-            <h1>A home for<br />your <em>next chapter.</em></h1>
-            <p>Local guidance, thoughtful service, and a home that feels right for you.</p>
+            <span className="hero-kicker"><span /> APARTMENTS &amp; SHOPS IN ADDIS ABABA</span>
+            <h1>Find your place<br />to <em>belong.</em></h1>
+            <p>Beautiful apartments and promising shop spaces, with personal guidance at every step.</p>
             <div className="hero-actions">
               <a className="button button-blue" href="#homes">Explore listings <Icon name="arrow" size={17} /></a>
               <a className="button hero-outline" href="#projects">Our projects</a>
             </div>
           </div>
           <span className="hero-caption">{branding.brand_name}</span>
+          <div className="hero-note" aria-hidden="true">
+            <span className="hero-note-mark">✦</span>
+            <span><strong>A better move</strong><small>Starts with the right space</small></span>
+          </div>
           <form className="search-panel" onSubmit={searchSubmit}>
             <label className="search-location">
-              <span>WHERE TO?</span>
-              <span className="search-input-wrap"><Icon name="pin" size={18} /><input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Neighborhood, city, or ZIP" /></span>
+              <span>YOUR NEIGHBORHOOD</span>
+              <span className="search-input-wrap"><Icon name="pin" size={18} /><input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search Addis Ababa areas" /></span>
             </label>
             <label className="search-type">
               <span>HOME TYPE</span>
               <select value={type} onChange={(event) => setType(event.target.value)}>
-                <option value="">Any kind of home</option>
-                <option value="House">House</option>
-                <option value="Condo">Condo</option>
-                <option value="Townhouse">Townhouse</option>
+                <option value="">All spaces</option>
                 <option value="Apartment">Apartment</option>
                 <option value="Shop">Shop</option>
               </select>
@@ -450,7 +504,7 @@ function App() {
             <div>
               <p className="eyebrow">FIND YOUR NEXT PLACE</p>
               <h2>Featured <em>listings.</em></h2>
-              <p className="section-intro">Explore current properties and find the one that fits your next move.</p>
+              <p className="section-intro">Browse apartments to call home and shop spaces for your next business move.</p>
             </div>
             <div className="listing-controls">
               <span>{visibleHomes.length} {visibleHomes.length === 1 ? "property" : "properties"}</span>
@@ -528,31 +582,36 @@ function App() {
 
         <section className="contact-section" id="contact">
           <div className="contact-copy">
-            <p className="eyebrow">GET IN TOUCH</p>
-            <h2>Contact <em>{agentName}.</em></h2>
-            <p>Call Helen or connect with her on social media.</p>
-            {phoneDigits || configuredSocialLinks.length ? (
-              <div className="contact-details" aria-label={`${agentName} contact details`}>
-                {phoneDigits && (
-                  <div className="contact-detail">
-                    <span>Phone</span>
-                    <a href={`tel:${phoneDigits}`}>{branding.contact_phone}</a>
-                  </div>
-                )}
-                {configuredSocialLinks.map((item) => (
-                  <div className="contact-detail" key={item.name}>
-                    <span>{item.name}</span>
-                    <a href={item.href} target="_blank" rel="noreferrer">
-                      {item.account || item.href}
-                    </a>
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <p className="contact-unavailable">Helen’s phone number and social media accounts will appear here once they’re added.</p>
+            <p className="eyebrow">A PERSONAL HELLO IS JUST A CLICK AWAY</p>
+            <h2>Let’s find your<br /><em>next place.</em></h2>
+            <p>Whether you’re looking for a place to call home or the right space for your business, {agentName} is ready to help.</p>
+            {phoneDigits && (
+              <a className="contact-primary-action" href={`tel:${phoneDigits}`}>
+                <span className="contact-action-icon"><Icon name="phone" size={19} /></span>
+                <span><small>CALL {agentName.toUpperCase()}</small><strong>{branding.contact_phone}</strong></span>
+                <Icon name="arrow" size={18} />
+              </a>
+            )}
+            {!phoneDigits && !configuredSocialLinks.length && (
+              <p className="contact-unavailable">Contact details will appear here once they’re added in Site branding.</p>
             )}
           </div>
-          <div className="contact-decoration" aria-hidden="true"><span>{agentName.split(/\s+/).map((part) => part.charAt(0)).join("")}</span><i>Here for your next move.</i></div>
+          <div className="contact-card">
+            <div className="contact-card-heading">
+              <span className="contact-card-icon"><Icon name="home" size={21} /></span>
+              <span><strong>Let’s connect</strong><small>Choose the way that works for you.</small></span>
+            </div>
+            <div className="contact-channels">
+              {configuredSocialLinks.length ? configuredSocialLinks.map((item) => (
+                <a className="contact-channel" href={item.href} key={item.name} target="_blank" rel="noreferrer">
+                  <span className={`contact-channel-mark channel-${item.name.toLowerCase()}`}>{item.mark}</span>
+                  <span><strong>{item.name}</strong><small>{item.account || "Connect with Helen"}</small></span>
+                  <Icon name="arrow" size={16} />
+                </a>
+              )) : <p className="contact-channel-empty">Social links are being updated. Please check back soon.</p>}
+            </div>
+            <p className="contact-card-note"><span>✦</span> Friendly advice, no pressure.</p>
+          </div>
         </section>
       </main>
       )}
