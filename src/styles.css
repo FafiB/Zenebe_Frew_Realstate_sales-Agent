@@ -426,6 +426,19 @@ h2 { font-family: var(--serif); font-weight: 400; font-size: clamp(34px, 4.1vw, 
 :root[data-theme="dark"] .modal-home-name,
 :root[data-theme="dark"] .privacy-note,
 :root[data-theme="dark"] .success-state > p:not(.eyebrow) { color: #a4b5c8; }
+:root[data-theme="dark"] .section-heading h2,
+:root[data-theme="dark"] .sold-page h1 { color: #eef5fc; }
+:root[data-theme="dark"] .property-info { background: linear-gradient(155deg, #11263d, #0d1d2f); }
+:root[data-theme="dark"] .property-title { color: #f0f5fa; }
+:root[data-theme="dark"] .property-price { border-color: #715c3b; background: #332b20; color: #f1d69e; }
+:root[data-theme="dark"] .property-location { color: #b8c7d6; }
+:root[data-theme="dark"] .property-description { color: #afc0d0; }
+:root[data-theme="dark"] .property-specs span { border-color: #334b63; background: #172e46; color: #d0deea; }
+:root[data-theme="dark"] .property-card-link { border-color: #334b63; color: #a9d2fb; }
+:root[data-theme="dark"] .sort-control select { color: #d2deeb; border-color: #49627a; }
+:root[data-theme="dark"] .text-link { color: #a9d2fb; border-color: #6486a4; }
+:root[data-theme="dark"] .brand-name { color: #edf4fa; }
+:root[data-theme="dark"] .empty-results h3 { color: #eef5fc; }
 @media (max-width: 850px) {
   .site-header { padding: 0 5%; }
   .site-header nav { gap: 16px; }

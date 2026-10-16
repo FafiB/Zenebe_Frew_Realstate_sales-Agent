@@ -110,6 +110,10 @@ function readSavedHomes() {
   }
 }
 
+function isPastSalesPage() {
+  return window.location.pathname === "/sold-homes" || window.location.hash === "#sold-homes";
+}
+
 function PropertyCard({ home, saved, onSave, onOpen, settings }) {
   const price = new Intl.NumberFormat(undefined, {
     style: "currency",
@@ -270,7 +274,7 @@ function InquiryModal({ home, onClose, settings }) {
 }
 
 function App() {
-  const soldPage = window.location.pathname === "/sold-homes";
+  const [soldPage, setSoldPage] = useState(isPastSalesPage);
   const [branding, setBranding] = useState({
     brand_name: "Zenebe Frew Real Estate",
     logo_url: "",
@@ -331,7 +335,7 @@ function App() {
   const configuredSocialLinks = socialLinks.filter((item) => item.href);
   const featuredHomes = homes.filter((home) => home.featured).slice(0, 2);
   const heroImage = homes[0]?.image_url || fallbackHomes[0].image_url;
-  const [darkMode, setDarkMode] = useState(() => localStorage.getItem("site-theme") === "dark");
+  const [darkMode, setDarkMode] = useState(() => localStorage.getItem("site-theme") !== "light");
 
   useEffect(() => {
     try {
@@ -343,8 +347,33 @@ function App() {
 
   useEffect(() => {
     document.documentElement.dataset.theme = darkMode ? "dark" : "light";
-    localStorage.setItem("site-theme", darkMode ? "dark" : "light");
+    try {
+      localStorage.setItem("site-theme", darkMode ? "dark" : "light");
+    } catch (error) {
+      console.error("Could not save your theme preference in this browser:", error);
+    }
   }, [darkMode]);
+
+  useEffect(() => {
+    function syncPageFromLocation() {
+      const nextSoldPage = isPastSalesPage();
+      if (nextSoldPage === soldPage) return;
+      setSoldPage(nextSoldPage);
+      setMenuOpen(false);
+      if (nextSoldPage) {
+        window.scrollTo({ top: 0, behavior: "auto" });
+      } else if (window.location.hash) {
+        const targetId = decodeURIComponent(window.location.hash.slice(1));
+        requestAnimationFrame(() => document.getElementById(targetId)?.scrollIntoView());
+      }
+    }
+    window.addEventListener("hashchange", syncPageFromLocation);
+    window.addEventListener("popstate", syncPageFromLocation);
+    return () => {
+      window.removeEventListener("hashchange", syncPageFromLocation);
+      window.removeEventListener("popstate", syncPageFromLocation);
+    };
+  }, [soldPage]);
 
   useEffect(() => {
     document.title = `${branding.brand_name} — Your next move`;
@@ -429,7 +458,7 @@ function App() {
           {!soldPage && <a href="/#projects" onClick={() => setMenuOpen(false)}>Projects</a>}
           <a href="/#about" onClick={() => setMenuOpen(false)}>About</a>
           <a href="/#contact" onClick={() => setMenuOpen(false)}>Contact</a>
-          <a href="/sold-homes" onClick={() => setMenuOpen(false)}>Past sales</a>
+          <a href="/#sold-homes" onClick={() => setMenuOpen(false)}>Past sales</a>
           <button className="theme-toggle" onClick={() => setDarkMode((current) => !current)} aria-label={`Switch to ${darkMode ? "light" : "dark"} mode`} title={`Switch to ${darkMode ? "light" : "dark"} mode`}>
             <Icon name={darkMode ? "sun" : "moon"} size={17} />
           </button>
@@ -534,7 +563,7 @@ function App() {
           ) : (
             <div className="empty-results"><span>⌂</span><h3>{savedOnly ? "Your shortlist is ready when you are." : "No properties match your search."}</h3><p>{savedOnly ? "Tap the heart on any home to keep it close while you explore." : "Try another area or clear your search to see all available listings."}</p><button className="text-link" onClick={() => { setQuery(""); setType(""); setSavedOnly(false); }}>Show all listings <Icon name="arrow" size={16} /></button></div>
           )}
-          <div className="center-action"><a href="/sold-homes" className="text-link">Browse past sales <Icon name="arrow" size={16} /></a></div>
+          <div className="center-action"><a href="/#sold-homes" className="text-link">Browse past sales <Icon name="arrow" size={16} /></a></div>
         </section>
 
         <section className="projects-section section-shell" id="projects">
