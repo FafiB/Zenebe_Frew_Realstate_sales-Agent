@@ -4,7 +4,8 @@ from pathlib import Path
 import dj_database_url
 
 BASE_DIR = Path(__file__).resolve().parent.parent
-DEBUG = os.environ.get("DEBUG", "true").lower() == "true"
+debug_default = "false" if os.environ.get("VERCEL_ENV") in {"production", "preview"} else "true"
+DEBUG = os.environ.get("DEBUG", debug_default).lower() == "true"
 SECRET_KEY = os.environ.get("SECRET_KEY", "django-insecure-development-key-change-before-deployment")
 if not DEBUG and SECRET_KEY == "django-insecure-development-key-change-before-deployment":
     raise RuntimeError("Set SECRET_KEY in the environment when DEBUG is false.")
@@ -23,7 +24,18 @@ def configured_frontend_origins():
     ))
 
 
-ALLOWED_HOSTS = environment_list("ALLOWED_HOSTS", "127.0.0.1,localhost")
+def configured_allowed_hosts():
+    return list(dict.fromkeys(
+        host.rstrip("/")
+        for host in [
+            *environment_list("ALLOWED_HOSTS", "127.0.0.1,localhost"),
+            *environment_list("VERCEL_URL"),
+            *environment_list("VERCEL_PROJECT_PRODUCTION_URL"),
+        ]
+    ))
+
+
+ALLOWED_HOSTS = configured_allowed_hosts()
 configured_origins = configured_frontend_origins()
 CSRF_TRUSTED_ORIGINS = list(dict.fromkeys(
     ["http://127.0.0.1:5173", "http://localhost:5173", *configured_origins]

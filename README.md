@@ -56,6 +56,7 @@ Configure these backend environment variables:
 - `DEBUG=false`
 - `SECRET_KEY` — a strong, private random value
 - `ALLOWED_HOSTS` — the backend host name only, without scheme or path (for example `your-api.koyeb.app`). This is the hostname users access for the Django API, not the Vercel frontend domain.
+- On Vercel, production and preview deployments default to `DEBUG=false`; Django also trusts the exact deployment and production hostnames provided by Vercel's `VERCEL_URL` and `VERCEL_PROJECT_PRODUCTION_URL` environment variables. Set a private `SECRET_KEY` in Vercel before deploying because production mode rejects the development fallback key.
 - `FRONTEND_URL` — the exact frontend origin, including scheme (for example `https://your-site.vercel.app`). This is automatically added to both CORS and trusted CSRF origins. Separate multiple origins with commas if you use more than one frontend domain.
 - `CORS_ALLOWED_ORIGINS` — optional additional frontend origins, including scheme; separate multiple origins with commas.
 - `DATABASE_URL` — a persistent PostgreSQL connection URL

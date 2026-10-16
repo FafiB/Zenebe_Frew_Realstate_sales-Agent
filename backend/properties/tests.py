@@ -10,11 +10,26 @@ from django.test import override_settings
 from django.test import TestCase
 from PIL import Image
 
-from config.settings import configured_frontend_origins
+from config.settings import configured_allowed_hosts, configured_frontend_origins
 from .models import Inquiry, Property, SiteSettings
 
 
 class PropertyApiTests(TestCase):
+    @patch.dict(
+        "os.environ",
+        {
+            "ALLOWED_HOSTS": "api.example.com",
+            "VERCEL_URL": "deployment.vercel.app",
+            "VERCEL_PROJECT_PRODUCTION_URL": "www.example.com",
+        },
+        clear=True,
+    )
+    def test_vercel_hostnames_are_added_to_allowed_hosts(self):
+        self.assertEqual(
+            configured_allowed_hosts(),
+            ["api.example.com", "deployment.vercel.app", "www.example.com"],
+        )
+
     @patch.dict(
         "os.environ",
         {
