@@ -15,6 +15,7 @@ from config.settings import (
     configured_frontend_origins,
     database_connection_max_age,
     database_connection_options,
+    supabase_media_storage_options,
 )
 from .models import Inquiry, Property, SiteSettings
 
@@ -57,6 +58,34 @@ class PropertyApiTests(TestCase):
     def test_non_vercel_deployments_keep_database_connection_reuse(self):
         self.assertEqual(database_connection_max_age(), 600)
         self.assertEqual(database_connection_options(), {})
+
+    @patch.dict(
+        "os.environ",
+        {
+            "SUPABASE_PROJECT_REF": "project-ref",
+            "SUPABASE_STORAGE_BUCKET": "real-estate-media",
+            "SUPABASE_S3_ACCESS_KEY_ID": "test-access-key",
+            "SUPABASE_S3_SECRET_ACCESS_KEY": "test-secret-key",
+        },
+        clear=True,
+    )
+    def test_supabase_media_storage_uses_public_bucket_urls(self):
+        options = supabase_media_storage_options()
+        self.assertEqual(
+            options["endpoint_url"],
+            "https://project-ref.supabase.co/storage/v1/s3",
+        )
+        self.assertEqual(
+            options["custom_domain"],
+            "project-ref.supabase.co/storage/v1/object/public/real-estate-media",
+        )
+        self.assertFalse(options["querystring_auth"])
+        self.assertEqual(options["addressing_style"], "path")
+
+    @patch.dict("os.environ", {"SUPABASE_PROJECT_REF": "project-ref"}, clear=True)
+    def test_partial_supabase_media_storage_configuration_is_rejected(self):
+        with self.assertRaisesMessage(RuntimeError, "SUPABASE_STORAGE_BUCKET"):
+            supabase_media_storage_options()
 
     def setUp(self):
         self.home = Property.objects.create(

@@ -49,6 +49,43 @@ def database_connection_options():
     return {}
 
 
+def supabase_media_storage_options():
+    setting_names = {
+        "project_ref": "SUPABASE_PROJECT_REF",
+        "bucket_name": "SUPABASE_STORAGE_BUCKET",
+        "access_key": "SUPABASE_S3_ACCESS_KEY_ID",
+        "secret_key": "SUPABASE_S3_SECRET_ACCESS_KEY",
+    }
+    values = {key: os.environ.get(name, "").strip() for key, name in setting_names.items()}
+    if not any(values.values()):
+        return None
+
+    missing = [setting_names[key] for key, value in values.items() if not value]
+    if missing:
+        raise RuntimeError(
+            "Supabase media storage is partially configured; set: "
+            + ", ".join(missing)
+        )
+
+    project_ref = values["project_ref"]
+    bucket_name = values["bucket_name"]
+    return {
+        "access_key": values["access_key"],
+        "secret_key": values["secret_key"],
+        "bucket_name": bucket_name,
+        "endpoint_url": f"https://{project_ref}.supabase.co/storage/v1/s3",
+        "region_name": "us-east-1",
+        "signature_version": "s3v4",
+        "addressing_style": "path",
+        "custom_domain": (
+            f"{project_ref}.supabase.co/storage/v1/object/public/{bucket_name}"
+        ),
+        "querystring_auth": False,
+        "default_acl": None,
+        "file_overwrite": False,
+    }
+
+
 ALLOWED_HOSTS = configured_allowed_hosts()
 configured_origins = configured_frontend_origins()
 CSRF_TRUSTED_ORIGINS = list(dict.fromkeys(
@@ -136,8 +173,16 @@ staticfiles_backend = (
     if DEBUG
     else "whitenoise.storage.CompressedManifestStaticFilesStorage"
 )
+media_storage_options = supabase_media_storage_options()
 STORAGES = {
-    "default": {"BACKEND": "django.core.files.storage.FileSystemStorage"},
+    "default": (
+        {
+            "BACKEND": "storages.backends.s3.S3Storage",
+            "OPTIONS": media_storage_options,
+        }
+        if media_storage_options
+        else {"BACKEND": "django.core.files.storage.FileSystemStorage"}
+    ),
     "staticfiles": {"BACKEND": staticfiles_backend},
 }
 MEDIA_URL = "media/"

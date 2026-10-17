@@ -43,13 +43,11 @@ Property currency defaults to Ethiopian Birr (ETB); currency and area units are 
 - `GET /api/site-settings/` — returns public branding, agent-profile, contact, currency, and area-unit settings.
 - `POST /api/inquiries/` — creates an inquiry. Required JSON fields: `name`, `email`, and `message`; `phone` and `property` are optional.
 
-The frontend uses sample property cards when the backend is unavailable, and the seed command provides starter listings. Replace these with the agent's real listings before publishing. Inquiries require the Django backend. Past sales are managed by setting a listing's status to **Sold** in Django Admin. Uploaded media is stored under `backend/media/`; configure production media serving when deploying.
+The frontend uses sample property cards when the backend is unavailable, and the seed command provides starter listings. Replace these with the agent's real listings before publishing. Inquiries require the Django backend. Past sales are managed by setting a listing's status to **Sold** in Django Admin. Uploaded media is stored locally during development and in Supabase Storage in production.
 
-## Deploy the frontend and backend separately
+## Deploy the frontend and backend on Vercel
 
-The React frontend can be deployed from the repository root to Vercel with build command `npm run build` and output directory `dist`. Set the Vercel environment variable `VITE_API_BASE_URL` to the public Django service origin, for example `https://your-service.koyeb.app`, then redeploy the frontend. The frontend uses this origin for API requests and uploaded media URLs; leave it unset for local development, where Vite proxies requests to Django.
-
-Deploy Django from the `backend` root directory on a Python web-service host. Install dependencies with `pip install -r requirements.txt`, then run `python manage.py migrate && python manage.py collectstatic --noinput` as part of the build/release process. Start the service with `gunicorn config.wsgi:application --bind 0.0.0.0:$PORT`.
+Deploy the repository root to Vercel. The root `vercel.json` configures Vite for the frontend and Django for the backend, routing `/api/`, `/admin/`, and `/static/` requests to Django. The frontend uses same-origin API requests, so leave `VITE_API_BASE_URL` unset unless deploying the frontend on a separate domain.
 
 Configure these backend environment variables:
 
@@ -65,7 +63,16 @@ The configured frontend origins are also trusted for Django CSRF checks, and sec
 
 For Vercel deployments, connect a persistent PostgreSQL database, then make sure its full PostgreSQL connection URI is available as `DATABASE_URL` to the backend service in Production (and Preview, if used). Production now fails clearly at startup if `DATABASE_URL` is missing instead of silently using SQLite, which is not persistent or reliable for serverless deployments. Vercel uses short-lived database connections, disables prepared statements, and disables server-side cursors for compatibility with transaction poolers such as Supabase's. In Supabase, choose **Connect → Transaction pooler** for the Vercel runtime. Before signing into Django Admin, run `python manage.py migrate` and `python manage.py createsuperuser` against that same production database from a trusted environment with the backend dependencies and production `DATABASE_URL` configured. For migrations, Supabase recommends a direct connection; if your local network cannot connect directly, use its session pooler. Migrations must be applied before admin login because Django authentication and sessions require their database tables. Never commit or share the database URL.
 
-Local SQLite and uploaded files are suitable for development only. Production uploads need persistent or object storage; this project currently stores uploaded media on the service filesystem, which many hosts do not persist between deployments. Configure persistent media storage before relying on uploaded photos or videos.
+### Configure Supabase Storage for uploads
+
+Create a bucket in Supabase Storage (for example, `real-estate-media`) and make it **public**, because listing photos, agent photos, and videos are served to website visitors. In the Supabase Storage settings, enable the S3 protocol and create an S3 access key and secret. Add these Vercel environment variables to the Django service for Production (and Preview if used):
+
+- `SUPABASE_PROJECT_REF` — project reference from the Supabase project URL
+- `SUPABASE_STORAGE_BUCKET` — the public bucket name
+- `SUPABASE_S3_ACCESS_KEY_ID` — the S3 access key generated in Supabase Storage settings
+- `SUPABASE_S3_SECRET_ACCESS_KEY` — its matching secret; store it only in Vercel, never in the repository or frontend
+
+The backend uploads through Supabase's S3-compatible endpoint and generates public object URLs for the React site. Keep the Supabase S3 secret server-side; do not use a service-role or database password as the S3 credential. Redeploy after adding the variables. Existing uploads on Vercel's temporary filesystem are not persistent; upload them again after storage is configured. Local development continues to use `backend/media/` when these Supabase variables are not set.
 
 ## Before deploying
 
