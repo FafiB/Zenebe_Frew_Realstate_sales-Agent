@@ -35,10 +35,18 @@ def configured_allowed_hosts():
     ))
 
 
+def is_vercel_environment():
+    return os.environ.get("VERCEL") == "1" or bool(os.environ.get("VERCEL_ENV"))
+
+
 def database_connection_max_age():
-    if os.environ.get("VERCEL") == "1" or os.environ.get("VERCEL_ENV"):
-        return 0
-    return 600
+    return 0 if is_vercel_environment() else 600
+
+
+def database_connection_options():
+    if is_vercel_environment():
+        return {"prepare_threshold": None}
+    return {}
 
 
 ALLOWED_HOSTS = configured_allowed_hosts()
@@ -100,6 +108,9 @@ DATABASES = {
         ssl_require=bool(database_url and not DEBUG),
     )
 }
+if is_vercel_environment():
+    DATABASES["default"]["OPTIONS"] = database_connection_options()
+    DATABASES["default"]["DISABLE_SERVER_SIDE_CURSORS"] = True
 
 CORS_ALLOWED_ORIGINS = configured_origins
 CORS_ALLOW_CREDENTIALS = True
