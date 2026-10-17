@@ -10,7 +10,11 @@ from django.test import override_settings
 from django.test import TestCase
 from PIL import Image
 
-from config.settings import configured_allowed_hosts, configured_frontend_origins
+from config.settings import (
+    configured_allowed_hosts,
+    configured_frontend_origins,
+    database_connection_max_age,
+)
 from .models import Inquiry, Property, SiteSettings
 
 
@@ -42,6 +46,14 @@ class PropertyApiTests(TestCase):
             configured_frontend_origins(),
             ["https://extra.example.com", "https://site.example.com"],
         )
+
+    @patch.dict("os.environ", {"VERCEL_ENV": "production"}, clear=True)
+    def test_vercel_uses_short_lived_database_connections(self):
+        self.assertEqual(database_connection_max_age(), 0)
+
+    @patch.dict("os.environ", {}, clear=True)
+    def test_non_vercel_deployments_keep_database_connection_reuse(self):
+        self.assertEqual(database_connection_max_age(), 600)
 
     def setUp(self):
         self.home = Property.objects.create(

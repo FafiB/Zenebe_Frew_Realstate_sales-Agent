@@ -35,6 +35,12 @@ def configured_allowed_hosts():
     ))
 
 
+def database_connection_max_age():
+    if os.environ.get("VERCEL") == "1" or os.environ.get("VERCEL_ENV"):
+        return 0
+    return 600
+
+
 ALLOWED_HOSTS = configured_allowed_hosts()
 configured_origins = configured_frontend_origins()
 CSRF_TRUSTED_ORIGINS = list(dict.fromkeys(
@@ -89,7 +95,8 @@ if not DEBUG and not database_url:
 DATABASES = {
     "default": dj_database_url.config(
         default=f"sqlite:///{BASE_DIR / 'db.sqlite3'}",
-        conn_max_age=600,
+        conn_max_age=database_connection_max_age(),
+        conn_health_checks=True,
         ssl_require=bool(database_url and not DEBUG),
     )
 }
