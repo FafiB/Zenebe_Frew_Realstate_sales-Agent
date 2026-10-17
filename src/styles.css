@@ -441,7 +441,12 @@ h2 { font-family: var(--serif); font-weight: 400; font-size: clamp(34px, 4.1vw, 
 :root[data-theme="dark"] .empty-results h3 { color: #eef5fc; }
 @media (max-width: 850px) {
   .site-header { padding: 0 5%; }
-  .site-header nav { gap: 16px; }
+  .mobile-menu-toggle { width: 44px; height: 44px; display: grid; place-items: center; border-radius: 50%; cursor: pointer; }
+  .site-header nav { display: none; position: absolute; top: 100%; left: 0; right: 0; padding: 12px 5% 22px; border-top: 1px solid var(--line); background: var(--paper); box-shadow: 0 18px 30px #10253b1c; align-items: stretch; gap: 0; flex-direction: column; }
+  .site-header nav.nav-open { display: flex; }
+  .site-header nav a { min-height: 48px; display: flex; align-items: center; padding: 12px 4px; border-bottom: 1px solid var(--line); }
+  .site-header nav .theme-toggle { margin: 12px 0; }
+  .nav-contact, .nav-call { min-height: 48px; justify-content: space-between; margin-top: 8px; padding: 0 16px; border-radius: 24px; }
   .hero { height: 590px; }
   .hero-content { left: 7%; }
   .search-panel { left: 7%; width: 86%; }
@@ -464,64 +469,76 @@ h2 { font-family: var(--serif); font-weight: 400; font-size: clamp(34px, 4.1vw, 
   .brand-name { font-size: 9px; letter-spacing: 1.65px; }
   .site-header > .brand { max-width: calc(100% - 60px); }
   .site-header > .brand .brand-name { max-width: calc(100vw - 125px); }
-  .mobile-menu-toggle { display: block; cursor: pointer; padding: 8px; }
-  .site-header nav { display: none; position: absolute; top: 72px; left: 0; right: 0; background: var(--paper); padding: 12px 6% 24px; box-shadow: 0 12px 18px #20251d12; align-items: stretch; gap: 0; flex-direction: column; }
-  .site-header nav.nav-open { display: flex; }
-  .site-header nav a, .nav-contact, .nav-call { padding: 15px 0; border-bottom: 1px solid var(--line); border-radius: 0; }
-  .site-header nav .theme-toggle { margin: 8px 0; }
-  .nav-contact, .nav-call { justify-content: space-between; padding-left: 14px !important; padding-right: 14px !important; border-radius: 24px; border: 0 !important; }
-  .hero { margin: 0; height: 640px; }
+  .site-header nav { top: 72px; padding-right: 6%; padding-left: 6%; }
+  .hero { margin: 0; height: clamp(600px, calc(100svh - 100px), 680px); }
   .hero-image { background-position: 61% center; }
-  .hero-content { left: 7%; top: 73px; right: 5%; }
+  .hero-content { left: 7%; top: clamp(54px, 9vh, 73px); right: 5%; }
   .hero-content::before { right: 0; left: -16px; filter: blur(8px); }
-  .hero h1 { font-size: clamp(48px, 13vw, 56px); letter-spacing: -1.1px; }
+  .hero-kicker { max-width: 100%; font-size: 8px; letter-spacing: 1.35px; }
+  .hero h1 { font-size: clamp(48px, 12.5vw, 58px); letter-spacing: -1.1px; }
   .hero-actions { margin-top: 23px; }
   .hero-content > p { max-width: 260px; line-height: 1.6; }
-  .hero-caption { bottom: 145px; right: 5%; font-size: 8px; }
+  .hero-bottom { display: none; }
   .hero-note { display: none; }
-  .search-panel { left: 5%; bottom: -47px; width: 90%; grid-template-columns: 1fr 1fr; gap: 13px 0; padding: 17px; }
-  .search-panel label { gap: 8px; padding-right: 10px; }
+  .search-panel { left: 5%; bottom: -82px; width: 90%; grid-template-columns: 1fr 1fr; gap: 13px 0; padding: 17px; border-radius: 16px; }
+  .search-panel label { min-width: 0; gap: 9px; padding-right: 10px; }
   .search-location { border: 0; }
   .search-type { padding-left: 12px; border-left: 1px solid var(--line); }
-  .search-panel input, .search-panel select { font-size: 10px; }
-  .search-submit { height: 43px; grid-column: 1/-1; justify-content: center; }
-  .hero-bottom { bottom: 15px; font-size: 7px; letter-spacing: 1px; }
-  .hero-bottom span:last-child { text-align: right; }
-  .listings-section { padding-top: 111px; padding-bottom: 72px; }
+  .search-panel label > span:first-child { font-size: 8px; letter-spacing: 1.2px; }
+  .search-panel input, .search-panel select { min-height: 30px; font-size: 14px; }
+  .search-submit { min-height: 48px; grid-column: 1/-1; justify-content: center; }
+  .listings-section { padding-top: 145px; padding-bottom: 68px; }
   .sold-page { min-height: 65vh; padding-top: 62px; padding-bottom: 70px; }
   .sold-page .property-grid { margin-top: 26px; }
   .section-heading { display: block; }
   h2 { font-size: 37px; }
   .section-intro { max-width: 290px; line-height: 1.6; }
-  .listing-controls { margin-top: 23px; justify-content: space-between; gap: 9px; flex-wrap: wrap; }
-  .saved-filter { order: 3; }
-  .sort-control { order: 2; }
+  .listing-controls { display: grid; grid-template-columns: 1fr auto; margin-top: 22px; justify-content: initial; gap: 10px; }
+  .listing-controls > span { grid-column: 1/-1; }
+  .saved-filter, .sort-control { order: initial; }
+  .saved-filter { min-height: 42px; justify-content: center; }
+  .sort-control select { min-height: 42px; padding-left: 4px; font-size: 12px; }
   .property-grid { grid-template-columns: 1fr; gap: 18px; }
   .projects-section { padding-top: 50px; padding-bottom: 65px; }
   .project-grid { grid-template-columns: 1fr; }
-  .project-tile { height: 270px; }
-  .image-button { height: 235px; }
+  .project-tile { height: clamp(230px, 68vw, 290px); padding: 22px; }
+  .image-button { height: auto; aspect-ratio: 1.48; }
   .property-title-row { display: block; }
   .property-title { font-size: 23px; }
   .property-price { display: inline-flex; max-width: 100%; margin-top: 8px; white-space: normal; }
-  .property-specs { gap: 18px; }
+  .property-specs { flex-wrap: wrap; gap: 8px; }
+  .property-specs span { min-height: 36px; }
   .manifesto { grid-template-columns: 1fr; }
-  .manifesto-image { min-height: 300px; height: 300px; }
-  .manifesto-copy { min-height: 390px; padding: 54px 8% 94px; }
+  .manifesto-image { min-height: 280px; height: 280px; }
+  .manifesto-copy { min-height: 370px; padding: 48px 8% 88px; }
   .handwritten { bottom: 42px; right: 9%; }
-  .contact-section { min-height: auto; grid-template-columns: 1fr; gap: 32px; padding: 66px 7%; }
-  .contact-copy h2 { font-size: 55px; }
-  .contact-card { padding: 21px; }
-  .site-footer { padding: 22px 5%; flex-wrap: wrap; gap: 14px; }
+  .contact-section { min-height: auto; grid-template-columns: 1fr; gap: 27px; padding: 56px 7% calc(56px + env(safe-area-inset-bottom)); }
+  .contact-copy h2 { font-size: clamp(44px, 12vw, 55px); }
+  .contact-copy > p:not(.eyebrow) { font-size: 14px; }
+  .contact-card { padding: 20px; border-radius: 18px; }
+  .contact-channel { min-height: 58px; }
+  .site-footer { padding: 22px 5% calc(28px + env(safe-area-inset-bottom)); flex-wrap: wrap; gap: 14px; }
   .site-footer > span:nth-child(2) { display: none; }
-  .inquiry-modal { padding: 39px 25px 28px; }
-  .inquiry-modal { padding: 36px 22px 25px; border-radius: 18px; }
+  .modal-backdrop { align-items: end; padding: 10px 10px calc(10px + env(safe-area-inset-bottom)); }
+  .inquiry-modal { width: 100%; max-height: min(92svh, 760px); padding: 38px 20px 24px; border-radius: 20px; }
   .inquiry-modal h2 { font-size: 34px; }
-  .direct-contact { padding: 14px; }
+  .inquiry-form input, .inquiry-form textarea { min-height: 46px; font-size: 16px; }
+  .inquiry-form textarea { min-height: 96px; }
+  .inquiry-form button { min-height: 48px; }
+  .direct-contact { padding: 13px; }
   .direct-contact-actions { grid-template-columns: 1fr; }
   .section-intro, .property-description { font-size: 13px; }
-  .floating-contact { right: 10px; bottom: 12px; gap: 8px; }
-  .floating-contact .social-circle { width: 41px; height: 41px; font-size: 20px; }
+  .floating-contact { display: none; }
+}
+@media (max-width: 420px) {
+  .search-panel { bottom: -126px; grid-template-columns: 1fr; gap: 11px; }
+  .search-panel label { padding: 0; }
+  .search-type { padding: 10px 0 0; border-top: 1px solid var(--line); border-left: 0; }
+  .search-panel input, .search-panel select { min-height: 32px; font-size: 16px; }
+  .search-submit { grid-column: 1; }
+  .listings-section { padding-top: 190px; }
+  .property-info { padding: 19px 17px 16px; }
+  .property-specs { gap: 7px; }
 }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; }
