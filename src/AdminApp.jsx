@@ -8,7 +8,9 @@ const blankSettings = {
   logo_url: "",
   agent_name: "Helen Hidbachew",
   agent_title: "Real Estate Agent",
+  agent_title_am: "",
   agent_bio: "",
+  agent_bio_am: "",
   agent_photo_url: "",
   contact_phone: "",
   whatsapp_number: "",
@@ -22,7 +24,9 @@ const blankSettings = {
 
 const blankProperty = {
   title: "",
+  title_am: "",
   location: "",
+  location_am: "",
   price: "",
   beds: 1,
   baths: 1,
@@ -32,6 +36,7 @@ const blankProperty = {
   image_url: "",
   video_url: "",
   description: "",
+  description_am: "",
   featured: false,
 };
 
@@ -40,7 +45,9 @@ const settingsFields = [
   ["logo_url", "Logo image URL (optional)", "url"],
   ["agent_name", "Agent name", "text"],
   ["agent_title", "Agent title", "text"],
+  ["agent_title_am", "Agent title in Amharic (optional)", "text"],
   ["agent_bio", "Short agent biography", "textarea"],
+  ["agent_bio_am", "Short agent biography in Amharic (optional)", "textarea"],
   ["agent_photo_url", "Agent photo URL (optional)", "url"],
   ["contact_phone", "Phone number", "tel"],
   ["whatsapp_number", "WhatsApp number (international digits)", "tel"],
@@ -365,7 +372,9 @@ function AdminApp() {
             <form className="admin-panel admin-form admin-property-form" onSubmit={saveProperty}>
               <div className="admin-panel-heading"><div><h2>{editingId ? "Edit property" : "Add a property"}</h2><p>Fields marked required must be filled in.</p></div>{editingId !== null && <button className="admin-secondary-button" type="button" onClick={startNewProperty}>New</button>}</div>
               <label>Property title<input value={propertyDraft.title} onChange={(event) => setPropertyDraft({ ...propertyDraft, title: event.target.value })} required maxLength="120" /></label>
+              <label>Property title in Amharic (optional)<input value={propertyDraft.title_am || ""} onChange={(event) => setPropertyDraft({ ...propertyDraft, title_am: event.target.value })} maxLength="120" /></label>
               <label>Location<input value={propertyDraft.location} onChange={(event) => setPropertyDraft({ ...propertyDraft, location: event.target.value })} required maxLength="180" /></label>
+              <label>Location in Amharic (optional)<input value={propertyDraft.location_am || ""} onChange={(event) => setPropertyDraft({ ...propertyDraft, location_am: event.target.value })} maxLength="180" /></label>
               <div className="admin-field-grid admin-field-grid-three">
                 <label>Price<input type="number" min="1" value={propertyDraft.price} onChange={(event) => setPropertyDraft({ ...propertyDraft, price: event.target.value })} required /></label>
                 <label>Bedrooms<input type="number" min="0" value={propertyDraft.beds} onChange={(event) => setPropertyDraft({ ...propertyDraft, beds: event.target.value })} required /></label>
@@ -379,6 +388,7 @@ function AdminApp() {
               <label>Video URL<input type="url" value={propertyDraft.video_url || ""} onChange={(event) => setPropertyDraft({ ...propertyDraft, video_url: event.target.value })} placeholder="https://…" /></label>
               <label>Upload property video<input type="file" accept="video/mp4,video/webm,video/quicktime,video/x-m4v" onChange={(event) => setPropertyVideoFile(event.target.files?.[0] || null)} /></label>
               <label>Description<textarea rows="4" value={propertyDraft.description || ""} onChange={(event) => setPropertyDraft({ ...propertyDraft, description: event.target.value })} /></label>
+              <label>Description in Amharic (optional)<textarea rows="4" value={propertyDraft.description_am || ""} onChange={(event) => setPropertyDraft({ ...propertyDraft, description_am: event.target.value })} /></label>
               <label className="admin-checkbox"><input type="checkbox" checked={Boolean(propertyDraft.featured)} onChange={(event) => setPropertyDraft({ ...propertyDraft, featured: event.target.checked })} /> Feature this property</label>
               <button className="admin-primary-button" disabled={busy}>{editingId ? "Save property" : "Add property"}</button>
             </form>

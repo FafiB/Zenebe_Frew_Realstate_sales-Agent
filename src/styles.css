@@ -36,6 +36,10 @@ a { color: inherit; text-decoration: none; }
 .nav-contact, .nav-call { border: 0; background: var(--blue); border-radius: 28px; padding: 12px 17px; display: flex; align-items: center; gap: 11px; cursor: pointer; color: white; font-size: 10px; letter-spacing: .4px; text-transform: none; white-space: nowrap; }
 .nav-contact:hover, .nav-call:hover { background: var(--blue-dark); color: white; }
 .theme-toggle { width: 39px; height: 39px; border: 1px solid var(--line); border-radius: 50%; display: grid; place-items: center; background: var(--paper); color: var(--ink); cursor: pointer; flex: 0 0 auto; }
+.language-toggle { min-height: 38px; display: inline-flex; align-items: center; gap: 7px; padding: 0 12px; border: 1px solid var(--line); border-radius: 22px; background: var(--paper); color: var(--ink); font-size: 10px; font-weight: 800; cursor: pointer; white-space: nowrap; transition: background .2s, border-color .2s, transform .2s; }
+.language-toggle:hover { transform: translateY(-1px); border-color: #9db9d6; background: #eaf3fc; }
+.language-toggle > span:first-child { color: var(--blue); font-size: 12px; }
+.language-toggle-mobile { display: none; }
 .mobile-menu-toggle { display: none; border: 0; background: none; }
 .mobile-header-call { display: none; }
 .hero { height: 610px; margin: 0 1.2%; position: relative; background: #243d5c; color: white; }
@@ -358,6 +362,7 @@ h2 { font-family: var(--serif); font-weight: 400; font-size: clamp(34px, 4.1vw, 
 .property-price { font-size: 13px; }
 .property-card-link { font-size: 12px; }
 .site-header nav { font-size: 11px; }
+.language-toggle:focus-visible { outline: 3px solid #dfa947; outline-offset: 3px; }
 .floating-contact .social-circle { width: 49px; height: 49px; }
 .direct-contact-button:focus-visible, .inquiry-form button:focus-visible { outline: 3px solid #d6a64f; outline-offset: 3px; }
 :root[data-theme="dark"] .direct-contact { background: #172e46; border-color: #38516a; }
@@ -440,6 +445,22 @@ h2 { font-family: var(--serif); font-weight: 400; font-size: clamp(34px, 4.1vw, 
 :root[data-theme="dark"] .text-link { color: #a9d2fb; border-color: #6486a4; }
 :root[data-theme="dark"] .brand-name { color: #edf4fa; }
 :root[data-theme="dark"] .empty-results h3 { color: #eef5fc; }
+:root[data-theme="dark"] .language-toggle { border-color: #38516a; background: #11263d; color: #d2deeb; }
+:root[data-theme="dark"] .language-toggle:hover { background: #1c3a59; }
+:root[lang="am"] { font-family: "Noto Sans Ethiopic", "Manrope", sans-serif; }
+:root[lang="am"] button,
+:root[lang="am"] input,
+:root[lang="am"] select,
+:root[lang="am"] textarea,
+:root[lang="am"] .brand-name,
+:root[lang="am"] .hero,
+:root[lang="am"] .site-header nav,
+:root[lang="am"] .property-info,
+:root[lang="am"] .contact-section,
+:root[lang="am"] .inquiry-modal { font-family: "Noto Sans Ethiopic", "Manrope", sans-serif; }
+:root[lang="am"] .brand-name { letter-spacing: 0; }
+:root[lang="am"] .hero h1 { line-height: 1.35; }
+:root[lang="am"] .hero-bottom { letter-spacing: .3px; }
 @media (max-width: 850px) {
   .site-header { padding: 0 5%; }
   .mobile-header-call { min-height: 42px; margin-left: auto; margin-right: 10px; padding: 0 14px; display: inline-flex; align-items: center; justify-content: center; gap: 7px; border-radius: 24px; background: #174b77; color: white; font-size: 11px; font-weight: 800; white-space: nowrap; }
@@ -448,6 +469,10 @@ h2 { font-family: var(--serif); font-weight: 400; font-size: clamp(34px, 4.1vw, 
   .site-header nav.nav-open { display: flex; }
   .site-header nav a { min-height: 48px; display: flex; align-items: center; padding: 12px 4px; border-bottom: 1px solid var(--line); }
   .site-header nav .theme-toggle { margin: 12px 0; }
+  .language-toggle-mobile { min-height: 38px; display: inline-flex; flex: 0 0 auto; margin: 0 7px 0 0; padding: 0 9px; }
+  .language-toggle-mobile > span:last-child { display: none; }
+  .site-header nav .language-toggle { display: none; }
+  .site-header { gap: 5px; }
   .nav-contact, .nav-call { min-height: 48px; justify-content: space-between; margin-top: 8px; padding: 0 16px; border-radius: 24px; }
   .hero { height: 590px; }
   .hero-content { left: 7%; }
@@ -478,6 +503,8 @@ h2 { font-family: var(--serif); font-weight: 400; font-size: clamp(34px, 4.1vw, 
   .brand-name { font-size: 9px; letter-spacing: 1.65px; }
   .site-header > .brand { max-width: calc(100% - 60px); }
   .site-header > .brand .brand-name { max-width: calc(100vw - 125px); }
+  .site-header > .brand { flex: 1 1 auto; }
+  .mobile-header-call { margin-right: 3px; padding: 0 9px; font-size: 10px; }
   .site-header nav { top: 72px; padding-right: 6%; padding-left: 6%; }
   .hero { margin: 0; height: clamp(600px, calc(100svh - 100px), 680px); }
   .hero-image { background-position: 61% center; }

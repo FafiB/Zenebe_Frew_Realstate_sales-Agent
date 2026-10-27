@@ -30,8 +30,9 @@ Open the local URL printed by Vite. The public website uses `/`, and the custom 
 
 1. Back up any existing database before changing it.
 2. In the Supabase project selected for this website, open **SQL Editor**, paste the contents of [`supabase/migrations/20261027000000_initial_real_estate.sql`](./supabase/migrations/20261027000000_initial_real_estate.sql), and run it. It creates the site settings, properties, and inquiries tables; row-level security policies; and the public `real-estate-media` storage bucket. If the previous Django tables are still in this same database, the SQL also copies their records. Previously uploaded files on local/Vercel storage are not copied; upload those files again through the admin.
-3. In **Authentication → Users**, create the administrator account. Disable public signups in the Auth settings if visitors should not be able to create accounts.
-4. In **SQL Editor**, grant that exact account the server-controlled admin role, replacing the email with the one you just created:
+3. Run [`supabase/migrations/20261028000000_add_amharic_content.sql`](./supabase/migrations/20261028000000_add_amharic_content.sql) as a separate query to add optional Amharic translations for listing titles, locations, descriptions, and agent profile text. If you have already applied the initial schema, run only this incremental migration; do not rerun the initial migration.
+4. In **Authentication → Users**, create the administrator account. Disable public signups in the Auth settings if visitors should not be able to create accounts.
+5. In **SQL Editor**, grant that exact account the server-controlled admin role, replacing the email with the one you just created:
 
    ```sql
    update auth.users
@@ -41,7 +42,7 @@ Open the local URL printed by Vite. The public website uses `/`, and the custom 
    ```
 
    Confirm the command updated exactly one account. The admin page checks `app_metadata.role`; changing user-editable metadata does not grant admin access. Sign out and back in after changing the role so the session refreshes.
-5. Add the project URL and publishable/anon key to the local `.env.local` or Cloudflare Pages environment as `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY`.
+6. Add the project URL and publishable/anon key to the local `.env.local` or Cloudflare Pages environment as `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY`.
 
 The public website can read site settings and property listings and submit inquiries. Only signed-in accounts with the server-controlled admin role can change listings, branding, inquiries, or upload media. Do not remove the row-level security policies or expose a service-role key.
 
@@ -50,6 +51,7 @@ The public website can read site settings and property listings and submit inqui
 Sign in at `/admin` using the Supabase Auth account you created. The admin lets you:
 
 - Add, edit, feature, and delete apartment or shop listings, including status and optional photo/video uploads.
+- Add optional Amharic titles, locations, and descriptions for listings, and an Amharic agent title and biography. Fields without an Amharic translation fall back to their English value.
 - Edit the agent profile, business contact links, currency, and area units.
 - Read customer inquiries and mark them as contacted.
 

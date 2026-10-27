@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import AdminApp from "./AdminApp.jsx";
 import { supabase } from "./lib/supabase.js";
+import { translations } from "./translations.js";
 
 const apiAssetUrl = (url) => {
   return url || "";
@@ -109,67 +110,91 @@ function readSavedHomes() {
   }
 }
 
+function readLanguage() {
+  try {
+    return localStorage.getItem("site-language") === "am" ? "am" : "en";
+  } catch (error) {
+    console.error("Could not read the language preference from this browser:", error);
+    return "en";
+  }
+}
+
 function isPastSalesPage() {
   return window.location.pathname === "/sold-homes" || window.location.hash === "#sold-homes";
 }
 
-function PropertyCard({ home, saved, onSave, onOpen, settings }) {
-  const price = new Intl.NumberFormat(undefined, {
+function PropertyCard({ home, saved, onSave, onOpen, settings, t, language }) {
+  const displayTitle = language === "am" ? (home.title_am || home.title) : home.title;
+  const displayLocation = language === "am" ? (home.location_am || home.location) : home.location;
+  const displayDescription = language === "am" ? (home.description_am || home.description) : home.description;
+  const displayHome = {
+    ...home,
+    title: displayTitle,
+    location: displayLocation,
+    description: displayDescription,
+  };
+  const price = new Intl.NumberFormat(language === "am" ? "am-ET" : "en-ET", {
     style: "currency",
     currency: settings.currency_code || "ETB",
     maximumFractionDigits: 0,
   }).format(home.price);
+  const statusLabels = {
+    "For sale": t.forSale,
+    "Under contract": t.underContract,
+    Sold: t.sold,
+  };
+  const typeLabel = home.property_type === "Apartment" ? t.apartment : t.shop;
 
   return (
     <article className="property-card">
-      <button className="image-button" onClick={() => onOpen(home)} aria-label={`View ${home.title}`}>
+      <button className="image-button" onClick={() => onOpen(displayHome)} aria-label={`${t.viewDetails}: ${displayTitle}`}>
         {home.image_url
-          ? <img src={apiAssetUrl(home.image_url)} alt={home.title} loading="lazy" />
-          : <span className="no-property-image">Property video</span>}
-        <span className="status-pill">{home.status || "For sale"}</span>
-        <span className="type-pill">{home.property_type}</span>
-        {home.video_url && <span className="video-pill">▶ Video tour</span>}
+          ? <img src={apiAssetUrl(home.image_url)} alt={displayTitle} loading="lazy" />
+          : <span className="no-property-image">{t.videoTour}</span>}
+        <span className="status-pill">{statusLabels[home.status] || t.forSale}</span>
+        <span className="type-pill">{typeLabel}</span>
+        {home.video_url && <span className="video-pill">▶ {t.videoTour}</span>}
       </button>
       <button
         className={`save-button ${saved ? "is-saved" : ""}`}
         onClick={() => onSave(home.id)}
-        aria-label={saved ? "Remove from saved homes" : "Save home"}
+        aria-label={saved ? t.removeSaved : t.saveHome}
         aria-pressed={saved}
       >
         <Icon name="heart" size={19} />
       </button>
       <button className="property-info" onClick={() => onOpen(home)}>
         <span className="property-title-row">
-          <span className="property-title">{home.title}</span>
+          <span className="property-title">{displayTitle}</span>
           <span className="property-price">{price}</span>
         </span>
-        <span className="property-location"><Icon name="pin" size={15} />{home.location}</span>
-        {home.description && <span className="property-description">{home.description}</span>}
+        <span className="property-location"><Icon name="pin" size={15} />{displayLocation}</span>
+        {displayDescription && <span className="property-description">{displayDescription}</span>}
         <span className="property-specs">
           {home.property_type === "Apartment" ? (
             <>
-              <span><Icon name="bed" size={16} />{home.beds} beds</span>
-              <span><Icon name="bath" size={16} />{home.baths} baths</span>
+              <span><Icon name="bed" size={16} />{home.beds} {t.beds}</span>
+              <span><Icon name="bath" size={16} />{home.baths} {t.baths}</span>
             </>
           ) : (
-            <span className="property-use">Retail space</span>
+            <span className="property-use">{t.retailSpace}</span>
           )}
           <span><Icon name="area" size={16} />{Number(home.area).toLocaleString()} {settings.area_unit || "sqft"}</span>
         </span>
-        <span className="property-card-link">View details <Icon name="arrow" size={15} /></span>
+        <span className="property-card-link">{t.viewDetails} <Icon name="arrow" size={15} /></span>
       </button>
     </article>
   );
 }
 
-function InquiryModal({ home, onClose, settings }) {
+function InquiryModal({ home, onClose, settings, t }) {
   const [sending, setSending] = useState(false);
   const [sent, setSent] = useState(false);
   const [error, setError] = useState("");
   const phoneDigits = (settings.contact_phone || "").replace(/[^\d+]/g, "");
   const whatsappDigits = (settings.whatsapp_number || "").replace(/\D/g, "");
   const directContacts = [
-    phoneDigits && { name: "Call", detail: settings.contact_phone, href: `tel:${phoneDigits}`, mark: "☎" },
+    phoneDigits && { name: t.callNow, detail: settings.contact_phone, href: `tel:${phoneDigits}`, mark: "☎" },
     whatsappDigits && { name: "WhatsApp", detail: settings.whatsapp_number, href: `https://wa.me/${whatsappDigits}`, mark: "W" },
     settings.telegram_url && { name: "Telegram", detail: "Message Helen", href: settings.telegram_url, mark: "➤" },
     settings.facebook_url && { name: "Facebook", detail: "Visit profile", href: settings.facebook_url, mark: "f" },
@@ -183,7 +208,7 @@ function InquiryModal({ home, onClose, settings }) {
     setError("");
     const form = new FormData(event.currentTarget);
     try {
-      if (!supabase) throw new Error("The contact form is not configured yet. Please contact Helen directly.");
+      if (!supabase) throw new Error(t.unavailableForm);
       const { error: insertError } = await supabase.from("inquiries").insert({
         name: form.get("name"),
         email: form.get("email"),
@@ -194,7 +219,7 @@ function InquiryModal({ home, onClose, settings }) {
       if (insertError) throw insertError;
       setSent(true);
     } catch (requestError) {
-      setError(requestError.message || "We couldn't send your note. Please try again.");
+      setError(requestError.message || t.sendError);
     } finally {
       setSending(false);
     }
@@ -203,25 +228,25 @@ function InquiryModal({ home, onClose, settings }) {
   return (
     <div className="modal-backdrop" role="presentation" onMouseDown={(event) => event.target === event.currentTarget && onClose()}>
       <section className="inquiry-modal" role="dialog" aria-modal="true" aria-labelledby="inquiry-title">
-        <button className="modal-close" onClick={onClose} aria-label="Close"><Icon name="close" /></button>
+        <button className="modal-close" onClick={onClose} aria-label={t.close}><Icon name="close" /></button>
         {sent ? (
           <div className="success-state">
             <span className="success-mark">✓</span>
-            <p className="eyebrow">NOTE RECEIVED</p>
-            <h2 id="inquiry-title">We’ll be in touch.</h2>
-            <p>Thanks for reaching out. A real person from our team will get back to you shortly.</p>
-            <button className="button button-dark" onClick={onClose}>Lovely, thank you</button>
+            <p className="eyebrow">{t.noteReceived}</p>
+            <h2 id="inquiry-title">{t.inTouchSoon}</h2>
+            <p>{t.thankYouMessage}</p>
+            <button className="button button-dark" onClick={onClose}>{t.lovelyThanks}</button>
           </div>
         ) : (
           <>
-            <p className="eyebrow">LET’S TALK HOMES</p>
-            <h2 id="inquiry-title">{home ? (home.status === "Sold" ? "Looking for a home like this?" : "Curious about this home?") : "Tell us what home means to you."}</h2>
+            <p className="eyebrow">{t.letsTalkHomes}</p>
+            <h2 id="inquiry-title">{home ? (home.status === "Sold" ? t.lookingSimilar : t.curiousHome) : t.tellUsHome}</h2>
             {home && <p className="modal-home-name">{home.title}</p>}
-            {home?.video_url && <video className="property-video" src={apiAssetUrl(home.video_url)} controls playsInline preload="metadata">Your browser does not support property video playback.</video>}
+            {home?.video_url && <video className="property-video" src={apiAssetUrl(home.video_url)} controls playsInline preload="metadata">{t.videoUnsupported}</video>}
             <div className="direct-contact">
               <div className="direct-contact-heading">
-                <span>Prefer to talk directly?</span>
-                <p>Choose a contact option. No form needed.</p>
+                <span>{t.preferDirect}</span>
+                <p>{t.contactNoForm}</p>
               </div>
               {directContacts.length ? (
                 <div className="direct-contact-actions">
@@ -240,20 +265,20 @@ function InquiryModal({ home, onClose, settings }) {
                   ))}
                 </div>
               ) : (
-                <p className="direct-contact-unavailable">Helen’s phone and social links will appear here when they’re added to Site branding.</p>
+                <p className="direct-contact-unavailable">{t.linksUnavailable}</p>
               )}
             </div>
-            <div className="inquiry-divider"><span>Or leave a note</span></div>
+            <div className="inquiry-divider"><span>{t.orLeaveNote}</span></div>
             <form className="inquiry-form" onSubmit={submitInquiry}>
-              <label>Your name<input name="name" required autoComplete="name" placeholder="Jane Smith" /></label>
-              <label>Email address<input name="email" required type="email" autoComplete="email" placeholder="jane@example.com" /></label>
-              <label>Phone <span>(optional)</span><input name="phone" type="tel" autoComplete="tel" placeholder="(555) 000-0000" /></label>
-              <label>A little about what you’re looking for<textarea name="message" required rows="3" placeholder="I’d love to know more about..." /></label>
+              <label>{t.yourName}<input name="name" required autoComplete="name" placeholder={t.namePlaceholder} /></label>
+              <label>{t.emailAddress}<input name="email" required type="email" autoComplete="email" placeholder={t.emailPlaceholder} /></label>
+              <label>{t.phone} <span>{t.optional}</span><input name="phone" type="tel" autoComplete="tel" placeholder={t.phonePlaceholder} /></label>
+              <label>{t.messagePrompt}<textarea name="message" required rows="3" placeholder={t.messagePlaceholder} /></label>
               {error && <p className="form-error" role="alert">{error}</p>}
               <button className="button button-dark submit-button" type="submit" disabled={sending}>
-                {sending ? "Sending..." : "Send a note"} <Icon name="arrow" size={17} />
+                {sending ? t.sending : t.sendNote} <Icon name="arrow" size={17} />
               </button>
-              <p className="privacy-note">Your details stay with us. No spam, ever.</p>
+              <p className="privacy-note">{t.privacyNote}</p>
             </form>
           </>
         )}
@@ -264,6 +289,8 @@ function InquiryModal({ home, onClose, settings }) {
 
 function PublicSite() {
   const [soldPage, setSoldPage] = useState(isPastSalesPage);
+  const [language, setLanguage] = useState(readLanguage);
+  const t = translations[language];
   const [branding, setBranding] = useState({
     brand_name: "Zenebe Frew Real Estate",
     logo_url: "",
@@ -294,10 +321,11 @@ function PublicSite() {
   const [menuOpen, setMenuOpen] = useState(false);
 
   useEffect(() => {
-    if (!supabase) {
-      setApiNotice("Listings and contact forms are being configured. Please use the contact links below.");
-      return undefined;
-    }
+    if (!supabase) setApiNotice(t.listingsUnavailable);
+  }, [t]);
+
+  useEffect(() => {
+    if (!supabase) return undefined;
 
     supabase.from("site_settings").select("*").eq("id", 1).maybeSingle()
       .then(({ data, error }) => {
@@ -317,6 +345,8 @@ function PublicSite() {
   }, []);
 
   const agentName = branding.agent_name || "Helen Hidbachew";
+  const agentTitle = language === "am" ? (branding.agent_title_am || branding.agent_title) : branding.agent_title;
+  const agentBio = language === "am" ? (branding.agent_bio_am || branding.agent_bio) : branding.agent_bio;
   const phoneDigits = (branding.contact_phone || "").replace(/[^\d+]/g, "");
   const whatsappDigits = (branding.whatsapp_number || "").replace(/\D/g, "");
   const socialLinks = [
@@ -370,8 +400,14 @@ function PublicSite() {
   }, [soldPage]);
 
   useEffect(() => {
-    document.title = `${branding.brand_name} — Your next move`;
-  }, [branding.brand_name]);
+    document.documentElement.lang = language === "am" ? "am" : "en";
+    document.title = t.pageTitle(branding.brand_name);
+    try {
+      localStorage.setItem("site-language", language);
+    } catch (error) {
+      console.error("Could not save the language preference in this browser:", error);
+    }
+  }, [branding.brand_name, language, t]);
 
   useEffect(() => {
     const contactSection = document.getElementById("contact");
@@ -401,18 +437,18 @@ function PublicSite() {
       if (active) {
         console.error("Could not load listings from Supabase:", error);
         setApiNotice(soldPage
-          ? "Past sales could not be loaded right now. Please try again later."
-          : "Listings could not be refreshed right now. Please check back soon.");
+          ? t.soldError
+          : t.listingsError);
       }
     });
     return () => {
       active = false;
     };
-  }, [soldPage]);
+  }, [soldPage, t]);
 
   const filteredHomes = useMemo(() => {
     const matching = homes.filter((home) => {
-      const matchesQuery = !query || `${home.title} ${home.location}`.toLowerCase().includes(query.toLowerCase());
+      const matchesQuery = !query || `${home.title} ${home.location} ${home.title_am || ""} ${home.location_am || ""}`.toLowerCase().includes(query.toLowerCase());
       const matchesType = !type || home.property_type === type;
       const matchesBedrooms = !bedrooms
         || (home.property_type === "Apartment" && home.beds >= Number(bedrooms));
@@ -434,8 +470,8 @@ function PublicSite() {
       ? current.filter((item) => item !== id)
       : [...current, id]);
     setSavedAnnouncement(alreadySaved
-      ? `${home?.title || "Home"} removed from your saved homes.`
-      : `${home?.title || "Home"} added to your saved homes.`);
+      ? t.savedRemoved((language === "am" && home?.title_am) || home?.title || t.home.toLowerCase())
+      : t.savedAdded((language === "am" && home?.title_am) || home?.title || t.home.toLowerCase()));
   }
 
   function searchSubmit(event) {
@@ -450,19 +486,39 @@ function PublicSite() {
         <a
           className="mobile-header-call"
           href={phoneDigits ? `tel:${phoneDigits}` : "#contact"}
-          aria-label={phoneDigits ? `Call ${agentName}` : "Contact the agent"}
+          aria-label={phoneDigits ? t.callAgent(agentName) : t.contactAgent}
         >
           <Icon name="phone" size={17} />
-          <span>{phoneDigits ? "Call now" : "Contact"}</span>
+          <span>{phoneDigits ? t.callNow : t.contact}</span>
         </a>
-        <button className="mobile-menu-toggle" aria-label="Toggle navigation" aria-expanded={menuOpen} onClick={() => setMenuOpen(!menuOpen)}><Icon name={menuOpen ? "close" : "menu"} /></button>
-        <nav className={menuOpen ? "nav-open" : ""} aria-label="Main navigation">
-          <a href="/" onClick={() => setMenuOpen(false)}>Home</a>
-          <a href="/#homes" onClick={() => setMenuOpen(false)}>Listings</a>
-          {!soldPage && <a href="/#projects" onClick={() => setMenuOpen(false)}>Projects</a>}
-          <a href="/#about" onClick={() => setMenuOpen(false)}>About</a>
-          <a href="/#contact" onClick={() => setMenuOpen(false)}>Contact</a>
-          <a href="/#sold-homes" onClick={() => setMenuOpen(false)}>Past sales</a>
+        <button
+          className="language-toggle language-toggle-mobile"
+          type="button"
+          onClick={() => setLanguage((current) => current === "en" ? "am" : "en")}
+          aria-label={t.switchLanguage}
+          title={t.switchLanguage}
+        >
+          <span aria-hidden="true">{language === "en" ? "አማ" : "EN"}</span>
+          <span>{language === "en" ? "አማርኛ" : "English"}</span>
+        </button>
+        <button className="mobile-menu-toggle" aria-label={menuOpen ? t.close : t.listings} aria-expanded={menuOpen} onClick={() => setMenuOpen(!menuOpen)}><Icon name={menuOpen ? "close" : "menu"} /></button>
+        <nav className={menuOpen ? "nav-open" : ""} aria-label={t.home}>
+          <a href="/" onClick={() => setMenuOpen(false)}>{t.home}</a>
+          <a href="/#homes" onClick={() => setMenuOpen(false)}>{t.listings}</a>
+          {!soldPage && <a href="/#projects" onClick={() => setMenuOpen(false)}>{t.projects}</a>}
+          <a href="/#about" onClick={() => setMenuOpen(false)}>{t.about}</a>
+          <a href="/#contact" onClick={() => setMenuOpen(false)}>{t.contact}</a>
+          <a href="/#sold-homes" onClick={() => setMenuOpen(false)}>{t.pastSales}</a>
+          <button
+            className="language-toggle language-toggle-desktop"
+            type="button"
+            onClick={() => setLanguage((current) => current === "en" ? "am" : "en")}
+            aria-label={t.switchLanguage}
+            title={t.switchLanguage}
+          >
+            <span aria-hidden="true">{language === "en" ? "አማ" : "EN"}</span>
+            <span>{language === "en" ? "አማርኛ" : "English"}</span>
+          </button>
           <button className="theme-toggle" onClick={() => setDarkMode((current) => !current)} aria-label={`Switch to ${darkMode ? "light" : "dark"} mode`} title={`Switch to ${darkMode ? "light" : "dark"} mode`}>
             <Icon name={darkMode ? "sun" : "moon"} size={17} />
           </button>
@@ -471,7 +527,7 @@ function PublicSite() {
             href={phoneDigits ? `tel:${phoneDigits}` : (soldPage ? "/#contact" : "#contact")}
             onClick={() => setMenuOpen(false)}
           >
-            {phoneDigits ? `Call ${agentName}` : "Contact Helen"} <Icon name="arrow" size={16} />
+            {phoneDigits ? t.callAgent(agentName) : t.contactHelen} <Icon name="arrow" size={16} />
           </a>
         </nav>
       </header>
@@ -479,18 +535,18 @@ function PublicSite() {
       {soldPage ? (
         <main>
           <section className="sold-page section-shell">
-            <p className="eyebrow">A LOOK BACK AT THE KEYS HANDED OVER</p>
-            <h1>Previously <em>sold.</em></h1>
-            <p className="section-intro">A collection of homes sold by Helen Hidbachew. Every sale has a story; here are a few of the places that found their people.</p>
+            <p className="eyebrow">{t.soldEyebrow}</p>
+            <h1>{t.previously} <em>{t.soldAccent}</em></h1>
+            <p className="section-intro">{t.soldIntro}</p>
             {apiNotice && <p className="api-notice" role="status">{apiNotice}</p>}
             {homes.length ? (
               <div className="property-grid">
-                {homes.map((home) => <PropertyCard key={home.id} home={home} settings={branding} saved={saved.includes(home.id)} onSave={toggleSaved} onOpen={setSelectedHome} />)}
+                {homes.map((home) => <PropertyCard key={home.id} home={home} settings={branding} saved={saved.includes(home.id)} onSave={toggleSaved} onOpen={setSelectedHome} t={t} language={language} />)}
               </div>
             ) : (
-              <div className="empty-results"><span>⌂</span><h3>Helen’s sold homes will be shared here.</h3><p>Past sales added in the admin will appear on this page.</p><a className="text-link" href="/#contact">Ask Helen a question <Icon name="arrow" size={16} /></a></div>
+              <div className="empty-results"><span>⌂</span><h3>{t.soldHomesEmpty}</h3><p>{t.soldHomesHint}</p><a className="text-link" href="/#contact">{t.askHelen} <Icon name="arrow" size={16} /></a></div>
             )}
-            <div className="center-action"><a href="/#contact" className="button button-outline">Talk with Helen <Icon name="arrow" size={17} /></a></div>
+            <div className="center-action"><a href="/#contact" className="button button-outline">{t.talkHelen} <Icon name="arrow" size={17} /></a></div>
           </section>
         </main>
       ) : (
@@ -498,83 +554,83 @@ function PublicSite() {
         <section className="hero">
           <div className="hero-image" style={{ backgroundImage: `linear-gradient(90deg, rgba(7,24,48,.88) 0%, rgba(12,35,64,.68) 48%, rgba(13,35,63,.23) 100%), url("${heroImage}")` }} />
           <div className="hero-content">
-            <span className="hero-kicker"><span /> HOMES &amp; SHOPS · ADDIS ABABA</span>
-            <h1>Find a place<br />to <em>call home.</em></h1>
-            <p>Explore thoughtful homes and promising business spaces, with personal guidance at every step.</p>
+            <span className="hero-kicker"><span /> {t.heroKicker}</span>
+            <h1>{t.heroTitle}<br /><em>{t.heroTitleAccent}</em></h1>
+            <p>{t.heroIntro}</p>
             <div className="hero-actions">
-              <a className="button button-blue" href="#homes">Explore listings <Icon name="arrow" size={17} /></a>
-              <a className="button hero-outline" href="#projects">Our projects</a>
+              <a className="button button-blue" href="#homes">{t.exploreListings} <Icon name="arrow" size={17} /></a>
+              <a className="button hero-outline" href="#projects">{t.ourProjects}</a>
             </div>
           </div>
           <span className="hero-caption">{branding.brand_name}</span>
           <div className="hero-note" aria-hidden="true">
             <span className="hero-note-mark">✦</span>
-            <span><strong>A better move</strong><small>Starts with the right space</small></span>
+            <span><strong>{t.heroNoteTitle}</strong><small>{t.heroNoteText}</small></span>
           </div>
           <form className="search-panel" onSubmit={searchSubmit}>
             <label className="search-location">
-              <span>AREA OR NEIGHBORHOOD</span>
-              <span className="search-input-wrap"><Icon name="pin" size={18} /><input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search Addis Ababa areas" /></span>
+              <span>{t.areaOrNeighborhood}</span>
+              <span className="search-input-wrap"><Icon name="pin" size={18} /><input value={query} onChange={(event) => setQuery(event.target.value)} placeholder={t.searchArea} /></span>
             </label>
             <label className="search-type">
-              <span>PROPERTY TYPE</span>
+              <span>{t.propertyType}</span>
               <select value={type} onChange={(event) => setType(event.target.value)}>
-                <option value="">All spaces</option>
-                <option value="Apartment">Apartment</option>
-                <option value="Shop">Shop</option>
+                <option value="">{t.allSpaces}</option>
+                <option value="Apartment">{t.apartment}</option>
+                <option value="Shop">{t.shop}</option>
               </select>
             </label>
             <label className="search-bedrooms">
-              <span>BEDROOMS</span>
+              <span>{t.bedrooms}</span>
               <select value={bedrooms} onChange={(event) => setBedrooms(event.target.value)}>
-                <option value="">Any number</option>
-                <option value="1">1 or more</option>
-                <option value="2">2 or more</option>
-                <option value="3">3 or more</option>
+                <option value="">{t.anyNumber}</option>
+                <option value="1">{t.orMore(1)}</option>
+                <option value="2">{t.orMore(2)}</option>
+                <option value="3">{t.orMore(3)}</option>
               </select>
             </label>
             <label className="search-budget">
-              <span>MAXIMUM PRICE · ETB</span>
+              <span>{t.maximumPrice}</span>
               <input
                 type="number"
                 min="0"
                 inputMode="numeric"
                 value={maxPrice}
                 onChange={(event) => setMaxPrice(event.target.value)}
-                placeholder="Any budget"
-                aria-label="Maximum price in Ethiopian birr"
+                placeholder={t.anyBudget}
+                aria-label={t.maxPriceLabel}
               />
             </label>
-            <button className="search-submit" type="submit"><Icon name="search" size={19} /><span>Search homes</span></button>
+            <button className="search-submit" type="submit"><Icon name="search" size={19} /><span>{t.searchHomes}</span></button>
           </form>
           <div className="hero-bottom">
-            <span>PERSONAL GUIDANCE. LOCAL KNOWLEDGE.</span>
-            <span>{agentName.toUpperCase()} · {(branding.agent_title || "REAL ESTATE AGENT").toUpperCase()}</span>
+            <span>{t.personalGuidance}</span>
+            <span>{agentName.toUpperCase()} · {(agentTitle || "REAL ESTATE AGENT").toUpperCase()}</span>
           </div>
         </section>
 
         <section className="listings-section section-shell" id="homes">
           <div className="section-heading">
             <div>
-              <p className="eyebrow">FIND YOUR NEXT PLACE</p>
-              <h2>Featured <em>listings.</em></h2>
-              <p className="section-intro">Browse apartments to call home and shop spaces for your next business move.</p>
+              <p className="eyebrow">{t.findNextPlace}</p>
+              <h2>{t.featuredListings} <em>{t.listingsAccent}</em></h2>
+              <p className="section-intro">{t.listingsIntro}</p>
             </div>
             <div className="listing-controls">
-              <span>{visibleHomes.length} {visibleHomes.length === 1 ? "property" : "properties"}</span>
+              <span>{t.propertyCount(visibleHomes.length)}</span>
               <button
                 className={`saved-filter${savedOnly ? " is-active" : ""}`}
                 type="button"
                 onClick={() => setSavedOnly((current) => !current)}
                 aria-pressed={savedOnly}
               >
-                <Icon name="heart" size={15} /> Saved <span className="saved-count">{saved.length}</span>
+                <Icon name="heart" size={15} /> {t.saved} <span className="saved-count">{saved.length}</span>
               </button>
               <label className="sort-control"><span className="sr-only">Sort homes</span>
                 <select value={sort} onChange={(event) => setSort(event.target.value)}>
-                  <option value="featured">Featured first</option>
-                  <option value="price-low">Price: low to high</option>
-                  <option value="price-high">Price: high to low</option>
+                  <option value="featured">{t.featuredFirst}</option>
+                  <option value="price-low">{t.priceLowHigh}</option>
+                  <option value="price-high">{t.priceHighLow}</option>
                 </select>
               </label>
             </div>
@@ -583,37 +639,42 @@ function PublicSite() {
           <p className="sr-only" aria-live="polite">{savedAnnouncement}</p>
           {visibleHomes.length ? (
             <div className="property-grid">
-              {visibleHomes.map((home) => <PropertyCard key={home.id} home={home} settings={branding} saved={saved.includes(home.id)} onSave={toggleSaved} onOpen={setSelectedHome} />)}
+              {visibleHomes.map((home) => <PropertyCard key={home.id} home={home} settings={branding} saved={saved.includes(home.id)} onSave={toggleSaved} onOpen={setSelectedHome} t={t} language={language} />)}
             </div>
           ) : (
-            <div className="empty-results"><span>⌂</span><h3>{savedOnly ? "Your shortlist is ready when you are." : "No properties match your search."}</h3><p>{savedOnly ? "Tap the heart on any home to keep it close while you explore." : "Try another area or clear your search to see all available listings."}</p><button className="text-link" onClick={() => { setQuery(""); setType(""); setBedrooms(""); setMaxPrice(""); setSavedOnly(false); }}>Show all listings <Icon name="arrow" size={16} /></button></div>
+            <div className="empty-results"><span>⌂</span><h3>{savedOnly ? t.noSavedHomes : t.noSearchMatches}</h3><p>{savedOnly ? t.savedHomesHint : t.searchHint}</p><button className="text-link" onClick={() => { setQuery(""); setType(""); setBedrooms(""); setMaxPrice(""); setSavedOnly(false); }}>{t.showAllListings} <Icon name="arrow" size={16} /></button></div>
           )}
-          <div className="center-action"><a href="/#sold-homes" className="text-link">Browse past sales <Icon name="arrow" size={16} /></a></div>
+          <div className="center-action"><a href="/#sold-homes" className="text-link">{t.browsePastSales} <Icon name="arrow" size={16} /></a></div>
         </section>
 
         <section className="projects-section section-shell" id="projects">
           <div className="section-heading">
             <div>
-              <p className="eyebrow">A CLOSER LOOK</p>
-              <h2>Selected <em>projects.</em></h2>
-              <p className="section-intro">A few featured properties from the current portfolio.</p>
+              <p className="eyebrow">{t.closerLook}</p>
+              <h2>{t.selectedProjects} <em>{t.projectsAccent}</em></h2>
+              <p className="section-intro">{t.projectsIntro}</p>
             </div>
-            <a href="#homes" className="text-link">Explore listings <Icon name="arrow" size={16} /></a>
+            <a href="#homes" className="text-link">{t.exploreProperties} <Icon name="arrow" size={16} /></a>
           </div>
           {featuredHomes.length ? (
             <div className="project-grid">
               {featuredHomes.map((home) => (
-                <button className="project-tile" key={home.id} onClick={() => setSelectedHome(home)}>
+                <button className="project-tile" key={home.id} onClick={() => setSelectedHome({
+                  ...home,
+                  title: (language === "am" && home.title_am) || home.title,
+                  location: (language === "am" && home.location_am) || home.location,
+                  description: (language === "am" && home.description_am) || home.description,
+                })}>
                   <img src={home.image_url} alt={home.title} loading="lazy" />
                   <span className="project-tile-shade" />
-                  <span className="project-tile-label">{home.property_type} · {home.location}</span>
-                  <span className="project-tile-title">{home.title}</span>
-                  <span className="project-tile-link">View property <Icon name="arrow" size={16} /></span>
+                  <span className="project-tile-label">{home.property_type === "Apartment" ? t.apartment : t.shop} · {(language === "am" && home.location_am) || home.location}</span>
+                  <span className="project-tile-title">{(language === "am" && home.title_am) || home.title}</span>
+                  <span className="project-tile-link">{t.viewProperty} <Icon name="arrow" size={16} /></span>
                 </button>
               ))}
             </div>
           ) : (
-            <div className="empty-results"><h3>Featured projects will appear here.</h3><p>Mark a property as featured in Admin to show it in this section.</p></div>
+            <div className="empty-results"><h3>{t.featuredProjectsEmpty}</h3><p>{t.featuredProjectsHint}</p></div>
           )}
         </section>
 
@@ -621,50 +682,50 @@ function PublicSite() {
           <div className={`manifesto-image profile-portrait${branding.agent_photo_url ? " has-agent-photo" : ""}`} aria-label={`Profile of ${agentName}`}>
             {branding.agent_photo_url
               ? <img src={branding.agent_photo_url} alt={agentName} loading="lazy" />
-              : <span className="profile-photo-prompt">Upload {agentName.split(" ")[0]}’s photo in Admin → Site branding</span>}
-            <span className="profile-placeholder-caption">{agentName.toUpperCase()} <i>{(branding.agent_title || "REAL ESTATE AGENT").toUpperCase()}</i></span>
+              : <span className="profile-photo-prompt">{t.uploadPhoto(agentName.split(" ")[0])}</span>}
+            <span className="profile-placeholder-caption">{agentName.toUpperCase()} <i>{(agentTitle || "REAL ESTATE AGENT").toUpperCase()}</i></span>
           </div>
           <div className="manifesto-copy">
-            <p className="eyebrow">MEET YOUR REAL ESTATE PROFESSIONAL</p>
+            <p className="eyebrow">{t.meetAgent}</p>
             <h2>{agentName.split(" ")[0]} <em>{agentName.split(" ").slice(1).join(" ")}.</em></h2>
-            <p className="agent-role">{branding.agent_title}</p>
-            <p>{branding.agent_bio}</p>
-            <a className="text-link" href="#contact">Get in touch <Icon name="arrow" size={16} /></a>
-            <div className="handwritten">Here to help with your next move.</div>
+            <p className="agent-role">{agentTitle}</p>
+            <p>{agentBio}</p>
+            <a className="text-link" href="#contact">{t.getInTouch} <Icon name="arrow" size={16} /></a>
+            <div className="handwritten">{t.agentTagline}</div>
           </div>
         </section>
 
         <section className="contact-section" id="contact">
           <div className="contact-copy">
-            <p className="eyebrow">A PERSONAL HELLO IS JUST A CLICK AWAY</p>
-            <h2>Let’s find your<br /><em>next place.</em></h2>
-            <p>Whether you’re looking for a place to call home or the right space for your business, {agentName} is ready to help.</p>
+            <p className="eyebrow">{t.personalHello}</p>
+            <h2>{t.findPlace}<br /><em>{t.nextPlace}</em></h2>
+            <p>{t.contactIntro(agentName)}</p>
             {phoneDigits && (
               <a className="contact-primary-action" href={`tel:${phoneDigits}`}>
                 <span className="contact-action-icon"><Icon name="phone" size={19} /></span>
-                <span><small>CALL {agentName.toUpperCase()}</small><strong>{branding.contact_phone}</strong></span>
+                <span><small>{t.callAgentUpper(agentName)}</small><strong>{branding.contact_phone}</strong></span>
                 <Icon name="arrow" size={18} />
               </a>
             )}
             {!phoneDigits && !configuredSocialLinks.length && (
-              <p className="contact-unavailable">Contact details will appear here once they’re added in Site branding.</p>
+              <p className="contact-unavailable">{t.contactDetailsPrompt}</p>
             )}
           </div>
           <div className="contact-card">
             <div className="contact-card-heading">
               <span className="contact-card-icon"><Icon name="home" size={21} /></span>
-              <span><strong>Let’s connect</strong><small>Choose the way that works for you.</small></span>
+              <span><strong>{t.letsConnect}</strong><small>{t.chooseContact}</small></span>
             </div>
             <div className="contact-channels">
               {configuredSocialLinks.length ? configuredSocialLinks.map((item) => (
                 <a className="contact-channel" href={item.href} key={item.name} target="_blank" rel="noreferrer">
                   <span className={`contact-channel-mark channel-${item.name.toLowerCase()}`}>{item.mark}</span>
-                  <span><strong>{item.name}</strong><small>{item.account || "Connect with Helen"}</small></span>
+                  <span><strong>{item.name}</strong><small>{item.account || t.connectHelen}</small></span>
                   <Icon name="arrow" size={16} />
                 </a>
-              )) : <p className="contact-channel-empty">Social links are being updated. Please check back soon.</p>}
+              )) : <p className="contact-channel-empty">{t.socialEmpty}</p>}
             </div>
-            <p className="contact-card-note"><span>✦</span> Friendly advice, no pressure.</p>
+            <p className="contact-card-note"><span>✦</span> {t.friendlyAdvice}</p>
           </div>
         </section>
       </main>
@@ -672,11 +733,11 @@ function PublicSite() {
 
       <footer className="site-footer">
         <Brand settings={branding} footer />
-        <span>Real estate with {agentName}.</span>
+        <span>{t.footerTagline(agentName)}</span>
         <span>© 2026 {branding.brand_name}</span>
       </footer>
 
-      <nav className="floating-contact" aria-label="Social media accounts">
+      <nav className="floating-contact" aria-label={t.socialAccounts}>
         {socialLinks.map((item) => item.href ? (
           <a
             className={`social-circle social-${item.name.toLowerCase()}`}
@@ -684,7 +745,7 @@ function PublicSite() {
             key={item.name}
             target="_blank"
             rel="noreferrer"
-            aria-label={`Contact on ${item.name}`}
+            aria-label={t.contactOn(item.name)}
             title={item.name}
           >
             <span aria-hidden="true">{item.mark}</span>
@@ -695,14 +756,14 @@ function PublicSite() {
             key={item.name}
             type="button"
             disabled
-            aria-label={`${item.name} account not configured`}
-            title={`Add ${item.name} account in Site branding`}
+            aria-label={t.accountNotConfigured(item.name)}
+            title={t.configureSocial(item.name)}
           >
             <span aria-hidden="true">{item.mark}</span>
           </button>
         ))}
       </nav>
-      {selectedHome && <InquiryModal home={selectedHome} settings={branding} onClose={() => setSelectedHome(null)} />}
+      {selectedHome && <InquiryModal home={selectedHome} settings={branding} onClose={() => setSelectedHome(null)} t={t} />}
     </>
   );
 }
