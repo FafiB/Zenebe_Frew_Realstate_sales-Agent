@@ -1,10 +1,9 @@
 import React, { useEffect, useMemo, useState } from "react";
+import AdminApp from "./AdminApp.jsx";
+import { supabase } from "./lib/supabase.js";
 
-const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL || "").replace(/\/+$/, "");
-const apiUrl = (path) => `${API_BASE_URL}${path}`;
 const apiAssetUrl = (url) => {
-  if (!url || /^(?:[a-z][a-z\d+.-]*:)?\/\//i.test(url) || url.startsWith("data:")) return url;
-  return apiUrl(url.startsWith("/") ? url : `/${url}`);
+  return url || "";
 };
 
 const fallbackHomes = [
@@ -184,25 +183,15 @@ function InquiryModal({ home, onClose, settings }) {
     setError("");
     const form = new FormData(event.currentTarget);
     try {
-      const csrfResponse = await fetch(apiUrl("/api/csrf/"), { credentials: "include" });
-      if (!csrfResponse.ok) throw new Error("We couldn't prepare the secure form. Please try again.");
-      const { csrfToken } = await csrfResponse.json();
-      const response = await fetch(apiUrl("/api/inquiries/"), {
-        method: "POST",
-        credentials: "include",
-        headers: { "Content-Type": "application/json", "X-CSRFToken": csrfToken },
-        body: JSON.stringify({
-          name: form.get("name"),
-          email: form.get("email"),
-          phone: form.get("phone"),
-          message: form.get("message"),
-          property: home?.id ?? null,
-        }),
+      if (!supabase) throw new Error("The contact form is not configured yet. Please contact Helen directly.");
+      const { error: insertError } = await supabase.from("inquiries").insert({
+        name: form.get("name"),
+        email: form.get("email"),
+        phone: form.get("phone") || "",
+        message: form.get("message"),
+        property_id: home?.id ?? null,
       });
-      if (!response.ok) {
-        const result = await response.json().catch(() => ({}));
-        throw new Error(result.detail || "We couldn't send your note. Please try again.");
-      }
+      if (insertError) throw insertError;
       setSent(true);
     } catch (requestError) {
       setError(requestError.message || "We couldn't send your note. Please try again.");
@@ -273,7 +262,7 @@ function InquiryModal({ home, onClose, settings }) {
   );
 }
 
-function App() {
+function PublicSite() {
   const [soldPage, setSoldPage] = useState(isPastSalesPage);
   const [branding, setBranding] = useState({
     brand_name: "Zenebe Frew Real Estate",
@@ -294,6 +283,8 @@ function App() {
   const [homes, setHomes] = useState(soldPage ? [] : fallbackHomes);
   const [query, setQuery] = useState("");
   const [type, setType] = useState("");
+  const [bedrooms, setBedrooms] = useState("");
+  const [maxPrice, setMaxPrice] = useState("");
   const [sort, setSort] = useState("featured");
   const [saved, setSaved] = useState(readSavedHomes);
   const [savedOnly, setSavedOnly] = useState(false);
@@ -303,23 +294,26 @@ function App() {
   const [menuOpen, setMenuOpen] = useState(false);
 
   useEffect(() => {
-    const controller = new AbortController();
-    fetch(apiUrl("/api/site-settings/"), { signal: controller.signal })
-      .then((response) => {
-        if (!response.ok) throw new Error("Site branding could not be loaded.");
-        return response.json();
+    if (!supabase) {
+      setApiNotice("Listings and contact forms are being configured. Please use the contact links below.");
+      return undefined;
+    }
+
+    supabase.from("site_settings").select("*").eq("id", 1).maybeSingle()
+      .then(({ data, error }) => {
+        if (error) throw error;
+        if (!data) return;
+        setBranding((current) => ({
+          ...current,
+          ...data,
+          brand_name: data.brand_name || "Zenebe Frew Real Estate",
+          logo_url: apiAssetUrl(data.logo_url),
+          agent_photo_url: apiAssetUrl(data.agent_photo_url),
+        }));
       })
-      .then((data) => setBranding((current) => ({
-        ...current,
-        ...data,
-        brand_name: data.brand_name || "Zenebe Frew Real Estate",
-        logo_url: apiAssetUrl(data.logo_url || ""),
-        agent_photo_url: apiAssetUrl(data.agent_photo_url || ""),
-      })))
       .catch((error) => {
-        if (error.name !== "AbortError") console.error("Could not load site branding:", error);
+        console.error("Could not load site branding from Supabase:", error);
       });
-    return () => controller.abort();
   }, []);
 
   const agentName = branding.agent_name || "Helen Hidbachew";
@@ -393,40 +387,42 @@ function App() {
   }, []);
 
   useEffect(() => {
-    const controller = new AbortController();
-    fetch(apiUrl(`/api/properties/${soldPage ? "?status=sold" : ""}`), { signal: controller.signal })
-      .then((response) => {
-        if (!response.ok) throw new Error("Listings service is unavailable.");
-        return response.json();
-      })
-      .then((data) => {
-        if (Array.isArray(data) && data.length) setHomes(data.map((home) => ({
-          ...home,
-          image_url: apiAssetUrl(home.image_url),
-          video_url: apiAssetUrl(home.video_url),
-        })));
-        else if (Array.isArray(data)) setHomes([]);
-      })
-      .catch((error) => {
-        if (error.name !== "AbortError") {
-          setApiNotice(soldPage
-            ? "Helen’s past sales could not be loaded. Please try again when the listings service is available."
-            : "You’re viewing a selection of featured spaces. Check back for the latest listings.");
-        }
-      });
-    return () => controller.abort();
+    if (!supabase) return undefined;
+    let active = true;
+    let query = supabase.from("properties").select("*")
+      .in("status", soldPage ? ["Sold"] : ["For sale", "Under contract"])
+      .in("property_type", ["Apartment", "Shop"])
+      .order("featured", { ascending: false })
+      .order("created_at", { ascending: false });
+    query.then(({ data, error }) => {
+      if (error) throw error;
+      if (active) setHomes(data || []);
+    }).catch((error) => {
+      if (active) {
+        console.error("Could not load listings from Supabase:", error);
+        setApiNotice(soldPage
+          ? "Past sales could not be loaded right now. Please try again later."
+          : "Listings could not be refreshed right now. Please check back soon.");
+      }
+    });
+    return () => {
+      active = false;
+    };
   }, [soldPage]);
 
   const filteredHomes = useMemo(() => {
     const matching = homes.filter((home) => {
       const matchesQuery = !query || `${home.title} ${home.location}`.toLowerCase().includes(query.toLowerCase());
       const matchesType = !type || home.property_type === type;
-      return matchesQuery && matchesType;
+      const matchesBedrooms = !bedrooms
+        || (home.property_type === "Apartment" && home.beds >= Number(bedrooms));
+      const matchesBudget = !maxPrice || home.price <= Number(maxPrice);
+      return matchesQuery && matchesType && matchesBedrooms && matchesBudget;
     });
     if (sort === "price-low") matching.sort((a, b) => a.price - b.price);
     if (sort === "price-high") matching.sort((a, b) => b.price - a.price);
     return matching;
-  }, [homes, query, type, sort]);
+  }, [homes, query, type, bedrooms, maxPrice, sort]);
   const visibleHomes = savedOnly
     ? filteredHomes.filter((home) => saved.includes(home.id))
     : filteredHomes;
@@ -451,6 +447,14 @@ function App() {
     <>
       <header className="site-header">
         <Brand settings={branding} />
+        <a
+          className="mobile-header-call"
+          href={phoneDigits ? `tel:${phoneDigits}` : "#contact"}
+          aria-label={phoneDigits ? `Call ${agentName}` : "Contact the agent"}
+        >
+          <Icon name="phone" size={17} />
+          <span>{phoneDigits ? "Call now" : "Contact"}</span>
+        </a>
         <button className="mobile-menu-toggle" aria-label="Toggle navigation" aria-expanded={menuOpen} onClick={() => setMenuOpen(!menuOpen)}><Icon name={menuOpen ? "close" : "menu"} /></button>
         <nav className={menuOpen ? "nav-open" : ""} aria-label="Main navigation">
           <a href="/" onClick={() => setMenuOpen(false)}>Home</a>
@@ -494,9 +498,9 @@ function App() {
         <section className="hero">
           <div className="hero-image" style={{ backgroundImage: `linear-gradient(90deg, rgba(7,24,48,.88) 0%, rgba(12,35,64,.68) 48%, rgba(13,35,63,.23) 100%), url("${heroImage}")` }} />
           <div className="hero-content">
-            <span className="hero-kicker"><span /> APARTMENTS &amp; SHOPS IN ADDIS ABABA</span>
-            <h1>Find your place<br />to <em>belong.</em></h1>
-            <p>Beautiful apartments and promising shop spaces, with personal guidance at every step.</p>
+            <span className="hero-kicker"><span /> HOMES &amp; SHOPS · ADDIS ABABA</span>
+            <h1>Find a place<br />to <em>call home.</em></h1>
+            <p>Explore thoughtful homes and promising business spaces, with personal guidance at every step.</p>
             <div className="hero-actions">
               <a className="button button-blue" href="#homes">Explore listings <Icon name="arrow" size={17} /></a>
               <a className="button hero-outline" href="#projects">Our projects</a>
@@ -509,18 +513,39 @@ function App() {
           </div>
           <form className="search-panel" onSubmit={searchSubmit}>
             <label className="search-location">
-              <span>YOUR NEIGHBORHOOD</span>
+              <span>AREA OR NEIGHBORHOOD</span>
               <span className="search-input-wrap"><Icon name="pin" size={18} /><input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search Addis Ababa areas" /></span>
             </label>
             <label className="search-type">
-              <span>HOME TYPE</span>
+              <span>PROPERTY TYPE</span>
               <select value={type} onChange={(event) => setType(event.target.value)}>
                 <option value="">All spaces</option>
                 <option value="Apartment">Apartment</option>
                 <option value="Shop">Shop</option>
               </select>
             </label>
-            <button className="search-submit" type="submit"><Icon name="search" size={19} /><span>Find a property</span></button>
+            <label className="search-bedrooms">
+              <span>BEDROOMS</span>
+              <select value={bedrooms} onChange={(event) => setBedrooms(event.target.value)}>
+                <option value="">Any number</option>
+                <option value="1">1 or more</option>
+                <option value="2">2 or more</option>
+                <option value="3">3 or more</option>
+              </select>
+            </label>
+            <label className="search-budget">
+              <span>MAXIMUM PRICE · ETB</span>
+              <input
+                type="number"
+                min="0"
+                inputMode="numeric"
+                value={maxPrice}
+                onChange={(event) => setMaxPrice(event.target.value)}
+                placeholder="Any budget"
+                aria-label="Maximum price in Ethiopian birr"
+              />
+            </label>
+            <button className="search-submit" type="submit"><Icon name="search" size={19} /><span>Search homes</span></button>
           </form>
           <div className="hero-bottom">
             <span>PERSONAL GUIDANCE. LOCAL KNOWLEDGE.</span>
@@ -561,7 +586,7 @@ function App() {
               {visibleHomes.map((home) => <PropertyCard key={home.id} home={home} settings={branding} saved={saved.includes(home.id)} onSave={toggleSaved} onOpen={setSelectedHome} />)}
             </div>
           ) : (
-            <div className="empty-results"><span>⌂</span><h3>{savedOnly ? "Your shortlist is ready when you are." : "No properties match your search."}</h3><p>{savedOnly ? "Tap the heart on any home to keep it close while you explore." : "Try another area or clear your search to see all available listings."}</p><button className="text-link" onClick={() => { setQuery(""); setType(""); setSavedOnly(false); }}>Show all listings <Icon name="arrow" size={16} /></button></div>
+            <div className="empty-results"><span>⌂</span><h3>{savedOnly ? "Your shortlist is ready when you are." : "No properties match your search."}</h3><p>{savedOnly ? "Tap the heart on any home to keep it close while you explore." : "Try another area or clear your search to see all available listings."}</p><button className="text-link" onClick={() => { setQuery(""); setType(""); setBedrooms(""); setMaxPrice(""); setSavedOnly(false); }}>Show all listings <Icon name="arrow" size={16} /></button></div>
           )}
           <div className="center-action"><a href="/#sold-homes" className="text-link">Browse past sales <Icon name="arrow" size={16} /></a></div>
         </section>
@@ -671,7 +696,7 @@ function App() {
             type="button"
             disabled
             aria-label={`${item.name} account not configured`}
-            title={`Add ${item.name} account in Django Admin`}
+            title={`Add ${item.name} account in Site branding`}
           >
             <span aria-hidden="true">{item.mark}</span>
           </button>
@@ -682,4 +707,7 @@ function App() {
   );
 }
 
-export default App;
+export default function App() {
+  const isAdminRoute = window.location.pathname.replace(/\/+$/, "") === "/admin";
+  return isAdminRoute ? <AdminApp /> : <PublicSite />;
+}
