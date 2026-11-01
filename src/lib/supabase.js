@@ -14,24 +14,32 @@ export const supabase = isSupabaseConfigured
     })
   : null;
 
-export const mediaBucket = "real-estate-media";
-
-export function getPublicMediaUrl(path) {
-  if (!supabase || !path) return "";
-  return supabase.storage.from(mediaBucket).getPublicUrl(path).data.publicUrl;
-}
-
 export async function uploadMedia(file, folder) {
   if (!supabase) throw new Error("Supabase is not configured for this deployment.");
   if (!file) return "";
 
-  const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, "-");
-  const path = `${folder}/${crypto.randomUUID()}-${safeName}`;
-  const { error } = await supabase.storage.from(mediaBucket).upload(path, file, {
-    cacheControl: "3600",
-    contentType: file.type || undefined,
-    upsert: false,
+  const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
+  if (sessionError) throw sessionError;
+  if (!sessionData.session?.access_token) {
+    throw new Error("Sign in as an administrator before uploading media.");
+  }
+
+  const params = new URLSearchParams({ folder, filename: file.name });
+  const response = await fetch(`/api/media-upload?${params}`, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${sessionData.session.access_token}`,
+      "Content-Type": file.type,
+    },
+    body: file,
   });
-  if (error) throw error;
-  return getPublicMediaUrl(path);
+
+  const result = await response.json().catch(() => ({}));
+  if (!response.ok) {
+    throw new Error(result.error || `Media upload failed (${response.status}).`);
+  }
+  if (typeof result.url !== "string" || !result.url) {
+    throw new Error("Media upload completed without returning a public URL.");
+  }
+  return result.url;
 }
