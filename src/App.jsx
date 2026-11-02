@@ -1,76 +1,896 @@
-/**
- * Composition root for the public website. Delegates state to hooks,
- * data to the API service, presentation to components — this file only
- * wires things together (Single Responsibility, Dependency Inversion).
- */
-
-import React, { useCallback, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import AdminApp from "./AdminApp.jsx";
-import { translations } from "./translations.js";
-import { isAdminRoute } from "./lib/format.js";
 import { supabase } from "./lib/supabase.js";
-import { realEstateApi } from "./lib/api.js";
-import { socialChannels } from "./lib/channels.js";
 import { localizeHome } from "./lib/format.js";
-import { fallbackHomes } from "./lib/constants.js";
-import { useBranding, useLanguage, useListings, useSavedHomes, useSoldPage, useTheme, useFilteredHomes } from "./hooks/useSiteState.js";
-import { useContactInView, usePageTitle } from "./hooks/useDocumentEffects.js";
-import { SiteHeader, SiteFooter, FloatingContact } from "./components/chrome.jsx";
-import { Hero, ListingsSection, ProjectsSection, AgentSection, ContactSection, SoldPage } from "./components/sections.jsx";
-import { InquiryModal } from "./components/InquiryModal.jsx";
 
-const EMPTY_FILTERS = { query: "", type: "", bedrooms: "", maxPrice: "" };
+const UI_COPY = {
+  en: {
+    home: "Home", listings: "Listings", projects: "Featured", areas: "Areas", buyingGuide: "Buying guide",
+    contact: "Contact", pastSales: "Past sales", callNow: "Call now", call: "Call",
+    close: "Close", openMenu: "Open menu", closeMenu: "Close menu",
+    language: "አማ", languageTitle: "Switch language to Amharic",
+    kicker: "HOMES & SHOPS · ADDIS ABABA", heroLead: "Find a place",
+    heroEmphasis: "to call home.", heroDescription: "Explore homes and business spaces, with personal guidance at every step.",
+    exploreListings: "Explore listings", bookViewing: "Book a viewing",
+    area: "AREA OR NEIGHBORHOOD", areaPlaceholder: "Search Addis Ababa areas",
+    propertyType: "PROPERTY TYPE", allSpaces: "All spaces", apartment: "Apartment", shop: "Shop",
+    bedrooms: "BEDROOMS", anyNumber: "Any number", orMore: "or more",
+    maxPrice: "MAXIMUM PRICE · ETB", anyBudget: "Any budget",
+    availability: "AVAILABILITY", allCurrent: "All current listings",
+    forSale: "For sale", underContract: "Under contract", search: "Search homes",
+    localKnowledge: "PERSONAL GUIDANCE. LOCAL KNOWLEDGE.",
+    currentCollection: "THE CURRENT COLLECTION", statsNote: "Counts update from active property listings.",
+    activeListings: "Active listings", apartmentsForSale: "Apartments for sale",
+    shopsForSale: "Shops for sale", neighborhoods: "Neighborhoods",
+    collectionEyebrow: "HOMES AND SHOPS IN ADDIS ABABA", exploreCollection: "Explore the",
+    listingsWord: "listings.", browseCopy: "Browse apartments to call home and shop spaces for your next business move.",
+    property: "property", properties: "properties", saved: "Saved",
+    featuredFirst: "Featured first", priceLow: "Price: low to high", priceHigh: "Price: high to low",
+    noSaved: "Your shortlist is ready when you are.", removeSaved: "Remove from saved homes",
+    saveHome: "Save home",
+    noMatches: "No properties match your search.",
+    savedHint: "Tap the heart on any home to keep it close while you explore.",
+    searchHint: "Try another area or clear your search to see all available listings.",
+    showAll: "Show all listings", completedSales: "Browse completed sales",
+    closerLook: "A CLOSER LOOK", featuredProperties: "Featured properties.",
+    featuredDescription: "A closer look at selected homes and business spaces.",
+    viewProperty: "View property", featuredEmpty: "Featured properties will appear here.",
+    featuredEmptyHint: "Mark a property as featured in Admin to show it in this section.",
+    clearStart: "A CLEARER WAY TO BEGIN", planMove: "Plan your next",
+    move: "move.", planDescription: "Explore the available details, choose a property, and ask about a visit.",
+    guideExplore: "Explore the collection", guideExploreCopy: "Filter homes and shops by neighborhood, type, bedrooms, availability, or price.",
+    guideCompare: "Compare the details", guideCompareCopy: "Review the listed location, size, price, and property information before deciding what suits you.",
+    guideTalk: "Arrange a conversation", guideTalkCopy: "Open a listing and send an inquiry, or use the contact options to ask about a viewing.",
+    goodToKnow: "GOOD TO KNOW", questions: "Common questions.",
+    faqTypes: "What kinds of properties can I browse?",
+    faqTypesAnswer: "The listings include apartments and shops. Use the property-type filter to narrow the collection.",
+    faqAreas: "How can I find properties in a particular area?",
+    faqAreasAnswer: "Type an area or neighborhood into the search field. Suggestions are based on locations in the current listings.",
+    faqViewing: "How do I ask about a property or arrange a viewing?",
+    faqViewingAnswer: "Choose a listing to open its inquiry form, or use the contact options on this page to get in touch.",
+    faqSave: "Can I save properties while I compare them?",
+    faqSaveAnswer: "Select the heart on a listing to add it to your saved homes on this device.",
+    contactEyebrow: "A PERSONAL HELLO IS JUST A CLICK AWAY",
+    contactTitle: "Let’s find your", nextPlace: "next place.",
+    contactDescription: "Whether you’re looking for a place to call home or the right space for your business, {name} is ready to help.",
+    connect: "Let’s connect", chooseContact: "Choose the way that works for you.",
+    socialEmpty: "Social links will appear here when they’re added in Site branding.",
+    friendlyAdvice: "Friendly advice, no pressure.", footerTagline: "Real estate with {name}.",
+    sendInquiry: "LET’S TALK ABOUT THIS HOME", curious: "Curious about this home?",
+    lookingSimilar: "Looking for a home like this?", inquireTitle: "Tell us what home means to you.",
+    preferTalk: "Prefer to talk directly?", chooseContactSimple: "Choose a contact option. No form needed.",
+    msgUs: "Message {name}", visitProfile: "Visit profile",
+    leaveNote: "Or leave a note", yourName: "Your name", email: "Email address",
+    phone: "Phone", optional: "(optional)", lookingFor: "A little about what you’re looking for",
+    notePlaceholder: "I’d love to know more about...",
+    sending: "Sending...", sendNote: "Send a note", privacy: "Your details stay with us. No spam, ever.",
+    noteReceived: "REQUEST RECEIVED", inTouch: "We’ll be in touch.",
+    thanks: "Thanks for reaching out. A real person from our team will get back to you shortly.",
+    thankYou: "Thank you", viewDetails: "View details", beds: "beds", baths: "baths",
+    retailSpace: "Retail space", videoTour: "Video tour", soldEyebrow: "A LOOK BACK AT COMPLETED SALES",
+    previouslySold: "Previously sold.", soldIntro: "Explore completed sales and get in touch to discuss your next move.",
+    soldEmpty: "Completed sales will be shared here.", pastSalesAdded: "Past sales added in Admin will appear on this page.",
+    getInTouch: "Get in touch", contactAgent: "Contact {name}",
+    contactOn: "Contact on {name}", siteTitle: "{brand} — Real Estate",
+    compare: "Compare", comparing: "Comparing", selectForCompare: "Select to compare",
+    compareLimit: "Compare up to 3 properties.", chooseTwo: "Choose at least two listings to compare them side by side.",
+    inventoryTitle: "Sizes and prices at a glance", inventoryIntro: "Compare current listing details using the information provided for each property.",
+    areaBrowse: "Explore by area", areaBrowseIntro: "Browse properties grouped by their listed location.",
+    viewArea: "View properties", bedroomsShort: "Beds", bathroomsShort: "Baths",
+    statusLabel: "Status", locationLabel: "Location", typeLabel: "Type", areaLabel: "Size",
+    priceLabel: "Price", listingLabel: "Listing", noListingData: "No listing details are available for this table yet.",
+    previousSlide: "Previous items", nextSlide: "Next items",
+    unmuteVideo: "Turn on hero video sound", muteVideo: "Mute hero video",
+    noAreas: "Neighborhoods will appear when listings have locations.",
+    footerExplore: "Explore", footerAreas: "Neighborhoods", footerVisit: "Contact",
+    footerDescription: "Browse the available homes and commercial properties, then get in touch to ask about a listing.",
+    footerNoAreas: "Locations will appear as properties are added.",
+    phoneNumber: "Phone", callBusiness: "Call",
+    requestCall: "Request a call", namePlaceholder: "Your name", phonePlaceholder: "Your phone number",
+    fromPrice: "From {price}", propertyDetails: "Property details",
+    propertyGallery: "Property photos", noPhotos: "More photos will be added soon.",
+    bathroomsLabel: "Bathrooms", bedroomsLabel: "Bedrooms", sizeLabel: "Property size",
+    descriptionLabel: "About this property", askAboutHome: "Interested in this property?",
+    modalEyebrow: "LET’S TALK ABOUT THIS HOME", contactUnavailable: "Contact details will appear here once they’re added in Site branding.",
+    formNotReady: "The contact form is not configured yet. Please use the contact links instead.",
+    formSendError: "We couldn't send your note. Please try again.",
+    loadingNotice: "Listings and contact forms are being configured. Please use the contact links below.",
+    pastSalesError: "Past sales could not be loaded right now. Please try again later.",
+    listingsError: "Listings could not be refreshed right now. Please check back soon.",
+    savedAdded: "{name} added to your saved homes.", savedRemoved: "{name} removed from your saved homes.",
+    callUpper: "CALL {name}",
+  },
+  am: {
+    home: "መነሻ", listings: "ዝርዝሮች", projects: "ተመራጭ", areas: "አካባቢዎች", buyingGuide: "የግዢ መመሪያ",
+    contact: "ያግኙን", pastSales: "የተሸጡ ቤቶች", callNow: "አሁን ይደውሉ", call: "ይደውሉ",
+    close: "ዝጋ", openMenu: "ምናሌውን ይክፈቱ", closeMenu: "ምናሌውን ዝጋ",
+    language: "EN", languageTitle: "ቋንቋውን ወደ እንግሊዝኛ ይቀይሩ",
+    kicker: "ቤቶች እና ሱቆች · አዲስ አበባ", heroLead: "ቤትዎን ያግኙ",
+    heroEmphasis: "የሚመችዎትን።", heroDescription: "ቤቶችንና የንግድ ቦታዎችን ያስሱ፤ በየደረጃውም የግል እገዛ ያግኙ።",
+    exploreListings: "ዝርዝሮችን ይመልከቱ", bookViewing: "ለጉብኝት ይመዝገቡ",
+    area: "አካባቢ ወይም ሰፈር", areaPlaceholder: "የአዲስ አበባ አካባቢዎችን ይፈልጉ",
+    propertyType: "የንብረት አይነት", allSpaces: "ሁሉም", apartment: "አፓርታማ", shop: "ሱቅ",
+    bedrooms: "መኝታ ክፍሎች", anyNumber: "ማንኛውም", orMore: "ወይም ከዚያ በላይ",
+    maxPrice: "ከፍተኛ ዋጋ · ብር", anyBudget: "ማንኛውም ዋጋ",
+    availability: "የንብረት ሁኔታ", allCurrent: "ሁሉም ያሉ ዝርዝሮች",
+    forSale: "ለሽያጭ", underContract: "በስምምነት ላይ", search: "ቤቶችን ይፈልጉ",
+    localKnowledge: "የግል እገዛ። የአካባቢ እውቀት።",
+    currentCollection: "አሁን ያሉ ንብረቶች", statsNote: "ቁጥሮቹ ከአሁኑ የንብረት ዝርዝሮች ይወሰዳሉ።",
+    activeListings: "ንቁ ዝርዝሮች", apartmentsForSale: "ለሽያጭ ያሉ አፓርታማዎች",
+    shopsForSale: "ለሽያጭ ያሉ ሱቆች", neighborhoods: "ሰፈሮች",
+    collectionEyebrow: "በአዲስ አበባ ያሉ ቤቶችና ሱቆች", exploreCollection: "ዝርዝሮቹን",
+    listingsWord: "ይመልከቱ።", browseCopy: "መኖሪያ አፓርታማዎችንና ለንግድ የሚሆኑ ሱቆችን ያስሱ።",
+    property: "ንብረት", properties: "ንብረቶች", saved: "የተቀመጡ",
+    featuredFirst: "ተመራጮች መጀመሪያ", priceLow: "ዋጋ፦ ከዝቅተኛ ወደ ከፍተኛ", priceHigh: "ዋጋ፦ ከከፍተኛ ወደ ዝቅተኛ",
+    noSaved: "የመረጧቸው ንብረቶች እዚህ ይቀመጣሉ።",
+    removeSaved: "ከተቀመጡት ያስወግዱ", saveHome: "ንብረቱን ያስቀምጡ",
+    noMatches: "ከፍለጋዎ ጋር የሚዛመድ ንብረት የለም።",
+    savedHint: "ለማስቀመጥ በማንኛውም ንብረት ላይ ያለውን ልብ ይጫኑ።",
+    searchHint: "ሌላ አካባቢ ይሞክሩ ወይም ፍለጋዎን ያጽዱ።",
+    showAll: "ሁሉንም ይመልከቱ", completedSales: "የተጠናቀቁ ሽያጮችን ይመልከቱ",
+    closerLook: "በቅርበት ይመልከቱ", featuredProperties: "ተመራጭ ንብረቶች።",
+    featuredDescription: "የተመረጡ ቤቶችንና የንግድ ቦታዎችን ይመልከቱ።",
+    viewProperty: "ንብረቱን ይመልከቱ", featuredEmpty: "ተመራጭ ንብረቶች እዚህ ይታያሉ።",
+    featuredEmptyHint: "በአስተዳደር ገጹ ላይ ንብረትን ተመራጭ ብለው ይምረጡ።",
+    clearStart: "በቀላሉ ይጀምሩ", planMove: "ቀጣዩን እርምጃ",
+    move: "ያቅዱ።", planDescription: "የንብረት መረጃዎችን ይመልከቱ፣ የሚስማማዎትን ይምረጡ፣ ስለጉብኝትም ይጠይቁ።",
+    guideExplore: "ንብረቶቹን ያስሱ", guideExploreCopy: "ቤቶችንና ሱቆችን በአካባቢ፣ በአይነት፣ በመኝታ ክፍል፣ በሁኔታ ወይም በዋጋ ያጣሩ።",
+    guideCompare: "ዝርዝሩን ያነጻጽሩ", guideCompareCopy: "የተዘረዘረውን ቦታ፣ ስፋት፣ ዋጋና የንብረት መረጃ ይመልከቱ።",
+    guideTalk: "ውይይት ያዘጋጁ", guideTalkCopy: "ንብረት ይምረጡና ጥያቄ ይላኩ፣ ወይም ስለ ጉብኝት ለመጠየቅ የመገናኛ አማራጮቹን ይጠቀሙ።",
+    goodToKnow: "ማወቅ ያለብዎት", questions: "ተደጋጋሚ ጥያቄዎች።",
+    faqTypes: "ምን አይነት ንብረቶችን ማየት እችላለሁ?",
+    faqTypesAnswer: "ዝርዝሮቹ አፓርታማዎችንና ሱቆችን ያካትታሉ። ለማጣራት የንብረት አይነት ማጣሪያውን ይጠቀሙ።",
+    faqAreas: "በተወሰነ አካባቢ ያሉ ንብረቶችን እንዴት አገኛለሁ?",
+    faqAreasAnswer: "የአካባቢውን ስም በፍለጋ ቦታው ያስገቡ። የሚታዩ ጥቆማዎች ከዝርዝሮቹ የተወሰዱ ናቸው።",
+    faqViewing: "ስለ ንብረት ወይም ጉብኝት እንዴት መጠየቅ እችላለሁ?",
+    faqViewingAnswer: "የጥያቄ ቅጹን ለመክፈት ንብረትን ይምረጡ፣ ወይም በዚህ ገጽ ያሉትን የመገናኛ አማራጮች ይጠቀሙ።",
+    faqSave: "እያነጻጸርኩ ንብረቶችን ማስቀመጥ እችላለሁ?",
+    faqSaveAnswer: "በንብረቱ ላይ ያለውን ልብ ምልክት በመጫን በዚህ መሳሪያ ላይ ያስቀምጡት።",
+    contactEyebrow: "የግል ውይይት በአንድ ጠቅታ ብቻ",
+    contactTitle: "ቀጣዩን", nextPlace: "ቦታዎን እናግኝ።",
+    contactDescription: "መኖሪያ ቤት ወይም የንግድ ቦታ እየፈለጉ ከሆነ፣ {name} ሊያግዝዎት ዝግጁ ነው።",
+    connect: "እንገናኝ", chooseContact: "የሚመችዎትን የመገናኛ መንገድ ይምረጡ።",
+    socialEmpty: "የማህበራዊ ሚዲያ አገናኞች በብራንዲንግ ሲጨመሩ እዚህ ይታያሉ።",
+    friendlyAdvice: "ወዳጃዊ ምክር፣ ያለ ግዴታ።", footerTagline: "ከ{name} ጋር ሪል እስቴት።",
+    sendInquiry: "ስለዚህ ቤት እንወያይ", curious: "ስለዚህ ቤት ጥያቄ አለዎት?",
+    lookingSimilar: "እንደዚህ ያለ ቤት ይፈልጋሉ?", inquireTitle: "የሚፈልጉትን ይንገሩን።",
+    preferTalk: "በቀጥታ ማነጋገር ይመርጣሉ?", chooseContactSimple: "የመገናኛ መንገድ ይምረጡ።",
+    msgUs: "{name}ን ያነጋግሩ", visitProfile: "መገለጫውን ይመልከቱ",
+    leaveNote: "ወይም መልዕክት ይተዉ", yourName: "ሙሉ ስም", email: "የኢሜይል አድራሻ",
+    phone: "ስልክ", optional: "(አማራጭ)", lookingFor: "ስለሚፈልጉት አጭር መልዕክት",
+    notePlaceholder: "ስለዚህ ንብረት ተጨማሪ ማወቅ እፈልጋለሁ...",
+    sending: "በመላክ ላይ...", sendNote: "መልዕክት ይላኩ", privacy: "መረጃዎ በግል ይጠበቃል።",
+    noteReceived: "ጥያቄዎ ደርሶናል", inTouch: "እናገኝዎታለን።",
+    thanks: "ስላገኙን እናመሰግናለን። የቡድናችን አባል በቅርቡ ያነጋግርዎታል።",
+    thankYou: "እናመሰግናለን", viewDetails: "ዝርዝሩን ይመልከቱ",
+    beds: "መኝታ", baths: "መታጠቢያ", retailSpace: "የንግድ ቦታ",
+    videoTour: "የቪዲዮ ጉብኝት", soldEyebrow: "የተጠናቀቁ ሽያጮችን ይመልከቱ",
+    previouslySold: "ቀደም ሲል የተሸጡ።", soldIntro: "የተጠናቀቁ ሽያጮችን ይመልከቱ፤ ስለ ቀጣይ እርምጃዎ ለመወያየትም ያግኙን።",
+    soldEmpty: "የተጠናቀቁ ሽያጮች እዚህ ይታያሉ።",
+    pastSalesAdded: "በአስተዳደር ገጹ የሚጨመሩ የተሸጡ ንብረቶች እዚህ ይታያሉ።",
+    getInTouch: "ያግኙን", contactAgent: "{name}ን ያግኙ",
+    contactOn: "በ{name} ያግኙን", siteTitle: "{brand} — ሪል እስቴት",
+    compare: "አነጻጽር", comparing: "በማነጻጸር ላይ", selectForCompare: "ለማነጻጸር ይምረጡ",
+    compareLimit: "እስከ 3 ንብረቶችን ያነጻጽሩ።", chooseTwo: "ከጎን ለጎን ለማነጻጸር ቢያንስ ሁለት ንብረቶችን ይምረጡ።",
+    inventoryTitle: "መጠንና ዋጋ በአንድ እይታ", inventoryIntro: "ለእያንዳንዱ ንብረት በተዘረዘረው መረጃ ያነጻጽሩ።",
+    areaBrowse: "በአካባቢ ያስሱ", areaBrowseIntro: "ንብረቶችን በተዘረዘረው ቦታ ይመልከቱ።",
+    viewArea: "ንብረቶችን ይመልከቱ", bedroomsShort: "መኝታ", bathroomsShort: "መታጠቢያ",
+    statusLabel: "ሁኔታ", locationLabel: "አካባቢ", typeLabel: "አይነት", areaLabel: "ስፋት",
+    priceLabel: "ዋጋ", listingLabel: "ንብረት", noListingData: "የንብረት መረጃ ለዚህ ሰንጠረዥ ገና አልተገኘም።",
+    previousSlide: "ወደ ቀደመው ይሂዱ", nextSlide: "ወደ ቀጣዩ ይሂዱ",
+    unmuteVideo: "የጀርባ ቪዲዮውን ድምጽ ያብሩ", muteVideo: "የጀርባ ቪዲዮውን ድምጽ ያጥፉ",
+    noAreas: "የአካባቢ መረጃ በንብረት ዝርዝሮች ሲጨመር እዚህ ይታያል።",
+    footerExplore: "ያስሱ", footerAreas: "አካባቢዎች", footerVisit: "ያግኙን",
+    footerDescription: "ያሉትን መኖሪያ ቤቶችና የንግድ ንብረቶች ይመልከቱ፤ ስለ ዝርዝር ለመጠየቅም ያግኙን።",
+    footerNoAreas: "ንብረቶች ሲጨመሩ አካባቢዎች እዚህ ይታያሉ።",
+    phoneNumber: "ስልክ", callBusiness: "ይደውሉ",
+    requestCall: "እንዲደውሉልኝ ይጠይቁ", namePlaceholder: "ስምዎ", phonePlaceholder: "ስልክ ቁጥርዎ",
+    fromPrice: "ከ {price} ጀምሮ", propertyDetails: "የንብረት ዝርዝር",
+    propertyGallery: "የንብረቱ ፎቶዎች", noPhotos: "ተጨማሪ ፎቶዎች በቅርቡ ይጨመራሉ።",
+    bathroomsLabel: "መታጠቢያ ቤቶች", bedroomsLabel: "መኝታ ክፍሎች", sizeLabel: "የንብረት ስፋት",
+    descriptionLabel: "ስለዚህ ንብረት", askAboutHome: "ስለዚህ ንብረት ፍላጎት አለዎት?",
+    modalEyebrow: "ስለዚህ ቤት እንወያይ", contactUnavailable: "የመገኛ መረጃዎች በብራንዲንግ ሲጨመሩ እዚህ ይታያሉ።",
+    formNotReady: "የመገኛ ቅጹ አልተዘጋጀም። እባክዎ የመገኛ አገናኞችን ይጠቀሙ።",
+    formSendError: "መልዕክትዎን መላክ አልተቻለም። እባክዎ እንደገና ይሞክሩ።",
+    loadingNotice: "የንብረት ዝርዝሮችና የመገኛ ቅጾች በመዘጋጀት ላይ ናቸው። እባክዎ ከታች ያሉትን የመገኛ አገናኞች ይጠቀሙ።",
+    pastSalesError: "የተሸጡ ንብረቶችን አሁን ማምጣት አልተቻለም። እባክዎ ቆይተው ይሞክሩ።",
+    listingsError: "ዝርዝሮችን ማዘመን አልተቻለም። እባክዎ ቆይተው ይመልከቱ።",
+    savedAdded: "{name} በተቀመጡት ንብረቶች ውስጥ ተጨምሯል።", savedRemoved: "{name} ከተቀመጡት ንብረቶች ተወግዷል።",
+    callUpper: "{name}ን ይደውሉ",
+  },
+};
+
+const apiAssetUrl = (url) => {
+  return url || "";
+};
+
+const fallbackHomes = [
+  {
+    id: 1,
+    title: "The Morning Light",
+    location: "Bole, Addis Ababa",
+    price: 18500000,
+    beds: 3,
+    baths: 2,
+    area: 168,
+    property_type: "Apartment",
+    status: "For sale",
+    image_url: "https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?auto=format&fit=crop&w=1600&q=90",
+    description: "A sunlit, beautifully finished apartment with generous living spaces and room to settle in.",
+    featured: true,
+  },
+  {
+    id: 2,
+    title: "Bole Avenue Retail",
+    location: "Bole, Addis Ababa",
+    price: 24000000,
+    beds: 0,
+    baths: 1,
+    area: 112,
+    property_type: "Shop",
+    status: "For sale",
+    image_url: "https://images.unsplash.com/photo-1604328698692-f76ea9498e76?auto=format&fit=crop&w=1600&q=90",
+    description: "A bright, flexible retail space in a lively neighborhood, ready for your next business idea.",
+    featured: true,
+  },
+  {
+    id: 3,
+    title: "City View Residence",
+    location: "Kazanchis, Addis Ababa",
+    price: 14800000,
+    beds: 2,
+    baths: 1,
+    area: 124,
+    property_type: "Apartment",
+    status: "For sale",
+    image_url: "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=1600&q=90",
+    description: "A calm, contemporary city home with open views, thoughtful details, and an easy everyday feel.",
+    featured: true,
+  },
+];
+
+function Brand({ settings, footer = false }) {
+  const [logoFailed, setLogoFailed] = useState(false);
+  const brandName = settings.brand_name || "Zenebe Frew Real Estate";
+  const nameParts = brandName.split("&");
+  return (
+    <a className={`brand${footer ? " footer-brand" : ""}`} href="/" aria-label={`${brandName} home`}>
+      {settings.logo_url && !logoFailed ? (
+        <img className="brand-logo" src={settings.logo_url} alt="" onError={() => setLogoFailed(true)} />
+      ) : (
+        <span className="brand-mark" aria-hidden="true"><Icon name="home" size={19} /></span>
+      )}
+      <span className="brand-name">
+        {nameParts.length > 1 ? <>{nameParts[0].trim()} <i>&amp;</i> {nameParts.slice(1).join("&").trim()}</> : brandName}
+      </span>
+    </a>
+  );
+}
+
+function Icon({ name, size = 18 }) {
+  const shared = {
+    width: size,
+    height: size,
+    viewBox: "0 0 24 24",
+    fill: "none",
+    stroke: "currentColor",
+    strokeWidth: 1.7,
+    strokeLinecap: "round",
+    strokeLinejoin: "round",
+    "aria-hidden": true,
+  };
+  const paths = {
+    search: <><circle cx="11" cy="11" r="7" /><path d="m20 20-4-4" /></>,
+    home: <><path d="m3 10 9-7 9 7" /><path d="M5 9v11h14V9M9 20v-6h6v6" /></>,
+    phone: <path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.4 19.4 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7l.5 2.8a2 2 0 0 1-.6 1.7L7.1 10a16 16 0 0 0 6 6l1.8-1.9a2 2 0 0 1 1.7-.6l2.8.5a2 2 0 0 1 1.6 1.9Z" />,
+    pin: <><path d="M20 10c0 5-8 12-8 12S4 15 4 10a8 8 0 1 1 16 0Z" /><circle cx="12" cy="10" r="2.5" /></>,
+    bed: <><path d="M3 18v-7a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v7M3 14h18M6 9V6a2 2 0 0 1 2-2h3v5" /></>,
+    bath: <><path d="M9 6 7.5 4.5a2.12 2.12 0 0 0-3 3L6 9M3 12h18v2a5 5 0 0 1-5 5h-4a5 5 0 0 1-5-5v-2Zm3 7-1 2m12-2 1 2" /></>,
+    area: <><path d="M4 8V4h4M20 8V4h-4M4 16v4h4m12-4v4h-4" /><path d="m8 8 8 8m0-8-8 8" /></>,
+    arrow: <><path d="M5 12h14M13 6l6 6-6 6" /></>,
+    heart: <path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8l1.1 1.1L12 21l7.8-7.5 1.1-1.1a5.5 5.5 0 0 0-.1-7.8Z" />,
+    close: <><path d="m18 6-12 12M6 6l12 12" /></>,
+    menu: <><path d="M4 7h16M4 12h16M4 17h16" /></>,
+    moon: <path d="M20.5 14.5A8.5 8.5 0 0 1 9.5 3.5a8.5 8.5 0 1 0 11 11Z" />,
+    sun: <><circle cx="12" cy="12" r="4" /><path d="M12 2v2m0 16v2M4.93 4.93l1.42 1.42m11.3 11.3 1.42 1.42M2 12h2m16 0h2M4.93 19.07l1.42-1.42m11.3-11.3 1.42-1.42" /></>,
+  };
+  return <svg {...shared}>{paths[name]}</svg>;
+}
+
+function AutoCarousel({ itemCount, className, label, children, t }) {
+  const trackRef = React.useRef(null);
+  const animationRef = React.useRef(0);
+  const snapRestoreRef = React.useRef(null);
+  const [isVisible, setIsVisible] = useState(false);
+
+  const cancelAnimation = React.useCallback(() => {
+    window.cancelAnimationFrame(animationRef.current);
+    animationRef.current = 0;
+    if (snapRestoreRef.current) {
+      snapRestoreRef.current.track.style.scrollSnapType = snapRestoreRef.current.scrollSnapType;
+      snapRestoreRef.current = null;
+    }
+  }, []);
+
+  const scrollTo = React.useCallback((track, target) => {
+    cancelAnimation();
+    const start = track.scrollLeft;
+    const distance = target - start;
+    if (Math.abs(distance) < 1) return;
+
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      track.scrollLeft = target;
+      return;
+    }
+
+    const duration = Math.min(4200, Math.max(1300, Math.abs(distance) / 0.18));
+    const scrollSnapType = track.style.scrollSnapType;
+    snapRestoreRef.current = { track, scrollSnapType };
+    track.style.scrollSnapType = "none";
+    const startedAt = performance.now();
+    function animate(now) {
+      const progress = Math.min((now - startedAt) / duration, 1);
+      const eased = 0.5 - Math.cos(Math.PI * progress) / 2;
+      track.scrollLeft = start + distance * eased;
+      if (progress < 1) animationRef.current = window.requestAnimationFrame(animate);
+      else {
+        animationRef.current = 0;
+        track.style.scrollSnapType = scrollSnapType;
+        snapRestoreRef.current = null;
+      }
+    }
+    animationRef.current = window.requestAnimationFrame(animate);
+  }, [cancelAnimation]);
+
+  useEffect(() => {
+    const track = trackRef.current;
+    if (!track) return undefined;
+    const observer = new IntersectionObserver(([entry]) => setIsVisible(entry.isIntersecting), { threshold: 0.1 });
+    observer.observe(track);
+    return () => observer.disconnect();
+  }, []);
+
+  useEffect(() => {
+    if (!isVisible || itemCount < 2 || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return undefined;
+    const timer = window.setInterval(() => {
+      const track = trackRef.current;
+      if (!track || document.hidden || track.matches(":hover, :focus-within")) return;
+      const firstItem = track.firstElementChild;
+      if (!firstItem) return;
+      const gap = Number.parseFloat(window.getComputedStyle(track).columnGap) || 0;
+      const step = firstItem.getBoundingClientRect().width + gap;
+      const atEnd = track.scrollLeft + track.clientWidth >= track.scrollWidth - 8;
+      scrollTo(track, atEnd ? 0 : track.scrollLeft + step);
+    }, 7000);
+    return () => {
+      window.clearInterval(timer);
+      cancelAnimation();
+    };
+  }, [isVisible, itemCount, scrollTo, cancelAnimation]);
+
+  useEffect(() => () => cancelAnimation(), [cancelAnimation]);
+
+  function move(direction) {
+    const track = trackRef.current;
+    const firstItem = track?.firstElementChild;
+    if (!track || !firstItem) return;
+    const gap = Number.parseFloat(window.getComputedStyle(track).columnGap) || 0;
+    const step = firstItem.getBoundingClientRect().width + gap;
+    const maxScroll = track.scrollWidth - track.clientWidth;
+    const nextPosition = track.scrollLeft + direction * step;
+    scrollTo(
+      track,
+      direction > 0 && nextPosition >= maxScroll - 8
+        ? 0
+        : direction < 0 && nextPosition <= 8 ? maxScroll : nextPosition,
+    );
+  }
+
+  return (
+    <div className="carousel-shell">
+      <div className="carousel-controls" aria-label={label}>
+        <button type="button" onClick={() => move(-1)} aria-label={t.previousSlide}><span aria-hidden="true">←</span></button>
+        <button type="button" onClick={() => move(1)} aria-label={t.nextSlide}><span aria-hidden="true">→</span></button>
+      </div>
+      <div
+        ref={trackRef}
+        className={className}
+        role="region"
+        aria-label={label}
+        tabIndex={0}
+        onWheel={cancelAnimation}
+        onPointerDown={cancelAnimation}
+        onKeyDown={cancelAnimation}
+      >
+        {children}
+      </div>
+    </div>
+  );
+}
+
+function readSavedHomes() {
+  try {
+    const stored = JSON.parse(localStorage.getItem("saved-homes") || "[]");
+    return Array.isArray(stored) ? stored : [];
+  } catch (error) {
+    console.error("Could not read saved homes from this browser:", error);
+    return [];
+  }
+}
+
+function readLanguage() {
+  try {
+    return localStorage.getItem("site-language") === "am" ? "am" : "en";
+  } catch (error) {
+    console.error("Could not read the language preference from this browser:", error);
+    return "en";
+  }
+}
+
+function isPastSalesPage() {
+  return window.location.pathname === "/sold-homes" || window.location.hash === "#sold-homes";
+}
+
+function PropertyCard({ home: sourceHome, saved, onSave, onOpen, settings, language, t }) {
+  const home = localizeHome(sourceHome, language);
+  const formattedPrice = new Intl.NumberFormat(language === "am" ? "am-ET" : "en-ET", {
+    style: "currency",
+    currency: settings.currency_code || "ETB",
+    maximumFractionDigits: 0,
+  }).format(home.price);
+  const price = t.fromPrice.replace("{price}", formattedPrice);
+
+  return (
+    <article className="property-card">
+      <button className="image-button" onClick={() => onOpen(home)} aria-label={`${t.viewDetails}: ${home.title}`}>
+        {home.image_url
+          ? <img src={apiAssetUrl(home.image_url)} alt={home.title} loading="lazy" />
+          : <span className="no-property-image">{t.videoTour}</span>}
+        <span className="status-pill">{home.status === "Under contract" ? t.underContract : home.status === "Sold" ? t.previouslySold : t.forSale}</span>
+        <span className="type-pill">{home.property_type === "Apartment" ? t.apartment : t.shop}</span>
+        {home.video_url && <span className="video-pill">▶ {t.videoTour}</span>}
+      </button>
+      <button
+        className={`save-button ${saved ? "is-saved" : ""}`}
+        onClick={() => onSave(home.id)}
+        aria-label={saved ? t.removeSaved : t.saveHome}
+        aria-pressed={saved}
+      >
+        <Icon name="heart" size={19} />
+      </button>
+      <button className="property-info" onClick={() => onOpen(home)}>
+        <span className="property-title-row">
+          <span className="property-title">{home.title}</span>
+          <span className="property-price">{price}</span>
+        </span>
+        <span className="property-location"><Icon name="pin" size={15} />{home.location}</span>
+        {home.description && <span className="property-description">{home.description}</span>}
+        <span className="property-specs">
+          {home.property_type === "Apartment" ? (
+            <>
+              <span><Icon name="bed" size={16} />{home.beds} {t.beds}</span>
+              <span><Icon name="bath" size={16} />{home.baths} {t.baths}</span>
+            </>
+          ) : (
+            <span className="property-use">{t.retailSpace}</span>
+          )}
+          <span><Icon name="area" size={16} />{Number(home.area).toLocaleString()} {settings.area_unit || "sqft"}</span>
+        </span>
+        <span className="property-card-link">{t.viewDetails} <Icon name="arrow" size={15} /></span>
+      </button>
+    </article>
+  );
+}
+
+function InquiryModal({ home, onClose, settings, language, t }) {
+  const [sending, setSending] = useState(false);
+  const [sent, setSent] = useState(false);
+  const [error, setError] = useState("");
+  const [activePhoto, setActivePhoto] = useState(home?.image_url || "");
+  const phoneDigits = (settings.contact_phone || "").replace(/[^\d+]/g, "");
+  const whatsappDigits = (settings.whatsapp_number || "").replace(/\D/g, "");
+  const gallery = home
+    ? [...new Set([home.image_url, ...(Array.isArray(home.gallery_urls) ? home.gallery_urls : [])].filter(Boolean))]
+    : [];
+  const price = home ? new Intl.NumberFormat(language === "am" ? "am-ET" : "en-ET", {
+    style: "currency",
+    currency: settings.currency_code || "ETB",
+    maximumFractionDigits: 0,
+  }).format(home.price) : "";
+  const directContacts = [
+    phoneDigits && { name: t.call, detail: settings.contact_phone, href: `tel:${phoneDigits}`, mark: "☎" },
+    whatsappDigits && { name: "WhatsApp", detail: settings.whatsapp_number, href: `https://wa.me/${whatsappDigits}`, mark: "W" },
+    settings.telegram_url && { name: "Telegram", detail: t.msgUs.replace("{name}", settings.agent_name || "our team"), href: settings.telegram_url, mark: "➤" },
+    settings.facebook_url && { name: "Facebook", detail: t.visitProfile, href: settings.facebook_url, mark: "f" },
+    settings.instagram_url && { name: "Instagram", detail: t.visitProfile, href: settings.instagram_url, mark: "◎" },
+    settings.tiktok_url && { name: "TikTok", detail: t.visitProfile, href: settings.tiktok_url, mark: "♪" },
+  ].filter(Boolean);
+
+  async function submitInquiry(event) {
+    event.preventDefault();
+    setSending(true);
+    setError("");
+    const form = new FormData(event.currentTarget);
+    try {
+      if (!supabase) throw new Error(t.formNotReady);
+      const { error: insertError } = await supabase.from("inquiries").insert({
+        name: form.get("name"),
+        phone: form.get("phone"),
+        property_id: home?.id ?? null,
+      });
+      if (insertError) throw insertError;
+      setSent(true);
+    } catch (requestError) {
+      setError(requestError.message || t.formSendError);
+    } finally {
+      setSending(false);
+    }
+  }
+
+  return (
+    <div className="modal-backdrop" role="presentation" onMouseDown={(event) => event.target === event.currentTarget && onClose()}>
+      <section className={`inquiry-modal${home ? " property-detail-modal" : ""}`} role="dialog" aria-modal="true" aria-labelledby="inquiry-title">
+        <button className="modal-close" onClick={onClose} aria-label={t.close}><Icon name="close" /></button>
+        {sent ? (
+          <div className="success-state">
+            <span className="success-mark">✓</span>
+            <p className="eyebrow">{t.noteReceived}</p>
+            <h2 id="inquiry-title">{t.inTouch}</h2>
+            <p>{t.thanks}</p>
+            <button className="button button-dark" onClick={onClose}>{t.thankYou}</button>
+          </div>
+        ) : (
+          <>
+            <p className="eyebrow">{t.modalEyebrow}</p>
+            <h2 id="inquiry-title">{home ? (home.status === "Sold" ? t.lookingSimilar : t.curious) : t.inquireTitle}</h2>
+            {home && <p className="modal-home-name">{home.title}</p>}
+            {home && (
+              <section className="property-detail-content" aria-label={t.propertyDetails}>
+                <div className="property-detail-gallery">
+                  {activePhoto ? (
+                    <img className="property-detail-main-photo" src={apiAssetUrl(activePhoto)} alt={home.title} />
+                  ) : (
+                    <div className="property-detail-no-photo">{t.noPhotos}</div>
+                  )}
+                  {gallery.length > 1 && (
+                    <div className="property-detail-thumbnails" aria-label={t.propertyGallery}>
+                      {gallery.map((image, index) => (
+                        <button
+                          className={image === activePhoto ? "is-active" : ""}
+                          type="button"
+                          key={image}
+                          onClick={() => setActivePhoto(image)}
+                          aria-label={`${t.propertyGallery} ${index + 1}`}
+                          aria-pressed={image === activePhoto}
+                        >
+                          <img src={apiAssetUrl(image)} alt="" />
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
+                <div className="property-detail-summary">
+                  <p className="property-detail-price">{t.fromPrice.replace("{price}", price)}</p>
+                  <p className="property-detail-location"><Icon name="pin" size={16} />{home.location}</p>
+                  <div className="property-detail-facts">
+                    {home.property_type === "Apartment" && (
+                      <div><small>{t.bedroomsLabel}</small><strong>{home.beds || "—"}</strong></div>
+                    )}
+                    <div><small>{t.bathroomsLabel}</small><strong>{home.baths || "—"}</strong></div>
+                    <div><small>{t.sizeLabel}</small><strong>{Number(home.area).toLocaleString(language === "am" ? "am-ET" : "en-ET")} {settings.area_unit || "sqft"}</strong></div>
+                    <div><small>{t.typeLabel}</small><strong>{home.property_type === "Apartment" ? t.apartment : t.shop}</strong></div>
+                    <div><small>{t.statusLabel}</small><strong>{home.status === "Under contract" ? t.underContract : home.status === "Sold" ? t.previouslySold : t.forSale}</strong></div>
+                  </div>
+                  {home.description && (
+                    <div className="property-detail-description">
+                      <h3>{t.descriptionLabel}</h3>
+                      <p>{home.description}</p>
+                    </div>
+                  )}
+                  {home.video_url && <video className="property-video" src={apiAssetUrl(home.video_url)} controls playsInline preload="metadata">{t.videoTour}</video>}
+                </div>
+              </section>
+            )}
+            <div className="direct-contact">
+              <div className="direct-contact-heading">
+                <span>{home ? t.askAboutHome : t.preferTalk}</span>
+                <p>{t.chooseContactSimple}</p>
+              </div>
+              {directContacts.length ? (
+                <div className="direct-contact-actions">
+                  {directContacts.map((contact) => (
+                    <a
+                      className={`direct-contact-button direct-${contact.name.toLowerCase()}`}
+                      href={contact.href}
+                      key={contact.name}
+                      target={contact.href.startsWith("http") ? "_blank" : undefined}
+                      rel={contact.href.startsWith("http") ? "noreferrer" : undefined}
+                    >
+                      <span className="direct-contact-mark" aria-hidden="true">{contact.mark}</span>
+                      <span><strong>{contact.name}</strong><small>{contact.detail}</small></span>
+                      <Icon name="arrow" size={16} />
+                    </a>
+                  ))}
+                </div>
+              ) : (
+                <p className="direct-contact-unavailable">{settings.agent_name || "Our team"}’s contact links will appear here when they’re added to Site branding.</p>
+              )}
+            </div>
+            <form className="inquiry-form" onSubmit={submitInquiry}>
+              <label>{t.yourName}<input name="name" required autoComplete="name" placeholder={t.namePlaceholder} /></label>
+              <label>{t.phone}<input name="phone" type="tel" autoComplete="tel" placeholder={t.phonePlaceholder} required /></label>
+              {error && <p className="form-error" role="alert">{error}</p>}
+              <button className="button button-dark submit-button" type="submit" disabled={sending}>
+                {sending ? t.sending : t.requestCall} <Icon name="arrow" size={17} />
+              </button>
+            </form>
+          </>
+        )}
+      </section>
+    </div>
+  );
+}
 
 function PublicSite() {
-  const branding = useBranding();
-  const [language, toggleLanguage] = useLanguage();
-  const [darkMode, toggleTheme] = useTheme();
-  const t = translations[language];
-
-  const [menuOpen, setMenuOpen] = useState(false);
+  const [soldPage, setSoldPage] = useState(isPastSalesPage);
+  const [language, setLanguage] = useState(readLanguage);
+  const t = UI_COPY[language];
+  const [branding, setBranding] = useState({
+    brand_name: "Zenebe Frew Real Estate",
+    logo_url: "",
+    agent_name: "Helen Hidbachew",
+    agent_title: "Real Estate Professional",
+    agent_bio: "Buying or selling a home is a personal decision. I’m here to help you explore your options, understand the next steps, and find a home that feels right for you.",
+    agent_photo_url: "",
+    contact_phone: "",
+    whatsapp_number: "",
+    tiktok_url: "",
+    facebook_url: "",
+    instagram_url: "",
+    telegram_url: "",
+    currency_code: "ETB",
+    area_unit: "sqft",
+  });
+  const [homes, setHomes] = useState(soldPage ? [] : fallbackHomes);
+  const [query, setQuery] = useState("");
+  const [type, setType] = useState("");
+  const [bedrooms, setBedrooms] = useState("");
+  const [maxPrice, setMaxPrice] = useState("");
+  const [availability, setAvailability] = useState("");
+  const [sort, setSort] = useState("featured");
+  const [saved, setSaved] = useState(readSavedHomes);
   const [savedOnly, setSavedOnly] = useState(false);
   const [savedAnnouncement, setSavedAnnouncement] = useState("");
   const [selectedHome, setSelectedHome] = useState(null);
+  const [inquiryOpen, setInquiryOpen] = useState(false);
   const [apiNotice, setApiNotice] = useState("");
-  const [criteria, setCriteria] = useState(EMPTY_FILTERS);
-  const [sort, setSort] = useState("featured");
+  const [listingsLoaded, setListingsLoaded] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
 
-  const [saved, setSaved] = useSavedHomes();
+  useEffect(() => {
+    if (!supabase) {
+      setApiNotice(t.loadingNotice);
+      return undefined;
+    }
 
-  const closeMenu = useCallback(() => setMenuOpen(false), []);
-  const soldPage = useSoldPage(closeMenu);
-
-  const requestNotice = useCallback((message) => setApiNotice(message), []);
-  const homes = useListings(soldPage, {
-    listingsUnavailable: t.listingsUnavailable,
-    listingsError: t.listingsError,
-    soldError: t.soldError,
-    notify: requestNotice,
-  });
-
-  usePageTitle(branding.brand_name, t);
-  useContactInView();
-
-  const filteredHomes = useFilteredHomes(homes, criteria, saved, savedOnly);
+    supabase.from("site_settings").select("*").eq("id", 1).maybeSingle()
+      .then(({ data, error }) => {
+        if (error) throw error;
+        if (!data) return;
+        setBranding((current) => ({
+          ...current,
+          ...data,
+          brand_name: data.brand_name || "Zenebe Frew Real Estate",
+          logo_url: apiAssetUrl(data.logo_url),
+          agent_photo_url: apiAssetUrl(data.agent_photo_url),
+        }));
+      })
+      .catch((error) => {
+        console.error("Could not load site branding from Supabase:", error);
+      });
+  }, [t.loadingNotice]);
 
   const agentName = branding.agent_name || "Helen Hidbachew";
-  const agentTitle = localizeHome({ title: branding.agent_title || "", title_am: branding.agent_title_am }, language).title;
-  const agentBio = localizeHome({ title: branding.agent_bio || "", title_am: branding.agent_bio_am }, language).title;
-  const socialLinks = socialChannels(branding).filter((item) => item.href);
-  const featuredHomes = homes.filter((home) => home.featured).slice(0, 2);
-  const heroImage = homes[0]?.image_url || fallbackHomes[0].image_url;
+  const profileTitle = (branding.agent_title || "Real Estate Professional")
+    .replace(/real estate agent/gi, "Real Estate Professional")
+    .replace(/\bagent\b/gi, "Professional");
+  const phoneDigits = (branding.contact_phone || "").replace(/[^\d+]/g, "");
+  const whatsappDigits = (branding.whatsapp_number || "").replace(/\D/g, "");
+  const socialLinks = [
+    { name: "TikTok", href: branding.tiktok_url, mark: "♪" },
+    { name: "WhatsApp", href: whatsappDigits ? `https://wa.me/${whatsappDigits}` : "", account: branding.whatsapp_number, mark: "W" },
+    { name: "Facebook", href: branding.facebook_url, mark: "f" },
+    { name: "Instagram", href: branding.instagram_url, mark: "◎" },
+    { name: "Telegram", href: branding.telegram_url, mark: "➤" },
+  ];
+  const configuredSocialLinks = socialLinks.filter((item) => item.href);
+  const featuredHomes = homes.filter((home) => home.featured);
+  const listingAreas = [...new Set(homes.map((home) => localizeHome(home, language).location?.trim()).filter(Boolean))]
+    .sort((first, second) => first.localeCompare(second));
+  const areaCards = listingAreas.map((location) => {
+    const homesInArea = homes.filter((home) => localizeHome(home, language).location?.trim() === location);
+    return { location, homes: homesInArea, image: homesInArea[0]?.image_url };
+  });
+  const currentListings = homes.filter((home) => home.status === "For sale");
+  const liveStats = listingsLoaded ? [
+    { value: homes.length, label: "activeListings" },
+    { value: currentListings.filter((home) => home.property_type === "Apartment").length, label: "apartmentsForSale" },
+    { value: currentListings.filter((home) => home.property_type === "Shop").length, label: "shopsForSale" },
+    { value: listingAreas.length, label: "neighborhoods" },
+  ] : [];
+  const heroHome = homes.find((home) => home.video_url) || homes[0] || fallbackHomes[0];
+  const heroImage = heroHome.image_url || fallbackHomes[0].image_url;
+  const heroVideo = heroHome.video_url || "";
+  const [heroMuted, setHeroMuted] = useState(true);
+  const [darkMode, setDarkMode] = useState(() => localStorage.getItem("site-theme") !== "light");
+  const [compareIds, setCompareIds] = useState([]);
+  const compareHomes = compareIds
+    .map((id) => homes.find((home) => home.id === id))
+    .filter(Boolean)
+    .map((home) => localizeHome(home, language));
+
+  useEffect(() => {
+    try {
+      localStorage.setItem("saved-homes", JSON.stringify(saved));
+    } catch (error) {
+      console.error("Could not save your shortlist in this browser:", error);
+    }
+  }, [saved]);
+
+  useEffect(() => {
+    document.documentElement.dataset.theme = darkMode ? "dark" : "light";
+    try {
+      localStorage.setItem("site-theme", darkMode ? "dark" : "light");
+    } catch (error) {
+      console.error("Could not save your theme preference in this browser:", error);
+    }
+  }, [darkMode]);
+
+  useEffect(() => {
+    document.documentElement.lang = language;
+    try {
+      localStorage.setItem("site-language", language);
+    } catch (error) {
+      console.error("Could not save the language preference in this browser:", error);
+    }
+  }, [language]);
+
+  useEffect(() => {
+    function syncPageFromLocation() {
+      const nextSoldPage = isPastSalesPage();
+      if (nextSoldPage === soldPage) return;
+      setSoldPage(nextSoldPage);
+      setMenuOpen(false);
+      if (nextSoldPage) {
+        window.scrollTo({ top: 0, behavior: "auto" });
+      } else if (window.location.hash) {
+        const targetId = decodeURIComponent(window.location.hash.slice(1));
+        requestAnimationFrame(() => document.getElementById(targetId)?.scrollIntoView());
+      }
+    }
+    window.addEventListener("hashchange", syncPageFromLocation);
+    window.addEventListener("popstate", syncPageFromLocation);
+    return () => {
+      window.removeEventListener("hashchange", syncPageFromLocation);
+      window.removeEventListener("popstate", syncPageFromLocation);
+    };
+  }, [soldPage]);
+
+  useEffect(() => {
+    document.title = t.siteTitle.replace("{brand}", branding.brand_name);
+  }, [branding.brand_name, t.siteTitle]);
+
+  useEffect(() => {
+    const contactSection = document.getElementById("contact");
+    if (!contactSection) return undefined;
+    const observer = new IntersectionObserver(([entry]) => {
+      document.documentElement.classList.toggle("contact-in-view", entry.isIntersecting);
+    }, { threshold: 0.15 });
+    observer.observe(contactSection);
+    return () => {
+      observer.disconnect();
+      document.documentElement.classList.remove("contact-in-view");
+    };
+  }, []);
+
+  useEffect(() => {
+    const footer = document.querySelector(".site-footer");
+    if (!footer) return undefined;
+    const observer = new IntersectionObserver(([entry]) => {
+      document.documentElement.classList.toggle("footer-in-view", entry.isIntersecting);
+    }, { threshold: 0.1 });
+    observer.observe(footer);
+    return () => {
+      observer.disconnect();
+      document.documentElement.classList.remove("footer-in-view");
+    };
+  }, []);
+
+  useEffect(() => {
+    const hero = document.querySelector(".hero");
+    if (!hero) return undefined;
+    const observer = new IntersectionObserver(([entry]) => {
+      document.documentElement.classList.toggle("hero-in-view", entry.isIntersecting);
+    }, { threshold: 0.05 });
+    observer.observe(hero);
+    return () => {
+      observer.disconnect();
+      document.documentElement.classList.remove("hero-in-view");
+    };
+  }, [soldPage]);
+
+  useEffect(() => {
+    if (!supabase) return undefined;
+    let active = true;
+    setListingsLoaded(false);
+    let query = supabase.from("properties").select("*")
+      .in("status", soldPage ? ["Sold"] : ["For sale", "Under contract"])
+      .in("property_type", ["Apartment", "Shop"])
+      .order("featured", { ascending: false })
+      .order("created_at", { ascending: false });
+    query.then(({ data, error }) => {
+      if (error) throw error;
+      if (active) {
+        setHomes(data || []);
+        setListingsLoaded(true);
+      }
+    }).catch((error) => {
+      if (active) {
+        console.error("Could not load listings from Supabase:", error);
+        setApiNotice(soldPage ? t.pastSalesError : t.listingsError);
+      }
+    });
+    return () => {
+      active = false;
+    };
+  }, [soldPage, t.listingsError, t.pastSalesError]);
+
+  const filteredHomes = useMemo(() => {
+    const matching = homes.filter((home) => {
+      const localizedHome = localizeHome(home, language);
+      const matchesQuery = !query || `${localizedHome.title} ${localizedHome.location}`.toLowerCase().includes(query.toLowerCase());
+      const matchesType = !type || home.property_type === type;
+      const matchesBedrooms = !bedrooms
+        || (home.property_type === "Apartment" && home.beds >= Number(bedrooms));
+      const matchesAvailability = !availability || home.status === availability;
+      const matchesBudget = !maxPrice || home.price <= Number(maxPrice);
+      return matchesQuery && matchesType && matchesBedrooms && matchesAvailability && matchesBudget;
+    });
+    if (sort === "price-low") matching.sort((a, b) => a.price - b.price);
+    if (sort === "price-high") matching.sort((a, b) => b.price - a.price);
+    return matching;
+  }, [homes, language, query, type, bedrooms, availability, maxPrice, sort]);
+  const visibleHomes = savedOnly
+    ? filteredHomes.filter((home) => saved.includes(home.id))
+    : filteredHomes;
 
   function toggleSaved(id) {
     const home = homes.find((item) => item.id === id);
     const alreadySaved = saved.includes(id);
-    setSaved(alreadySaved ? saved.filter((item) => item !== id) : [...saved, id]);
-    const label = (language === "am" && home?.title_am) || home?.title || t.home.toLowerCase();
-    setSavedAnnouncement(alreadySaved ? t.savedRemoved(label) : t.savedAdded(label));
+    setSaved((current) => alreadySaved
+      ? current.filter((item) => item !== id)
+      : [...current, id]);
+    setSavedAnnouncement((alreadySaved ? t.savedRemoved : t.savedAdded).replace("{name}", home?.title || t.home));
   }
 
-  function resetFilters() {
-    setCriteria(EMPTY_FILTERS);
-    setSavedOnly(false);
+  function toggleCompare(id) {
+    setCompareIds((current) => current.includes(id)
+      ? current.filter((item) => item !== id)
+      : current.length < 3 ? [...current, id] : current);
+  }
+
+  function browseArea(area) {
+    setQuery(area);
+    document.getElementById("homes")?.scrollIntoView({ behavior: "smooth" });
+  }
+
+  function displayPrice(price) {
+    const formattedPrice = new Intl.NumberFormat(language === "am" ? "am-ET" : "en-ET", {
+      style: "currency",
+      currency: branding.currency_code || "ETB",
+      maximumFractionDigits: 0,
+    }).format(price);
+    return t.fromPrice.replace("{price}", formattedPrice);
   }
 
   function searchSubmit(event) {
@@ -78,109 +898,493 @@ function PublicSite() {
     document.getElementById("homes")?.scrollIntoView({ behavior: "smooth" });
   }
 
-  async function submitInquiry(payload) {
-    if (!supabase) throw new Error(t.unavailableForm);
-    return realEstateApi.submitInquiry(payload);
-  }
-
-  if (soldPage) {
-    return (
-      <>
-        <SiteHeader
-          branding={branding}
-          language={language}
-          onToggleLanguage={toggleLanguage}
-          darkMode={darkMode}
-          onToggleTheme={toggleTheme}
-          menuOpen={menuOpen}
-          onToggleMenu={() => setMenuOpen(!menuOpen)}
-          onCloseMenu={closeMenu}
-          soldPage
-          agentName={agentName}
-          t={t}
-        />
-        <SoldPage
-          homes={homes}
-          saved={saved}
-          onSave={toggleSaved}
-          onOpen={setSelectedHome}
-          apiNotice={apiNotice}
-          settings={branding}
-          t={t}
-          language={language}
-        />
-        <SiteFooter branding={branding} agentName={agentName} t={t} />
-        <FloatingContact branding={branding} t={t} />
-        {selectedHome && <InquiryModal home={selectedHome} settings={branding} onClose={() => setSelectedHome(null)} t={t} onSubmit={submitInquiry} />}
-      </>
-    );
-  }
-
   return (
     <>
-      <SiteHeader
-        branding={branding}
-        language={language}
-        onToggleLanguage={toggleLanguage}
-        darkMode={darkMode}
-        onToggleTheme={toggleTheme}
-        menuOpen={menuOpen}
-        onToggleMenu={() => setMenuOpen(!menuOpen)}
-        onCloseMenu={closeMenu}
-        soldPage={false}
-        agentName={agentName}
-        t={t}
-      />
+      <header className={`site-header${soldPage ? " site-header-solid" : " site-header-hero"}`}>
+        <Brand settings={branding} />
+        <button className="language-toggle language-toggle-mobile" type="button" onClick={() => setLanguage((current) => current === "en" ? "am" : "en")} aria-label={t.languageTitle} title={t.languageTitle}>
+          {t.language}
+        </button>
+        <a
+          className="mobile-header-call"
+          href={phoneDigits ? `tel:${phoneDigits}` : "#contact"}
+          aria-label={t.contactAgent.replace("{name}", agentName)}
+        >
+          <Icon name="phone" size={17} />
+          <span>{phoneDigits ? t.callNow : t.contact}</span>
+        </a>
+        <button className="mobile-menu-toggle" aria-label={menuOpen ? t.closeMenu : t.openMenu} aria-expanded={menuOpen} onClick={() => setMenuOpen(!menuOpen)}><Icon name={menuOpen ? "close" : "menu"} /></button>
+        <nav className={menuOpen ? "nav-open" : ""} aria-label={t.home}>
+          <a href="/" onClick={() => setMenuOpen(false)}>{t.home}</a>
+          <a href="/#homes" onClick={() => setMenuOpen(false)}>{t.listings}</a>
+          {!soldPage && <a href="/#projects" onClick={() => setMenuOpen(false)}>{t.projects}</a>}
+          {!soldPage && <a href="/#areas" onClick={() => setMenuOpen(false)}>{t.areas}</a>}
+          {!soldPage && <a href="/#buying-guide" onClick={() => setMenuOpen(false)}>{t.buyingGuide}</a>}
+          <a href="/#contact" onClick={() => setMenuOpen(false)}>{t.contact}</a>
+          <a href="/#sold-homes" onClick={() => setMenuOpen(false)}>{t.pastSales}</a>
+          <button className="language-toggle language-toggle-desktop" type="button" onClick={() => setLanguage((current) => current === "en" ? "am" : "en")} aria-label={t.languageTitle} title={t.languageTitle}>
+            {t.language}
+          </button>
+          <button className="theme-toggle" onClick={() => setDarkMode((current) => !current)} aria-label={`Switch to ${darkMode ? "light" : "dark"} mode`} title={`Switch to ${darkMode ? "light" : "dark"} mode`}>
+            <Icon name={darkMode ? "sun" : "moon"} size={17} />
+          </button>
+          <a
+            className={phoneDigits ? "nav-call" : "nav-contact"}
+            href={phoneDigits ? `tel:${phoneDigits}` : (soldPage ? "/#contact" : "#contact")}
+            onClick={() => setMenuOpen(false)}
+          >
+            {phoneDigits ? `${t.call} ${agentName}` : t.contactAgent.replace("{name}", agentName)} <Icon name="arrow" size={16} />
+          </a>
+        </nav>
+      </header>
+
+      {soldPage ? (
+        <main>
+          <section className="sold-page section-shell">
+            <p className="eyebrow">{t.soldEyebrow}</p>
+            <h1>{t.previouslySold}</h1>
+            <p className="section-intro">{t.soldIntro}</p>
+            {apiNotice && <p className="api-notice" role="status">{apiNotice}</p>}
+            {homes.length ? (
+              <div className="property-grid" role="region" aria-label={t.soldEyebrow} tabIndex={0}>
+                {homes.map((home) => <PropertyCard key={home.id} home={home} settings={branding} language={language} t={t} saved={saved.includes(home.id)} onSave={toggleSaved} onOpen={setSelectedHome} />)}
+              </div>
+            ) : (
+              <div className="empty-results"><span>⌂</span><h3>{t.soldEmpty}</h3><p>{t.pastSalesAdded}</p><a className="text-link" href="/#contact">{t.getInTouch} <Icon name="arrow" size={16} /></a></div>
+            )}
+            <div className="center-action"><a href="/#contact" className="button button-outline">{t.getInTouch} <Icon name="arrow" size={17} /></a></div>
+          </section>
+        </main>
+      ) : (
       <main>
-        <Hero
-          branding={branding}
-          heroImage={heroImage}
-          agentName={agentName}
-          agentTitle={agentTitle}
-          criteria={criteria}
-          onCriteriaChange={setCriteria}
-          onSearchSubmit={searchSubmit}
-          t={t}
-        />
-        <ListingsSection
-          homes={filteredHomes}
-          saved={saved}
-          savedOnly={savedOnly}
-          savedCount={saved.length}
-          savedAnnouncement={savedAnnouncement}
-          apiNotice={apiNotice}
-          onToggleSavedOnly={() => setSavedOnly((current) => !current)}
-          sort={sort}
-          onSortChange={(event) => setSort(event.target.value)}
-          onSave={toggleSaved}
-          onOpen={setSelectedHome}
-          onResetFilters={resetFilters}
-          settings={branding}
-          t={t}
-          language={language}
-        />
-        <ProjectsSection
-          featuredHomes={featuredHomes}
-          onOpen={setSelectedHome}
-          t={t}
-          language={language}
-        />
-        <AgentSection
-          branding={branding}
-          agentName={agentName}
-          agentTitle={agentTitle}
-          agentBio={agentBio}
-          t={t}
-        />
-        <ContactSection branding={branding} socialLinks={socialLinks} t={t} />
+        <section className="hero">
+          <div className="hero-image" style={{ backgroundImage: `url("${heroImage}")` }}>
+            {heroVideo && <video className="hero-background-video" src={apiAssetUrl(heroVideo)} poster={apiAssetUrl(heroImage)} autoPlay muted={heroMuted} loop playsInline aria-hidden="true" />}
+          </div>
+          {heroVideo && (
+            <button className="hero-video-toggle" type="button" onClick={() => setHeroMuted((current) => !current)} aria-label={heroMuted ? t.unmuteVideo : t.muteVideo}>
+              <span aria-hidden="true">{heroMuted ? "◖" : "◗"}</span>
+            </button>
+          )}
+          <div className="hero-content">
+            <span className="hero-kicker"><span /> {t.kicker}</span>
+            <h1>{t.heroLead}<br /><em>{t.heroEmphasis}</em></h1>
+            <p>{t.heroDescription}</p>
+            <div className="hero-actions">
+              <a className="button button-blue" href="#homes">{t.exploreListings} <Icon name="arrow" size={17} /></a>
+              <button className="button hero-outline" type="button" onClick={() => setInquiryOpen(true)}>{t.bookViewing}</button>
+            </div>
+          </div>
+          <span className="hero-caption">{branding.brand_name}</span>
+          <div className="hero-note" aria-hidden="true">
+            <span className="hero-note-mark">✦</span>
+            <span><strong>{t.planMove}</strong><small>{t.planDescription}</small></span>
+          </div>
+          <form className="search-panel" onSubmit={searchSubmit}>
+            <label className="search-location">
+              <span>{t.area}</span>
+              <span className="search-input-wrap"><Icon name="pin" size={18} /><input list="property-locations" value={query} onChange={(event) => setQuery(event.target.value)} placeholder={t.areaPlaceholder} /></span>
+              <datalist id="property-locations">
+                {listingAreas.map((area) => <option value={area} key={area} />)}
+              </datalist>
+            </label>
+            <label className="search-type">
+              <span>{t.propertyType}</span>
+              <select value={type} onChange={(event) => setType(event.target.value)}>
+                <option value="">{t.allSpaces}</option>
+                <option value="Apartment">{t.apartment}</option>
+                <option value="Shop">{t.shop}</option>
+              </select>
+            </label>
+            <label className="search-bedrooms">
+              <span>{t.bedrooms}</span>
+              <select value={bedrooms} onChange={(event) => setBedrooms(event.target.value)}>
+                <option value="">{t.anyNumber}</option>
+                <option value="1">1 {t.orMore}</option>
+                <option value="2">2 {t.orMore}</option>
+                <option value="3">3 {t.orMore}</option>
+              </select>
+            </label>
+            <label className="search-budget">
+              <span>{t.maxPrice}</span>
+              <input
+                type="number"
+                min="0"
+                inputMode="numeric"
+                value={maxPrice}
+                onChange={(event) => setMaxPrice(event.target.value)}
+                placeholder={t.anyBudget}
+                aria-label={t.maxPrice}
+              />
+            </label>
+            <label className="search-status">
+              <span>{t.availability}</span>
+              <select value={availability} onChange={(event) => setAvailability(event.target.value)}>
+                <option value="">{t.allCurrent}</option>
+                <option value="For sale">{t.forSale}</option>
+                <option value="Under contract">{t.underContract}</option>
+              </select>
+            </label>
+            <button className="search-submit" type="submit"><Icon name="search" size={19} /><span>{t.search}</span></button>
+          </form>
+          <div className="hero-bottom">
+            <span>{t.localKnowledge}</span>
+            <span>{agentName.toUpperCase()} · {profileTitle.toUpperCase()}</span>
+          </div>
+        </section>
+
+        {listingsLoaded && (
+          <section className="stats-band" aria-label="Current listing statistics">
+            <div className="stats-band-heading">
+              <p className="eyebrow">{t.currentCollection}</p>
+              <span>{t.statsNote}</span>
+            </div>
+            <div className="stats-grid">
+              {liveStats.map((stat) => (
+                <div className="stat-card" key={stat.label}>
+                  <strong>{stat.value}</strong>
+                  <span>{t[stat.label]}</span>
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
+
+        <section className="listings-section section-shell" id="homes">
+          <div className="section-heading">
+            <div>
+              <p className="eyebrow">{t.collectionEyebrow}</p>
+              <h2>{t.exploreCollection} <em>{t.listingsWord}</em></h2>
+              <p className="section-intro">{t.browseCopy}</p>
+            </div>
+            <div className="listing-controls">
+              <span>{visibleHomes.length} {visibleHomes.length === 1 ? t.property : t.properties}</span>
+              <button
+                className={`saved-filter${savedOnly ? " is-active" : ""}`}
+                type="button"
+                onClick={() => setSavedOnly((current) => !current)}
+                aria-pressed={savedOnly}
+              >
+                <Icon name="heart" size={15} /> {t.saved} <span className="saved-count">{saved.length}</span>
+              </button>
+              <label className="sort-control"><span className="sr-only">Sort homes</span>
+                <select value={sort} onChange={(event) => setSort(event.target.value)}>
+                  <option value="featured">{t.featuredFirst}</option>
+                  <option value="price-low">{t.priceLow}</option>
+                  <option value="price-high">{t.priceHigh}</option>
+                </select>
+              </label>
+            </div>
+          </div>
+          {apiNotice && <p className="api-notice" role="status">{apiNotice}</p>}
+          <p className="sr-only" aria-live="polite">{savedAnnouncement}</p>
+          {visibleHomes.length ? (
+            <AutoCarousel itemCount={visibleHomes.length} className="property-grid" label={t.collectionEyebrow} t={t}>
+              {visibleHomes.map((home) => <PropertyCard key={home.id} home={home} settings={branding} language={language} t={t} saved={saved.includes(home.id)} onSave={toggleSaved} onOpen={setSelectedHome} />)}
+            </AutoCarousel>
+          ) : (
+            <div className="empty-results"><span>⌂</span><h3>{savedOnly ? t.noSaved : t.noMatches}</h3><p>{savedOnly ? t.savedHint : t.searchHint}</p><button className="text-link" onClick={() => { setQuery(""); setType(""); setBedrooms(""); setAvailability(""); setMaxPrice(""); setSavedOnly(false); }}>{t.showAll} <Icon name="arrow" size={16} /></button></div>
+          )}
+          {visibleHomes.length > 0 && (
+            <section className="inventory-section" aria-labelledby="inventory-title">
+              <div className="section-heading inventory-heading">
+                <div>
+                  <p className="eyebrow">{t.compareLimit}</p>
+                  <h3 id="inventory-title">{t.inventoryTitle}</h3>
+                  <p className="section-intro">{t.inventoryIntro}</p>
+                </div>
+                <span className="compare-count">{t.comparing}: {compareHomes.length}/3</span>
+              </div>
+              <div className="data-table-scroll">
+                <table className="listing-data-table">
+                  <thead>
+                    <tr>
+                      <th scope="col">{t.listingLabel}</th>
+                      <th scope="col">{t.typeLabel}</th>
+                      <th scope="col">{t.locationLabel}</th>
+                      <th scope="col">{t.bedroomsShort}</th>
+                      <th scope="col">{t.bathroomsShort}</th>
+                      <th scope="col">{t.areaLabel}</th>
+                      <th scope="col">{t.priceLabel}</th>
+                      <th scope="col">{t.statusLabel}</th>
+                      <th scope="col">{t.compare}</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {visibleHomes.map((sourceHome) => {
+                      const home = localizeHome(sourceHome, language);
+                      const selected = compareIds.includes(home.id);
+                      return (
+                        <tr key={home.id}>
+                          <th scope="row"><button className="table-home-link" type="button" onClick={() => setSelectedHome(home)}>{home.title}</button></th>
+                          <td>{home.property_type === "Apartment" ? t.apartment : t.shop}</td>
+                          <td>{home.location}</td>
+                          <td>{home.property_type === "Apartment" ? home.beds : "—"}</td>
+                          <td>{home.baths || "—"}</td>
+                          <td>{Number(home.area).toLocaleString(language === "am" ? "am-ET" : "en-ET")} {branding.area_unit || "sqft"}</td>
+                          <td>{displayPrice(home.price)}</td>
+                          <td>{home.status === "Under contract" ? t.underContract : home.status === "Sold" ? t.previouslySold : t.forSale}</td>
+                          <td>
+                            <button
+                              className={`table-compare-button${selected ? " is-selected" : ""}`}
+                              type="button"
+                              onClick={() => toggleCompare(home.id)}
+                              disabled={!selected && compareIds.length >= 3}
+                              aria-pressed={selected}
+                              aria-label={`${t.selectForCompare}: ${home.title}`}
+                            >
+                              {selected ? "✓" : "+"}
+                            </button>
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+              {compareHomes.length >= 2 ? (
+                <div className="comparison-table-wrap">
+                  <h3>{t.compare} ({compareHomes.length})</h3>
+                  <div className="data-table-scroll">
+                    <table className="comparison-table">
+                      <thead>
+                        <tr><th scope="col">{t.listingLabel}</th>{compareHomes.map((home) => <th scope="col" key={home.id}>{home.title}</th>)}</tr>
+                      </thead>
+                      <tbody>
+                        <tr><th scope="row">{t.typeLabel}</th>{compareHomes.map((home) => <td key={home.id}>{home.property_type === "Apartment" ? t.apartment : t.shop}</td>)}</tr>
+                        <tr><th scope="row">{t.locationLabel}</th>{compareHomes.map((home) => <td key={home.id}>{home.location}</td>)}</tr>
+                        <tr><th scope="row">{t.bedroomsShort}</th>{compareHomes.map((home) => <td key={home.id}>{home.property_type === "Apartment" ? home.beds : "—"}</td>)}</tr>
+                        <tr><th scope="row">{t.bathroomsShort}</th>{compareHomes.map((home) => <td key={home.id}>{home.baths || "—"}</td>)}</tr>
+                        <tr><th scope="row">{t.areaLabel}</th>{compareHomes.map((home) => <td key={home.id}>{Number(home.area).toLocaleString(language === "am" ? "am-ET" : "en-ET")} {branding.area_unit || "sqft"}</td>)}</tr>
+                        <tr><th scope="row">{t.priceLabel}</th>{compareHomes.map((home) => <td key={home.id}>{displayPrice(home.price)}</td>)}</tr>
+                        <tr><th scope="row">{t.statusLabel}</th>{compareHomes.map((home) => <td key={home.id}>{home.status === "Under contract" ? t.underContract : home.status === "Sold" ? t.previouslySold : t.forSale}</td>)}</tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              ) : (
+                <p className="compare-hint">{t.chooseTwo}</p>
+              )}
+            </section>
+          )}
+          <div className="center-action"><a href="/#sold-homes" className="text-link">{t.completedSales} <Icon name="arrow" size={16} /></a></div>
+        </section>
+
+        <section className="projects-section section-shell" id="projects">
+          <div className="section-heading">
+            <div>
+              <p className="eyebrow">{t.closerLook}</p>
+              <h2>{t.featuredProperties}</h2>
+              <p className="section-intro">{t.featuredDescription}</p>
+            </div>
+            <a href="#homes" className="text-link">Explore listings <Icon name="arrow" size={16} /></a>
+          </div>
+          {featuredHomes.length ? (
+            <AutoCarousel itemCount={featuredHomes.length} className="project-grid featured-carousel" label={t.featuredProperties} t={t}>
+              {featuredHomes.map((home) => (
+                <button className="project-tile" key={home.id} onClick={() => setSelectedHome(home)}>
+                  <img src={home.image_url} alt={home.title} loading="lazy" />
+                  <span className="project-tile-shade" />
+                  <span className="project-tile-label">{home.property_type === "Apartment" ? t.apartment : t.shop} · {language === "am" ? (home.location_am || home.location) : home.location}</span>
+                  <span className="project-tile-title">{language === "am" ? (home.title_am || home.title) : home.title}</span>
+                  <span className="project-tile-link">{t.viewProperty} <Icon name="arrow" size={16} /></span>
+                </button>
+              ))}
+            </AutoCarousel>
+          ) : (
+            <div className="empty-results"><h3>{t.featuredEmpty}</h3><p>{t.featuredEmptyHint}</p></div>
+          )}
+        </section>
+
+        <section className="area-section section-shell" id="areas">
+          <div className="section-heading">
+            <div>
+              <p className="eyebrow">{t.areaBrowse}</p>
+              <h2>{t.areaBrowse}</h2>
+              <p className="section-intro">{t.areaBrowseIntro}</p>
+            </div>
+          </div>
+          {areaCards.length ? (
+            <div className="area-card-grid">
+              {areaCards.map((area) => (
+                <button className="area-card" type="button" key={area.location} onClick={() => browseArea(area.location)}>
+                  {area.image ? <img src={apiAssetUrl(area.image)} alt="" loading="lazy" /> : <span className="area-card-placeholder"><Icon name="pin" size={28} /></span>}
+                  <span className="area-card-shade" />
+                  <span className="area-card-copy"><strong>{area.location}</strong><small>{area.homes.length} {area.homes.length === 1 ? t.property : t.properties}</small><span>{t.viewArea} <Icon name="arrow" size={15} /></span></span>
+                </button>
+              ))}
+            </div>
+          ) : <p className="empty-area-copy">{t.noAreas}</p>}
+        </section>
+
+        <section className="buying-guide section-shell" id="buying-guide">
+          <div className="section-heading">
+            <div>
+              <p className="eyebrow">{t.clearStart}</p>
+              <h2>{t.planMove} <em>{t.move}</em></h2>
+              <p className="section-intro">{t.planDescription}</p>
+            </div>
+          </div>
+          <div className="guide-grid">
+            <article className="guide-card">
+              <span className="guide-number">01</span>
+              <h3>{t.guideExplore}</h3>
+              <p>{t.guideExploreCopy}</p>
+            </article>
+            <article className="guide-card">
+              <span className="guide-number">02</span>
+              <h3>{t.guideCompare}</h3>
+              <p>{t.guideCompareCopy}</p>
+            </article>
+            <article className="guide-card">
+              <span className="guide-number">03</span>
+              <h3>{t.guideTalk}</h3>
+              <p>{t.guideTalkCopy}</p>
+            </article>
+          </div>
+          <div className="faq-panel">
+            <div className="faq-heading">
+              <p className="eyebrow">{t.goodToKnow}</p>
+              <h2>{t.questions}</h2>
+            </div>
+            <div className="faq-list">
+              <details>
+                <summary>{t.faqTypes}</summary>
+                <p>{t.faqTypesAnswer}</p>
+              </details>
+              <details>
+                <summary>{t.faqAreas}</summary>
+                <p>{t.faqAreasAnswer}</p>
+              </details>
+              <details>
+                <summary>{t.faqViewing}</summary>
+                <p>{t.faqViewingAnswer}</p>
+              </details>
+              <details>
+                <summary>{t.faqSave}</summary>
+                <p>{t.faqSaveAnswer}</p>
+              </details>
+            </div>
+          </div>
+        </section>
+
+        <section className="contact-section" id="contact">
+          <div className="contact-copy">
+            <p className="eyebrow">{t.contactEyebrow}</p>
+            <h2>{t.contactTitle}<br /><em>{t.nextPlace}</em></h2>
+            <p>{t.contactDescription.replace("{name}", agentName)}</p>
+            {phoneDigits && (
+              <a className="contact-primary-action" href={`tel:${phoneDigits}`}>
+                <span className="contact-action-icon"><Icon name="phone" size={19} /></span>
+                <span><small>{t.callUpper.replace("{name}", agentName.toUpperCase())}</small><strong>{branding.contact_phone}</strong></span>
+                <Icon name="arrow" size={18} />
+              </a>
+            )}
+            {!phoneDigits && !configuredSocialLinks.length && (
+              <p className="contact-unavailable">{t.contactUnavailable}</p>
+            )}
+          </div>
+          <div className="contact-card">
+            <div className="contact-card-heading">
+              <span className="contact-card-icon"><Icon name="home" size={21} /></span>
+              <span><strong>{t.connect}</strong><small>{t.chooseContact}</small></span>
+            </div>
+            <div className="contact-channels">
+              {configuredSocialLinks.length ? configuredSocialLinks.map((item) => (
+                <a className="contact-channel" href={item.href} key={item.name} target="_blank" rel="noreferrer">
+                  <span className={`contact-channel-mark channel-${item.name.toLowerCase()}`}>{item.mark}</span>
+                  <span><strong>{item.name}</strong><small>{item.account || t.msgUs.replace("{name}", agentName)}</small></span>
+                  <Icon name="arrow" size={16} />
+                </a>
+              )) : <p className="contact-channel-empty">{t.socialEmpty}</p>}
+            </div>
+            <p className="contact-card-note"><span>✦</span> {t.friendlyAdvice}</p>
+          </div>
+        </section>
       </main>
-      <SiteFooter branding={branding} agentName={agentName} t={t} />
-      <FloatingContact branding={branding} t={t} />
-      {selectedHome && <InquiryModal home={selectedHome} settings={branding} onClose={() => setSelectedHome(null)} t={t} onSubmit={submitInquiry} />}
+      )}
+
+      <footer className="site-footer">
+        <div className="footer-main">
+          <div className="footer-about">
+            <Brand settings={branding} footer />
+            <p>{t.footerDescription}</p>
+            <span className="footer-tagline">{t.footerTagline.replace("{name}", agentName)}</span>
+          </div>
+          <nav className="footer-column" aria-label={t.footerExplore}>
+            <h2>{t.footerExplore}</h2>
+            <a href="/#homes">{t.listings}</a>
+            <a href="/#projects">{t.projects}</a>
+            <a href="/#buying-guide">{t.buyingGuide}</a>
+            <a href="/#sold-homes">{t.pastSales}</a>
+          </nav>
+          <div className="footer-column">
+            <h2>{t.footerAreas}</h2>
+            {listingAreas.length ? listingAreas.slice(0, 5).map((area) => (
+              <button type="button" key={area} onClick={() => browseArea(area)}>{area}</button>
+            )) : <span>{t.footerNoAreas}</span>}
+          </div>
+          <div className="footer-column footer-contact-column">
+            <h2>{t.footerVisit}</h2>
+            {phoneDigits && <a href={`tel:${phoneDigits}`}><Icon name="phone" size={15} />{t.callBusiness} · {branding.contact_phone}</a>}
+            {configuredSocialLinks.map((item) => (
+              <a href={item.href} key={item.name} target="_blank" rel="noreferrer">{item.name}</a>
+            ))}
+            {!phoneDigits && !configuredSocialLinks.length && <a href="/#contact">{t.contact}</a>}
+          </div>
+        </div>
+        <div className="footer-bottom">
+          <span>© {new Date().getFullYear()} {branding.brand_name}</span>
+          <a href="/#contact">{t.contact}</a>
+        </div>
+      </footer>
+
+      {configuredSocialLinks.length > 0 && (
+        <nav className="floating-contact" aria-label={t.contact}>
+        {configuredSocialLinks.map((item) => (
+          <a
+            className={`social-circle social-${item.name.toLowerCase()}`}
+            href={item.href}
+            key={item.name}
+            target="_blank"
+            rel="noreferrer"
+            aria-label={t.contactOn.replace("{name}", item.name)}
+            title={item.name}
+          >
+            <span aria-hidden="true">{item.mark}</span>
+          </a>
+        ))}
+        </nav>
+      )}
+      {!soldPage && (
+        <a
+          className="mobile-contact-bar"
+          href={phoneDigits ? `tel:${phoneDigits}` : "#contact"}
+          aria-label={t.contactAgent.replace("{name}", agentName)}
+        >
+          <Icon name="phone" size={18} />
+          <span>{phoneDigits ? `${t.call} ${agentName}` : t.contactAgent.replace("{name}", agentName)}</span>
+          <Icon name="arrow" size={17} />
+        </a>
+      )}
+      {(selectedHome || inquiryOpen) && (
+        <InquiryModal
+          key={selectedHome?.id || "general-inquiry"}
+          home={selectedHome}
+          settings={branding}
+          language={language}
+          t={t}
+          onClose={() => {
+            setSelectedHome(null);
+            setInquiryOpen(false);
+          }}
+        />
+      )}
     </>
   );
 }
 
 export default function App() {
-  return isAdminRoute() ? <AdminApp /> : <PublicSite />;
+  const isAdminRoute = window.location.pathname.replace(/\/+$/, "") === "/admin";
+  return isAdminRoute ? <AdminApp /> : <PublicSite />;
 }

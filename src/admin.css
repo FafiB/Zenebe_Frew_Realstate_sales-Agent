@@ -68,6 +68,13 @@
 .admin-inquiry blockquote { margin: 12px 0; padding-left: 12px; border-left: 2px solid #d6bd8b; color: #43576a; font-size: 12px; white-space: pre-wrap; }
 .admin-inquiry-property { font-weight: 700; }
 .admin-inline-link { color: #195e91; font-size: 11px; font-weight: 700; }
+.admin-help-text { margin: -7px 0 15px; color: #6d7d8c; font-size: 11px; }
+.admin-gallery-manager { margin: 4px 0 18px; }
+.admin-gallery-manager > strong { display: block; margin-bottom: 10px; color: #40576b; font-size: 11px; }
+.admin-gallery-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(112px, 1fr)); gap: 10px; }
+.admin-gallery-item { min-width: 0; display: grid; gap: 6px; }
+.admin-gallery-item img { width: 100%; height: 82px; border: 1px solid #dfe6ec; border-radius: 8px; background: #eef2f5; object-fit: cover; }
+.admin-gallery-item .admin-danger-button { min-height: 32px; padding-inline: 8px; font-size: 10px; }
 .admin-error, .admin-notice { margin: 0 0 18px; padding: 12px 14px; border-radius: 8px; font-size: 12px; }
 .admin-error { border: 1px solid #efcdcd; background: #fff1f1; color: #9c3333; }
 .admin-notice { border: 1px solid #cfe7d7; background: #effaf2; color: #28623c; }

@@ -7,10 +7,8 @@ const blankSettings = {
   brand_name: "Zenebe Frew Real Estate",
   logo_url: "",
   agent_name: "Helen Hidbachew",
-  agent_title: "Real Estate Agent",
-  agent_title_am: "",
+  agent_title: "Real Estate Professional",
   agent_bio: "",
-  agent_bio_am: "",
   agent_photo_url: "",
   contact_phone: "",
   whatsapp_number: "",
@@ -24,9 +22,7 @@ const blankSettings = {
 
 const blankProperty = {
   title: "",
-  title_am: "",
   location: "",
-  location_am: "",
   price: "",
   beds: 1,
   baths: 1,
@@ -34,21 +30,19 @@ const blankProperty = {
   property_type: "Apartment",
   status: "For sale",
   image_url: "",
+  gallery_urls: [],
   video_url: "",
   description: "",
-  description_am: "",
   featured: false,
 };
 
 const settingsFields = [
   ["brand_name", "Business name", "text"],
   ["logo_url", "Logo image URL (optional)", "url"],
-  ["agent_name", "Agent name", "text"],
-  ["agent_title", "Agent title", "text"],
-  ["agent_title_am", "Agent title in Amharic (optional)", "text"],
-  ["agent_bio", "Short agent biography", "textarea"],
-  ["agent_bio_am", "Short agent biography in Amharic (optional)", "textarea"],
-  ["agent_photo_url", "Agent photo URL (optional)", "url"],
+  ["agent_name", "Profile name", "text"],
+  ["agent_title", "Profile title", "text"],
+  ["agent_bio", "Short biography", "textarea"],
+  ["agent_photo_url", "Profile photo URL (optional)", "url"],
   ["contact_phone", "Phone number", "tel"],
   ["whatsapp_number", "WhatsApp number (international digits)", "tel"],
   ["tiktok_url", "TikTok profile URL", "url"],
@@ -74,6 +68,7 @@ function AdminApp() {
   const [logoFile, setLogoFile] = useState(null);
   const [agentPhotoFile, setAgentPhotoFile] = useState(null);
   const [propertyImageFile, setPropertyImageFile] = useState(null);
+  const [propertyGalleryFiles, setPropertyGalleryFiles] = useState([]);
   const [propertyVideoFile, setPropertyVideoFile] = useState(null);
   const [busy, setBusy] = useState(false);
   const [notice, setNotice] = useState("");
@@ -188,6 +183,7 @@ function AdminApp() {
     setEditingId(null);
     setPropertyDraft(blankProperty);
     setPropertyImageFile(null);
+    setPropertyGalleryFiles([]);
     setPropertyVideoFile(null);
     setError("");
     setNotice("");
@@ -198,12 +194,14 @@ function AdminApp() {
     setEditingId(property.id);
     setPropertyDraft({
       ...property,
+      gallery_urls: Array.isArray(property.gallery_urls) ? property.gallery_urls : [],
       price: String(property.price),
       beds: String(property.beds),
       baths: String(property.baths),
       area: String(property.area),
     });
     setPropertyImageFile(null);
+    setPropertyGalleryFiles([]);
     setPropertyVideoFile(null);
     setError("");
     setNotice("");
@@ -223,6 +221,10 @@ function AdminApp() {
         area: Number(propertyDraft.area),
       };
       if (propertyImageFile) property.image_url = await uploadMedia(propertyImageFile, "property-images");
+      if (propertyGalleryFiles.length) {
+        const uploadedGallery = await Promise.all(propertyGalleryFiles.map((file) => uploadMedia(file, "property-images")));
+        property.gallery_urls = [...(property.gallery_urls || []), ...uploadedGallery];
+      }
       if (propertyVideoFile) property.video_url = await uploadMedia(propertyVideoFile, "property-videos");
       if (editingId) property.id = editingId;
 
@@ -238,6 +240,7 @@ function AdminApp() {
       setPropertyFormOpen(false);
       setPropertyDraft(blankProperty);
       setPropertyImageFile(null);
+      setPropertyGalleryFiles([]);
       setPropertyVideoFile(null);
       setNotice(editingId ? "Property updated." : "Property added.");
     } catch (saveError) {
@@ -338,7 +341,7 @@ function AdminApp() {
 
       {activeTab === "branding" && (
         <form className="admin-panel admin-form" onSubmit={saveSettings}>
-          <div className="admin-panel-heading"><div><h2>Site branding</h2><p>Update business details and the agent profile shown on the public website.</p></div></div>
+          <div className="admin-panel-heading"><div><h2>Site branding</h2><p>Update business details and the profile shown on the public website.</p></div></div>
           <div className="admin-field-grid">
             {settingsFields.map(([name, label, type]) => (
               <label className={type === "textarea" ? "field-wide" : ""} key={name}>{label}
@@ -348,7 +351,7 @@ function AdminApp() {
               </label>
             ))}
             <label>Upload a logo<input type="file" accept="image/jpeg,image/png,image/webp,image/avif,image/gif" onChange={(event) => setLogoFile(event.target.files?.[0] || null)} /></label>
-            <label>Upload agent photo<input type="file" accept="image/jpeg,image/png,image/webp,image/avif,image/gif" onChange={(event) => setAgentPhotoFile(event.target.files?.[0] || null)} /></label>
+            <label>Upload profile photo<input type="file" accept="image/jpeg,image/png,image/webp,image/avif,image/gif" onChange={(event) => setAgentPhotoFile(event.target.files?.[0] || null)} /></label>
           </div>
           <button className="admin-primary-button" disabled={busy}>Save branding</button>
         </form>
@@ -372,11 +375,9 @@ function AdminApp() {
             <form className="admin-panel admin-form admin-property-form" onSubmit={saveProperty}>
               <div className="admin-panel-heading"><div><h2>{editingId ? "Edit property" : "Add a property"}</h2><p>Fields marked required must be filled in.</p></div>{editingId !== null && <button className="admin-secondary-button" type="button" onClick={startNewProperty}>New</button>}</div>
               <label>Property title<input value={propertyDraft.title} onChange={(event) => setPropertyDraft({ ...propertyDraft, title: event.target.value })} required maxLength="120" /></label>
-              <label>Property title in Amharic (optional)<input value={propertyDraft.title_am || ""} onChange={(event) => setPropertyDraft({ ...propertyDraft, title_am: event.target.value })} maxLength="120" /></label>
               <label>Location<input value={propertyDraft.location} onChange={(event) => setPropertyDraft({ ...propertyDraft, location: event.target.value })} required maxLength="180" /></label>
-              <label>Location in Amharic (optional)<input value={propertyDraft.location_am || ""} onChange={(event) => setPropertyDraft({ ...propertyDraft, location_am: event.target.value })} maxLength="180" /></label>
               <div className="admin-field-grid admin-field-grid-three">
-                <label>Price<input type="number" min="1" value={propertyDraft.price} onChange={(event) => setPropertyDraft({ ...propertyDraft, price: event.target.value })} required /></label>
+                <label>Starting price<input type="number" min="1" value={propertyDraft.price} onChange={(event) => setPropertyDraft({ ...propertyDraft, price: event.target.value })} required /></label>
                 <label>Bedrooms<input type="number" min="0" value={propertyDraft.beds} onChange={(event) => setPropertyDraft({ ...propertyDraft, beds: event.target.value })} required /></label>
                 <label>Bathrooms<input type="number" min="0" step="0.5" value={propertyDraft.baths} onChange={(event) => setPropertyDraft({ ...propertyDraft, baths: event.target.value })} required /></label>
                 <label>Area<input type="number" min="0" value={propertyDraft.area} onChange={(event) => setPropertyDraft({ ...propertyDraft, area: event.target.value })} required /></label>
@@ -385,10 +386,27 @@ function AdminApp() {
               </div>
               <label>Photo URL<input type="url" value={propertyDraft.image_url || ""} onChange={(event) => setPropertyDraft({ ...propertyDraft, image_url: event.target.value })} placeholder="https://…" /></label>
               <label>Upload property photo<input type="file" accept="image/jpeg,image/png,image/webp,image/avif,image/gif" onChange={(event) => setPropertyImageFile(event.target.files?.[0] || null)} /></label>
+              <label>Upload additional detail photos<input type="file" accept="image/jpeg,image/png,image/webp,image/avif,image/gif" multiple onChange={(event) => setPropertyGalleryFiles(Array.from(event.target.files || []))} /></label>
+              {propertyGalleryFiles.length > 0 && <p className="admin-help-text">{propertyGalleryFiles.length} additional photo{propertyGalleryFiles.length === 1 ? "" : "s"} selected. They will be added when you save.</p>}
+              {propertyDraft.gallery_urls?.length > 0 && (
+                <div className="admin-gallery-manager">
+                  <strong>Published detail photos</strong>
+                  <div className="admin-gallery-grid">
+                    {propertyDraft.gallery_urls.map((image, index) => (
+                      <div className="admin-gallery-item" key={`${image}-${index}`}>
+                        <img src={image} alt={`Property detail ${index + 1}`} />
+                        <button className="admin-danger-button" type="button" onClick={() => setPropertyDraft({
+                          ...propertyDraft,
+                          gallery_urls: propertyDraft.gallery_urls.filter((_, imageIndex) => imageIndex !== index),
+                        })}>Remove photo</button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
               <label>Video URL<input type="url" value={propertyDraft.video_url || ""} onChange={(event) => setPropertyDraft({ ...propertyDraft, video_url: event.target.value })} placeholder="https://…" /></label>
               <label>Upload property video<input type="file" accept="video/mp4,video/webm,video/quicktime,video/x-m4v" onChange={(event) => setPropertyVideoFile(event.target.files?.[0] || null)} /></label>
-              <label>Description<textarea rows="4" value={propertyDraft.description || ""} onChange={(event) => setPropertyDraft({ ...propertyDraft, description: event.target.value })} /></label>
-              <label>Description in Amharic (optional)<textarea rows="4" value={propertyDraft.description_am || ""} onChange={(event) => setPropertyDraft({ ...propertyDraft, description_am: event.target.value })} /></label>
+              <label>Full property description (shown in View details)<textarea rows="5" value={propertyDraft.description || ""} onChange={(event) => setPropertyDraft({ ...propertyDraft, description: event.target.value })} /></label>
               <label className="admin-checkbox"><input type="checkbox" checked={Boolean(propertyDraft.featured)} onChange={(event) => setPropertyDraft({ ...propertyDraft, featured: event.target.checked })} /> Feature this property</label>
               <button className="admin-primary-button" disabled={busy}>{editingId ? "Save property" : "Add property"}</button>
             </form>
@@ -398,16 +416,14 @@ function AdminApp() {
 
       {activeTab === "inquiries" && (
         <section className="admin-panel">
-          <div className="admin-panel-heading"><div><h2>Customer inquiries</h2><p>Private messages are visible only to administrator accounts.</p></div></div>
+          <div className="admin-panel-heading"><div><h2>Customer inquiries</h2><p>Callback requests include the customer’s name and phone number.</p></div></div>
           {inquiries.length ? (
             <div className="admin-inquiry-list">
               {inquiries.map((inquiry) => (
                 <article className={`admin-inquiry${inquiry.contacted ? " is-contacted" : ""}`} key={inquiry.id}>
                   <div className="admin-inquiry-heading"><div><strong>{inquiry.name}</strong><span>{new Date(inquiry.created_at).toLocaleString()}</span></div><button className="admin-secondary-button" onClick={() => toggleContacted(inquiry)}>{inquiry.contacted ? "Mark new" : "Mark contacted"}</button></div>
-                  <p>{inquiry.email}{inquiry.phone ? ` · ${inquiry.phone}` : ""}</p>
+                  {inquiry.phone && <p><a href={`tel:${inquiry.phone.replace(/[^\d+]/g, "")}`}>{inquiry.phone}</a></p>}
                   {inquiry.properties?.title && <p className="admin-inquiry-property">Asking about: {inquiry.properties.title}</p>}
-                  <blockquote>{inquiry.message}</blockquote>
-                  <a className="admin-inline-link" href={`mailto:${encodeURIComponent(inquiry.email)}?subject=${encodeURIComponent("Your property inquiry")}`}>Reply by email</a>
                 </article>
               ))}
             </div>
