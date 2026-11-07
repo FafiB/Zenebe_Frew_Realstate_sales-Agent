@@ -47,10 +47,9 @@ export function PropertyCard({ home, saved, onSave, onOpen, settings, t, languag
         {displayDescription && <span className="property-description">{displayDescription}</span>}
         <span className="property-specs">
           {isApartment ? (
-            <>
-              <span><Icon name="bed" size={16} />{home.beds} {t.beds}</span>
-              <span><Icon name="bath" size={16} />{home.baths} {t.baths}</span>
-            </>
+            <span title={Number(home.beds) === 0 ? t.studio : undefined}>
+              <Icon name="bed" size={16} />{Number(home.beds) === 0 ? t.studioShort : `${home.beds} ${t.beds}`}
+            </span>
           ) : (
             <span className="property-use">{t.retailSpace}</span>
           )}

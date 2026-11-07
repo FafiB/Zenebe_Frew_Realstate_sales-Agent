@@ -15,7 +15,7 @@ const UI_COPY = {
     exploreListings: "Explore listings", bookViewing: "Book a viewing",
     area: "AREA OR NEIGHBORHOOD", areaPlaceholder: "Search Addis Ababa areas",
     propertyType: "PROPERTY TYPE", allSpaces: "All spaces", apartment: "Apartment", shop: "Shop",
-    bedrooms: "BEDROOMS", anyNumber: "Any number", orMore: "or more",
+    bedrooms: "BEDROOMS", anyNumber: "Any number", studio: "Studio (no separate bedroom)", orMore: "or more",
     maxPrice: "MAXIMUM PRICE · ETB", anyBudget: "Any budget",
     availability: "AVAILABILITY", allCurrent: "All current listings",
     forSale: "For sale", underContract: "Under contract", search: "Search homes",
@@ -65,7 +65,7 @@ const UI_COPY = {
     sending: "Sending...", sendNote: "Send a note", privacy: "Your details stay with us. No spam, ever.",
     noteReceived: "REQUEST RECEIVED", inTouch: "We’ll be in touch.",
     thanks: "Thanks for reaching out. A real person from our team will get back to you shortly.",
-    thankYou: "Thank you", viewDetails: "View details", beds: "beds", baths: "baths",
+    thankYou: "Thank you", viewDetails: "View details", beds: "beds", studioShort: "Studio", baths: "baths",
     retailSpace: "Retail space", videoTour: "Video tour", soldEyebrow: "A LOOK BACK AT COMPLETED SALES",
     previouslySold: "Previously sold.", soldIntro: "Explore completed sales and get in touch to discuss your next move.",
     soldEmpty: "Completed sales will be shared here.", pastSalesAdded: "Past sales added in Admin will appear on this page.",
@@ -78,7 +78,7 @@ const UI_COPY = {
     compareLimit: "Compare up to 3 properties.", chooseTwo: "Choose at least two listings to compare them side by side.",
     inventoryTitle: "Sizes and prices at a glance", inventoryIntro: "Compare current listing details using the information provided for each property.",
     areaBrowse: "Explore by area", areaBrowseIntro: "Browse properties grouped by their listed location.",
-    viewArea: "View properties", bedroomsShort: "Beds", bathroomsShort: "Baths",
+    viewArea: "View properties", bedroomsShort: "Bedrooms", bathroomsShort: "Baths",
     statusLabel: "Status", locationLabel: "Location", typeLabel: "Type", areaLabel: "Size",
     priceLabel: "Price", downPaymentLabel: "Down payment (10%)", listingLabel: "Listing", noListingData: "No listing details are available for this table yet.",
     previousSlide: "Previous items", nextSlide: "Next items",
@@ -107,11 +107,11 @@ const UI_COPY = {
     close: "ዝጋ", openMenu: "ምናሌውን ክፈት", closeMenu: "ምናሌውን ዝጋ",
     language: "EN", languageTitle: "ቋንቋውን ወደ እንግሊዝኛ ቀይር",
     kicker: "ቤቶችና ሱቆች · አዲስ አበባ", heroLead: "የሚመችዎትን",
-    heroEmphasis: "ቤት ያግኙ።", heroDescription: "መኖሪያ ቤቶችንና የንግድ ቦታዎችን ያስሱ፤ በፍለጋዎ ሁሉ እናግዝዎታለን።",
-    exploreListings: "ንብረቶቹን ይመልከቱ", bookViewing: "ለጉብኝት ይጠይቁ",
+    heroEmphasis: "ቤት ያግኙ።", heroDescription: "የሚወዱትን ቤት ወይም ለንግድዎ የሚሆን ቦታ ያስሱ፤ በደስታ እናግዝዎታለን።",
+    exploreListings: "ያሉትን ንብረቶች ይመልከቱ", bookViewing: "ለጉብኝት ቀጠሮ ይያዙ",
     area: "አካባቢ ወይም ሰፈር", areaPlaceholder: "በአዲስ አበባ ውስጥ ይፈልጉ",
     propertyType: "የንብረት ዓይነት", allSpaces: "ሁሉም ዓይነቶች", apartment: "አፓርታማ", shop: "ሱቅ",
-    bedrooms: "የመኝታ ክፍሎች", anyNumber: "ማንኛውም ቁጥር", orMore: "ወይም ከዚያ በላይ",
+    bedrooms: "የመኝታ ክፍሎች", anyNumber: "ሁሉም", studio: "ስቱዲዮ (ያለ መኝታ ክፍል)", orMore: "ወይም ከዚያ በላይ",
     maxPrice: "ከፍተኛ ዋጋ · ብር", anyBudget: "ማንኛውም ዋጋ",
     availability: "የሽያጭ ሁኔታ", allCurrent: "ሁሉም የአሁኑ ንብረቶች",
     forSale: "ለሽያጭ", underContract: "በስምምነት ላይ", search: "ንብረት ይፈልጉ",
@@ -124,19 +124,19 @@ const UI_COPY = {
     featuredFirst: "ተለይተው የቀረቡት ቀድመው", priceLow: "ዋጋ፦ ከዝቅተኛ ወደ ከፍተኛ", priceHigh: "ዋጋ፦ ከከፍተኛ ወደ ዝቅተኛ",
     noSaved: "ያስቀመጧቸው ንብረቶች እዚህ ይታያሉ።",
     removeSaved: "ከተቀመጡት ዝርዝር ያስወግዱ", saveHome: "ወደ ተቀመጡት ያክሉ",
-    noMatches: "ከፍለጋዎ ጋር የሚዛመድ ንብረት አልተገኘም።",
-    savedHint: "እያሰሱ ያሉትን ንብረት ለማስቀመጥ የልብ ምልክቱን ይጫኑ።",
-    searchHint: "ሌላ አካባቢ ይፈልጉ ወይም ሁሉንም ንብረቶች ለማየት ማጣሪያዎቹን ያጽዱ።",
+    noMatches: "ይቅርታ፣ ከፍለጋዎ ጋር የሚስማማ ንብረት አልተገኘም።",
+    savedHint: "የወደዱትን ቤት ለማስቀመጥ የልብ ምልክቱን ይጫኑ።",
+    searchHint: "ሌላ አካባቢ ይሞክሩ፤ ወይም ሁሉንም ንብረቶች ለማየት ማጣሪያዎቹን ያጽዱ።",
     showAll: "ሁሉንም ንብረቶች ይመልከቱ", completedSales: "የተጠናቀቁ ሽያጮችን ይመልከቱ",
     closerLook: "በቅርበት ይመልከቱ", featuredProperties: "ተለይተው የቀረቡ ንብረቶች።",
     featuredDescription: "የተመረጡ መኖሪያ ቤቶችንና የንግድ ቦታዎችን ይመልከቱ።",
     viewProperty: "ዝርዝሩን ይመልከቱ", featuredEmpty: "ተለይተው የቀረቡ ንብረቶች እዚህ ይታያሉ።",
     featuredEmptyHint: "በአስተዳደር ገጹ ላይ ንብረትን ተለይቶ እንዲታይ ይምረጡ።",
     clearStart: "በቀላሉ ይጀምሩ", planMove: "ቀጣዩን እርምጃ",
-    move: "ያቅዱ።", planDescription: "የንብረቶቹን ዝርዝር ይመልከቱ፣ የሚስማማዎትን ይምረጡ፣ ለጉብኝትም ያግኙን።",
-    guideExplore: "ንብረቶችን ያስሱ", guideExploreCopy: "ቤቶችንና ሱቆችን በአካባቢ፣ በዓይነት፣ በመኝታ ክፍል ብዛት፣ በሽያጭ ሁኔታ ወይም በዋጋ ያጣሩ።",
+    move: "ያቅዱ።", planDescription: "የሚወዱትን ንብረት ይመልከቱ፣ የሚመችዎትን ይምረጡ፣ ለጉብኝትም ያግኙን።",
+    guideExplore: "ንብረቶችን ያስሱ", guideExploreCopy: "ቤቶችንና ሱቆችን በአካባቢ፣ በዓይነት፣ በመኝታ ብዛት፣ በሽያጭ ሁኔታ ወይም በዋጋ ማጣራት ይችላሉ።",
     guideCompare: "ዝርዝሮቹን ያነጻጽሩ", guideCompareCopy: "የእያንዳንዱን ንብረት አካባቢ፣ ስፋት፣ ዋጋና ሌሎች መረጃዎች ይመልከቱ።",
-    guideTalk: "ለጉብኝት ያግኙን", guideTalkCopy: "ንብረት ይምረጡና ጥያቄ ይላኩ፤ ወይም ከዚህ ገጽ የመገናኛ አማራጮች አንዱን ይጠቀሙ።",
+    guideTalk: "ለጉብኝት ያግኙን", guideTalkCopy: "የወደዱትን ንብረት ይምረጡና መልዕክት ይላኩልን፤ ወይም በቀጥታ ያግኙን።",
     goodToKnow: "ጠቃሚ መረጃ", questions: "ተደጋጋሚ ጥያቄዎች።",
     faqTypes: "ምን ዓይነት ንብረቶችን ማየት እችላለሁ?",
     faqTypesAnswer: "የቀረቡት ንብረቶች አፓርታማዎችንና ሱቆችን ያካትታሉ። ውጤቶቹን ለማጣራት የንብረት ዓይነት ማጣሪያውን ይጠቀሙ።",
@@ -149,11 +149,11 @@ const UI_COPY = {
     contactEyebrow: "አንድ ጠቅታ ብቻ ቀርቶታል",
     contactTitle: "የሚቀጥለውን", nextPlace: "ቤትዎን እንፈልግ።",
     contactDescription: "መኖሪያ ቤትም ይሁን የንግድ ቦታ እየፈለጉ ከሆነ፣ ልንረዳዎት ዝግጁ ነን።",
-    connect: "ያግኙን", chooseContact: "የሚመችዎትን የመገናኛ መንገድ ይምረጡ።",
+    connect: "ያግኙን",     chooseContact: "በሚመችዎት መንገድ ያግኙን።",
     friendlyAdvice: "ያለ ግፊት፣ በወዳጅነት እናግዝዎታለን።", footerTagline: "ቀጣዩ እርምጃዎ እዚህ ይጀምራል።",
-    sendInquiry: "ስለዚህ ቤት ይጠይቁ", curious: "ስለዚህ ቤት ማወቅ ይፈልጋሉ?",
-    lookingSimilar: "እንደዚህ ያለ ቤት ይፈልጋሉ?", inquireTitle: "የሚፈልጉትን ይንገሩን።",
-    preferTalk: "በቀጥታ ማነጋገር ይመርጣሉ?", chooseContactSimple: "ቅጽ መሙላት ሳያስፈልግ፣ የሚመችዎትን የመገናኛ መንገድ ይምረጡ።",
+    sendInquiry: "ስለዚህ ቤት ይጠይቁ", curious: "ስለዚህ ቤት ተጨማሪ ማወቅ ይፈልጋሉ?",
+    lookingSimilar: "እንደዚህ ያለ ቤት ይፈልጋሉ?", inquireTitle: "ምን እንደሚፈልጉ ይንገሩን።",
+    preferTalk: "በቀጥታ ማነጋገር ይፈልጋሉ?", chooseContactSimple: "ቅጽ መሙላት አያስፈልግም፤ በሚመችዎት መንገድ ያግኙን።",
     msgUs: "መልዕክት ይላኩልን", visitProfile: "መገለጫውን ይመልከቱ",
     leaveNote: "ወይም መልዕክት ይተዉ", yourName: "ሙሉ ስም", email: "የኢሜይል አድራሻ",
     phone: "ስልክ ቁጥር", optional: "(አማራጭ)", lookingFor: "የሚፈልጉትን በአጭሩ ይግለጹ",
@@ -162,7 +162,7 @@ const UI_COPY = {
     noteReceived: "ጥያቄዎ ደርሶናል", inTouch: "በቅርቡ እናገኝዎታለን።",
     thanks: "ስላነጋገሩን እናመሰግናለን። ከቡድናችን አንዱ በቅርቡ ምላሽ ይሰጥዎታል።",
     thankYou: "እናመሰግናለን", viewDetails: "ዝርዝሩን ይመልከቱ",
-    beds: "መኝታ ቤቶች", baths: "መታጠቢያ ቤቶች", retailSpace: "የንግድ ቦታ",
+    beds: "መኝታ ክፍሎች", studioShort: "ስቱዲዮ", baths: "መታጠቢያ ቤቶች", retailSpace: "የንግድ ቦታ",
     videoTour: "የቪዲዮ ጉብኝት", soldEyebrow: "የተጠናቀቁ ሽያጮች",
     previouslySold: "ቀደም ሲል የተሸጡ ንብረቶች።", soldIntro: "የተጠናቀቁ ሽያጮችን ይመልከቱ፤ ስለ ቀጣይ የንብረት ፍላጎትዎ ለመወያየትም ያግኙን።",
     soldEmpty: "የተጠናቀቁ ሽያጮች እዚህ ይታያሉ።",
@@ -173,12 +173,12 @@ const UI_COPY = {
     siteDescription: "{brand} በአዲስ አበባ የሚገኙ አፓርታማዎችንና የንግድ ቦታዎችን ያስሱ። አካባቢ፣ ዋጋና ዝርዝሮችን ያነጻጽሩ።",
     soldPageDescription: "በ{brand} በኩል በአዲስ አበባ የተጠናቀቁ የንብረት ሽያጮችን ይመልከቱ፤ ስለ ቀጣይ እቅድዎም ያግኙን።",
     compare: "ያነጻጽሩ", comparing: "እያነጻጸሩ ነው", selectForCompare: "ለማነጻጸር ይምረጡ",
-    compareLimit: "እስከ 3 ንብረቶችን ማነጻጸር ይችላሉ።", chooseTwo: "ንብረቶችን ጎን ለጎን ለማነጻጸር ቢያንስ ሁለት ይምረጡ።",
-    inventoryTitle: "መጠንና ዋጋ በአንድ እይታ", inventoryIntro: "ለእያንዳንዱ ንብረት የቀረበውን መረጃ በማነጻጸር ይመልከቱ።",
+    compareLimit: "እስከ 3 ንብረቶችን ማነጻጸር ይችላሉ።", chooseTwo: "ለማነጻጸር ቢያንስ ሁለት ንብረቶችን ይምረጡ።",
+    inventoryTitle: "መጠንና ዋጋ በአንድ እይታ", inventoryIntro: "የእያንዳንዱን ንብረት መጠን፣ ዋጋና ቅድመ ክፍያ በቀላሉ ያነጻጽሩ።",
     areaBrowse: "በአካባቢ ያስሱ", areaBrowseIntro: "ንብረቶችን በተመዘገቡበት አካባቢ ይመልከቱ።",
-    viewArea: "ንብረቶቹን ይመልከቱ", bedroomsShort: "መኝታ", bathroomsShort: "መታጠቢያ",
+    viewArea: "ንብረቶቹን ይመልከቱ", bedroomsShort: "መኝታ ክፍሎች", bathroomsShort: "መታጠቢያ",
     statusLabel: "ሁኔታ", locationLabel: "አካባቢ", typeLabel: "ዓይነት", areaLabel: "ስፋት",
-    priceLabel: "ዋጋ", downPaymentLabel: "ቅድመ ክፍያ (10%)", listingLabel: "ንብረት", noListingData: "ለዚህ ሰንጠረዥ የሚታይ የንብረት መረጃ የለም።",
+    priceLabel: "ዋጋ", downPaymentLabel: "ቅድመ ክፍያ (10%)", listingLabel: "ንብረት", noListingData: "ለጊዜው የሚታይ የንብረት መረጃ የለም።",
     previousSlide: "ያለፉትን ይመልከቱ", nextSlide: "ቀጣዮቹን ይመልከቱ",
     unmuteVideo: "የጀርባ ቪዲዮውን ድምፅ ያብሩ", muteVideo: "የጀርባ ቪዲዮውን ድምፅ ያጥፉ",
     noAreas: "ንብረቶች ሲጨመሩ አካባቢዎች እዚህ ይታያሉ።",
@@ -187,9 +187,9 @@ const UI_COPY = {
     footerNoAreas: "ንብረቶች ሲጨመሩ አካባቢዎች እዚህ ይታያሉ።",
     phoneNumber: "ስልክ ቁጥር", callBusiness: "ይደውሉ",
     requestCall: "እንዲደውሉልኝ ይጠይቁ", namePlaceholder: "ሙሉ ስምዎ", phonePlaceholder: "ስልክ ቁጥርዎ",
-    fromPrice: "ከ {price} ጀምሮ", downPayment: "ቅድመ ክፍያ (10%)፦ {amount}", propertyDetails: "የንብረት ዝርዝር",
+    fromPrice: "ዋጋው {price} ነው", downPayment: "ቅድመ ክፍያ (10%)፦ {amount}", propertyDetails: "የንብረት ዝርዝር",
     propertyGallery: "የንብረቱ ፎቶዎች", noPhotos: "ተጨማሪ ፎቶዎች በቅርቡ ይጨመራሉ።",
-    bathroomsLabel: "መታጠቢያ ቤቶች", bedroomsLabel: "መኝታ ቤቶች", sizeLabel: "የንብረቱ ስፋት",
+    bathroomsLabel: "መታጠቢያ ቤቶች", bedroomsLabel: "መኝታ ክፍሎች", sizeLabel: "የንብረቱ ስፋት",
     descriptionLabel: "ስለ ንብረቱ", askAboutHome: "ስለዚህ ንብረት መጠየቅ ይፈልጋሉ?",
     modalEyebrow: "ስለዚህ ቤት ይጠይቁ",
     formNotReady: "የመገናኛ ቅጹ ገና አልተዘጋጀም። እባክዎ የመገናኛ አገናኞቹን ይጠቀሙ።",
@@ -204,6 +204,9 @@ const UI_COPY = {
 const apiAssetUrl = (url) => {
   return url || "";
 };
+
+const bedroomLabel = (beds, t) =>
+  Number(beds) === 0 ? t.studioShort : `${beds} ${t.beds}`;
 
 const fallbackHomes = [
   {
@@ -509,10 +512,7 @@ function PropertyCard({ home: sourceHome, saved, onSave, onOpen, settings, langu
         {home.description && <span className="property-description">{home.description}</span>}
         <span className="property-specs">
           {home.property_type === "Apartment" ? (
-            <>
-              <span><Icon name="bed" size={16} />{home.beds} {t.beds}</span>
-              <span><Icon name="bath" size={16} />{home.baths} {t.baths}</span>
-            </>
+            <span title={Number(home.beds) === 0 ? t.studio : undefined}><Icon name="bed" size={16} />{bedroomLabel(home.beds, t)}</span>
           ) : (
             <span className="property-use">{t.retailSpace}</span>
           )}
@@ -539,6 +539,12 @@ function InquiryModal({ home, onClose, settings, language, t }) {
     currency: settings.currency_code || "ETB",
     maximumFractionDigits: 0,
   }).format(home.price) : "";
+  const downPayment = home
+    ? t.downPayment.replace(
+      "{amount}",
+      formatCurrency(calculateDownPayment(home.price), settings.currency_code, language),
+    )
+    : "";
   const directContacts = [
     phoneDigits && { name: t.call, detail: settings.contact_phone, href: `tel:${phoneDigits}`, mark: "☎" },
     whatsappDigits && { name: "WhatsApp", detail: settings.whatsapp_number, href: `https://wa.me/${whatsappDigits}`, mark: "W" },
@@ -614,14 +620,13 @@ function InquiryModal({ home, onClose, settings, language, t }) {
                 <div className="property-detail-summary">
                   <p className="property-detail-price">{t.fromPrice.replace("{price}", price)}</p>
                   {home.status !== "Sold" && Number(home.price) > 0 && (
-                    <p className="property-detail-down-payment">{displayDownPayment(home.price)}</p>
+                    <p className="property-detail-down-payment">{downPayment}</p>
                   )}
                   <p className="property-detail-location"><Icon name="pin" size={16} />{home.location}</p>
                   <div className="property-detail-facts">
                     {home.property_type === "Apartment" && (
-                      <div><small>{t.bedroomsLabel}</small><strong>{home.beds || "—"}</strong></div>
+                      <div><small>{t.bedroomsLabel}</small><strong>{Number(home.beds) === 0 ? t.studio : home.beds || "—"}</strong></div>
                     )}
-                    <div><small>{t.bathroomsLabel}</small><strong>{home.baths || "—"}</strong></div>
                     <div><small>{t.sizeLabel}</small><strong>{Number(home.area).toLocaleString(language === "am" ? "am-ET" : "en-ET")} {settings.area_unit || "sqft"}</strong></div>
                     <div><small>{t.typeLabel}</small><strong>{home.property_type === "Apartment" ? t.apartment : t.shop}</strong></div>
                     <div><small>{t.statusLabel}</small><strong>{home.status === "Under contract" ? t.underContract : home.status === "Sold" ? t.previouslySold : t.forSale}</strong></div>
@@ -916,7 +921,9 @@ function PublicSite() {
       const matchesQuery = !query || `${localizedHome.title} ${localizedHome.location}`.toLowerCase().includes(query.toLowerCase());
       const matchesType = !type || home.property_type === type;
       const matchesBedrooms = !bedrooms
-        || (home.property_type === "Apartment" && home.beds >= Number(bedrooms));
+        || (home.property_type === "Apartment" && (bedrooms === "studio"
+          ? Number(home.beds) === 0
+          : Number(home.beds) >= Number(bedrooms)));
       const matchesAvailability = !availability || home.status === availability;
       const matchesBudget = !maxPrice || home.price <= Number(maxPrice);
       return matchesQuery && matchesType && matchesBedrooms && matchesAvailability && matchesBudget;
@@ -1067,6 +1074,7 @@ function PublicSite() {
               <span>{t.bedrooms}</span>
               <select value={bedrooms} onChange={(event) => setBedrooms(event.target.value)}>
                 <option value="">{t.anyNumber}</option>
+                <option value="studio">{t.studio}</option>
                 <option value="1">1 {t.orMore}</option>
                 <option value="2">2 {t.orMore}</option>
                 <option value="3">3 {t.orMore}</option>
@@ -1166,7 +1174,6 @@ function PublicSite() {
                       <th scope="col">{t.typeLabel}</th>
                       <th scope="col">{t.locationLabel}</th>
                       <th scope="col">{t.bedroomsShort}</th>
-                      <th scope="col">{t.bathroomsShort}</th>
                       <th scope="col">{t.areaLabel}</th>
                       <th scope="col">{t.priceLabel}</th>
                       <th scope="col">{t.downPaymentLabel}</th>
@@ -1183,8 +1190,7 @@ function PublicSite() {
                           <th scope="row"><button className="table-home-link" type="button" onClick={() => setSelectedHome(home)}>{home.title}</button></th>
                           <td>{home.property_type === "Apartment" ? t.apartment : t.shop}</td>
                           <td>{home.location}</td>
-                          <td>{home.property_type === "Apartment" ? home.beds : "—"}</td>
-                          <td>{home.baths || "—"}</td>
+                          <td>{home.property_type === "Apartment" ? bedroomLabel(home.beds, t) : "—"}</td>
                           <td>{Number(home.area).toLocaleString(language === "am" ? "am-ET" : "en-ET")} {branding.area_unit || "sqft"}</td>
                           <td>{displayPrice(home.price)}</td>
                           <td>{home.status === "Sold" ? "—" : displayDownPayment(home.price)}</td>
@@ -1218,8 +1224,7 @@ function PublicSite() {
                       <tbody>
                         <tr><th scope="row">{t.typeLabel}</th>{compareHomes.map((home) => <td key={home.id}>{home.property_type === "Apartment" ? t.apartment : t.shop}</td>)}</tr>
                         <tr><th scope="row">{t.locationLabel}</th>{compareHomes.map((home) => <td key={home.id}>{home.location}</td>)}</tr>
-                        <tr><th scope="row">{t.bedroomsShort}</th>{compareHomes.map((home) => <td key={home.id}>{home.property_type === "Apartment" ? home.beds : "—"}</td>)}</tr>
-                        <tr><th scope="row">{t.bathroomsShort}</th>{compareHomes.map((home) => <td key={home.id}>{home.baths || "—"}</td>)}</tr>
+                        <tr><th scope="row">{t.bedroomsShort}</th>{compareHomes.map((home) => <td key={home.id}>{home.property_type === "Apartment" ? bedroomLabel(home.beds, t) : "—"}</td>)}</tr>
                         <tr><th scope="row">{t.areaLabel}</th>{compareHomes.map((home) => <td key={home.id}>{Number(home.area).toLocaleString(language === "am" ? "am-ET" : "en-ET")} {branding.area_unit || "sqft"}</td>)}</tr>
                         <tr><th scope="row">{t.priceLabel}</th>{compareHomes.map((home) => <td key={home.id}>{displayPrice(home.price)}</td>)}</tr>
                         <tr><th scope="row">{t.downPaymentLabel}</th>{compareHomes.map((home) => <td key={home.id}>{home.status === "Sold" ? "—" : displayDownPayment(home.price)}</td>)}</tr>

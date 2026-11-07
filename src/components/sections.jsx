@@ -45,9 +45,10 @@ export function Hero({ branding, heroImage, agentTitle, criteria, onCriteriaChan
           <span>{t.bedrooms}</span>
           <select value={bedrooms} onChange={change("bedrooms")}>
             <option value="">{t.anyNumber}</option>
-            <option value="1">{t.orMore(1)}</option>
-            <option value="2">{t.orMore(2)}</option>
-            <option value="3">{t.orMore(3)}</option>
+            <option value="studio">{t.studio}</option>
+            <option value="1">1 {t.orMore}</option>
+            <option value="2">2 {t.orMore}</option>
+            <option value="3">3 {t.orMore}</option>
           </select>
         </label>
         <label className="search-budget">

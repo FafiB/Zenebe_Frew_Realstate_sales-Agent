@@ -137,7 +137,9 @@ export function useFilteredHomes(homes, criteria, saved, savedOnly) {
       const matchesQuery = !query || haystack.includes(query);
       const matchesType = !criteria.type || home.property_type === criteria.type;
       const matchesBedrooms = !criteria.bedrooms
-        || (home.property_type === "Apartment" && home.beds >= Number(criteria.bedrooms));
+        || (home.property_type === "Apartment" && (criteria.bedrooms === "studio"
+          ? Number(home.beds) === 0
+          : Number(home.beds) >= Number(criteria.bedrooms)));
       const matchesBudget = !criteria.maxPrice || home.price <= Number(criteria.maxPrice);
       return matchesQuery && matchesType && matchesBedrooms && matchesBudget;
     });

@@ -382,7 +382,7 @@ function AdminApp() {
               <label>Location<input value={propertyDraft.location} onChange={(event) => setPropertyDraft({ ...propertyDraft, location: event.target.value })} required maxLength="180" /></label>
               <div className="admin-field-grid admin-field-grid-three">
                 <label>Starting price<input type="number" min="1" value={propertyDraft.price} onChange={(event) => setPropertyDraft({ ...propertyDraft, price: event.target.value })} required /></label>
-                <label>Bedrooms<input type="number" min="0" value={propertyDraft.beds} onChange={(event) => setPropertyDraft({ ...propertyDraft, beds: event.target.value })} required /></label>
+                <label>Bedrooms (0 = Studio, no separate bedroom)<input type="number" min="0" value={propertyDraft.beds} onChange={(event) => setPropertyDraft({ ...propertyDraft, beds: event.target.value })} required /></label>
                 <label>Bathrooms<input type="number" min="0" step="0.5" value={propertyDraft.baths} onChange={(event) => setPropertyDraft({ ...propertyDraft, baths: event.target.value })} required /></label>
                 <label>Area<input type="number" min="0" value={propertyDraft.area} onChange={(event) => setPropertyDraft({ ...propertyDraft, area: event.target.value })} required /></label>
                 <label>Type<select value={propertyDraft.property_type} onChange={(event) => setPropertyDraft({ ...propertyDraft, property_type: event.target.value })}><option>Apartment</option><option>Shop</option></select></label>
