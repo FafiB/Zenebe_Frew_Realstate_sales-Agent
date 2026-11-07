@@ -81,7 +81,6 @@ const UI_COPY = {
     viewArea: "View properties", bedroomsShort: "Bedrooms", bathroomsShort: "Baths",
     statusLabel: "Status", locationLabel: "Location", typeLabel: "Type", areaLabel: "Size",
     priceLabel: "Price", downPaymentLabel: "Down payment (10%)", listingLabel: "Listing", noListingData: "No listing details are available for this table yet.",
-    previousSlide: "Previous items", nextSlide: "Next items",
     unmuteVideo: "Turn on hero video sound", muteVideo: "Mute hero video",
     noAreas: "Neighborhoods will appear when listings have locations.",
     footerExplore: "Explore", footerAreas: "Neighborhoods", footerVisit: "Contact",
@@ -179,7 +178,6 @@ const UI_COPY = {
     viewArea: "ንብረቶቹን ይመልከቱ", bedroomsShort: "መኝታ ክፍሎች", bathroomsShort: "መታጠቢያ",
     statusLabel: "ሁኔታ", locationLabel: "አካባቢ", typeLabel: "ዓይነት", areaLabel: "ስፋት",
     priceLabel: "ዋጋ", downPaymentLabel: "ቅድመ ክፍያ (10%)", listingLabel: "ንብረት", noListingData: "ለጊዜው የሚታይ የንብረት መረጃ የለም።",
-    previousSlide: "ያለፉትን ይመልከቱ", nextSlide: "ቀጣዮቹን ይመልከቱ",
     unmuteVideo: "የጀርባ ቪዲዮውን ድምፅ ያብሩ", muteVideo: "የጀርባ ቪዲዮውን ድምፅ ያጥፉ",
     noAreas: "ንብረቶች ሲጨመሩ አካባቢዎች እዚህ ይታያሉ።",
     footerExplore: "ያስሱ", footerAreas: "አካባቢዎች", footerVisit: "ያግኙን",
@@ -302,10 +300,8 @@ function Icon({ name, size = 18 }) {
   return <svg {...shared}>{paths[name]}</svg>;
 }
 
-function AutoCarousel({ itemCount, className, label, children, t }) {
+function AutoCarousel({ itemCount, className, label, children }) {
   const trackRef = React.useRef(null);
-  const animationRef = React.useRef(0);
-  const snapRestoreRef = React.useRef(null);
   const cycleWidthRef = React.useRef(0);
   const [isVisible, setIsVisible] = useState(false);
   const items = React.Children.toArray(children);
@@ -319,51 +315,6 @@ function AutoCarousel({ itemCount, className, label, children, t }) {
       )))
       : []),
   ];
-
-  const cancelAnimation = React.useCallback(() => {
-    window.cancelAnimationFrame(animationRef.current);
-    animationRef.current = 0;
-    if (snapRestoreRef.current) {
-      snapRestoreRef.current.track.style.scrollSnapType = snapRestoreRef.current.scrollSnapType;
-      snapRestoreRef.current = null;
-    }
-  }, []);
-
-  const scrollTo = React.useCallback((track, target) => {
-    cancelAnimation();
-    const start = track.scrollLeft;
-    const distance = target - start;
-    if (Math.abs(distance) < 1) return;
-
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-      track.scrollLeft = target;
-      return;
-    }
-
-    const duration = Math.min(4200, Math.max(1300, Math.abs(distance) / 0.18));
-    const scrollSnapType = track.style.scrollSnapType;
-    snapRestoreRef.current = { track, scrollSnapType };
-    track.style.scrollSnapType = "none";
-    const startedAt = performance.now();
-    function animate(now) {
-      const progress = Math.min((now - startedAt) / duration, 1);
-      const eased = 0.5 - Math.cos(Math.PI * progress) / 2;
-      track.scrollLeft = start + distance * eased;
-      if (progress < 1) animationRef.current = window.requestAnimationFrame(animate);
-      else {
-        const firstCopy = track.children[itemCount];
-        const firstCopyItem = firstCopy?.firstElementChild || firstCopy;
-        const cycleWidth = firstCopy
-          ? firstCopyItem.getBoundingClientRect().left - track.children[0].getBoundingClientRect().left
-          : 0;
-        if (cycleWidth > 0 && track.scrollLeft >= cycleWidth) track.scrollLeft %= cycleWidth;
-        animationRef.current = 0;
-        track.style.scrollSnapType = scrollSnapType;
-        snapRestoreRef.current = null;
-      }
-    }
-    animationRef.current = window.requestAnimationFrame(animate);
-  }, [cancelAnimation]);
 
   useEffect(() => {
     const track = trackRef.current;
@@ -400,7 +351,7 @@ function AutoCarousel({ itemCount, className, label, children, t }) {
     let frame = 0;
     let previousTime = 0;
     function animate(now) {
-      if (previousTime && !document.hidden && !animationRef.current) {
+      if (previousTime && !document.hidden) {
         const cycleWidth = cycleWidthRef.current;
         if (cycleWidth > 0) {
           track.scrollLeft += (now - previousTime) * 0.024;
@@ -417,36 +368,14 @@ function AutoCarousel({ itemCount, className, label, children, t }) {
     };
   }, [isVisible, itemCount]);
 
-  useEffect(() => () => cancelAnimation(), [cancelAnimation]);
-
-  function move(direction) {
-    const track = trackRef.current;
-    const firstItem = track?.firstElementChild;
-    if (!track || !firstItem) return;
-    const gap = Number.parseFloat(window.getComputedStyle(track).columnGap) || 0;
-    const step = firstItem.getBoundingClientRect().width + gap;
-    const cycleWidth = cycleWidthRef.current || track.scrollWidth / 2;
-    const target = direction > 0
-      ? track.scrollLeft + step
-      : track.scrollLeft <= 8 ? cycleWidth - step : track.scrollLeft - step;
-    scrollTo(track, target);
-  }
-
   return (
     <div className="carousel-shell">
-      <div className="carousel-controls" aria-label={label}>
-        <button type="button" onClick={() => move(-1)} aria-label={t.previousSlide}><span aria-hidden="true">←</span></button>
-        <button type="button" onClick={() => move(1)} aria-label={t.nextSlide}><span aria-hidden="true">→</span></button>
-      </div>
       <div
         ref={trackRef}
         className={className}
         role="region"
         aria-label={label}
         tabIndex={0}
-        onWheel={cancelAnimation}
-        onPointerDown={cancelAnimation}
-        onKeyDown={cancelAnimation}
       >
         {loopItems}
       </div>
@@ -1151,7 +1080,7 @@ function PublicSite() {
           {apiNotice && <p className="api-notice" role="status">{apiNotice}</p>}
           <p className="sr-only" aria-live="polite">{savedAnnouncement}</p>
           {visibleHomes.length ? (
-            <AutoCarousel itemCount={visibleHomes.length} className="property-grid" label={t.collectionEyebrow} t={t}>
+            <AutoCarousel itemCount={visibleHomes.length} className="property-grid" label={t.collectionEyebrow}>
               {visibleHomes.map((home) => <PropertyCard key={home.id} home={home} settings={branding} language={language} t={t} saved={saved.includes(home.id)} onSave={toggleSaved} onOpen={setSelectedHome} />)}
             </AutoCarousel>
           ) : (
@@ -1252,7 +1181,7 @@ function PublicSite() {
             <a href="#homes" className="text-link">Explore listings <Icon name="arrow" size={16} /></a>
           </div>
           {featuredHomes.length ? (
-            <AutoCarousel itemCount={featuredHomes.length} className="project-grid featured-carousel" label={t.featuredProperties} t={t}>
+            <AutoCarousel itemCount={featuredHomes.length} className="project-grid featured-carousel" label={t.featuredProperties}>
               {featuredHomes.map((home) => (
                 <button className="project-tile" key={home.id} onClick={() => setSelectedHome(home)}>
                   <span className="project-tile-placeholder" aria-hidden="true" />
