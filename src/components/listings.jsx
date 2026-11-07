@@ -5,7 +5,8 @@
 
 import React from "react";
 import { Icon } from "./atoms.jsx";
-import { apiAssetUrl, formatArea, formatPrice, localizeHome } from "../lib/format.js";
+import { PropertyMedia } from "./PropertyMedia.jsx";
+import { formatArea, formatPrice, localizeHome } from "../lib/format.js";
 import { statusLabelMap } from "../lib/channels.js";
 import { PROPERTY_TYPE } from "../lib/constants.js";
 
@@ -18,9 +19,8 @@ export function PropertyCard({ home, saved, onSave, onOpen, settings, t, languag
   return (
     <article className="property-card">
       <button className="image-button" onClick={() => onOpen(displayHome)} aria-label={`${t.viewDetails}: ${displayTitle}`}>
-        {home.image_url
-          ? <img src={apiAssetUrl(home.image_url)} alt={displayTitle} loading="lazy" />
-          : <span className="no-property-image">{t.videoTour}</span>}
+        <span className="no-property-image">{t.videoTour}</span>
+        <PropertyMedia imageUrl={home.image_url} videoUrl={home.video_url} alt={displayTitle} className="property-card-media" />
         <span className="status-pill">{statusLabelMap(t)[home.status] || t.forSale}</span>
         <span className="type-pill">{isApartment ? t.apartment : t.shop}</span>
         {home.video_url && <span className="video-pill">▶ {t.videoTour}</span>}
@@ -88,7 +88,7 @@ export function FeaturedProjects({ homes, onOpen, t, language }) {
             key={home.id}
             onClick={() => onOpen({ ...home, title, location, description: (language === "am" && home.description_am) || home.description })}
           >
-            <img src={home.image_url} alt={home.title} loading="lazy" />
+            <PropertyMedia imageUrl={home.image_url} videoUrl={home.video_url} alt={home.title} className="project-tile-media" />
             <span className="project-tile-shade" />
             <span className="project-tile-label">{home.property_type === "Apartment" ? t.apartment : t.shop} · {location}</span>
             <span className="project-tile-title">{title}</span>

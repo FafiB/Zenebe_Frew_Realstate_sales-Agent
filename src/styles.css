@@ -124,7 +124,18 @@ h2 { font-family: var(--serif); font-weight: 400; font-size: clamp(34px, 4.1vw, 
 .image-button.has-image-error::before { position: absolute; inset: 14% 12%; border: 1px solid #ffffff3b; border-radius: 50%; box-shadow: 0 0 0 22px #f0d3960d, 0 0 0 48px #f0d39609; content: ""; pointer-events: none; }
 .area-card-placeholder { background: radial-gradient(ellipse at 75% 18%, #d7b97938, transparent 36%), linear-gradient(145deg, #274b69, #10243a); }
 .project-tile img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transition: transform .5s; }
+.project-tile-media { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transition: transform .5s; }
+.image-button > .property-card-media,
+.area-card > .area-card-media {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+}
 .project-tile:hover img { transform: scale(1.04); }
+.project-tile:hover .project-tile-media { transform: scale(1.04); }
 .project-tile-shade { position: absolute; inset: 0; background: linear-gradient(0deg,#0d2545e8,transparent 85%); }
 .project-tile-label, .project-tile-title, .project-tile-link { position: relative; }
 .project-tile-label { font-size: 9px; letter-spacing: 1.4px; text-transform: uppercase; }

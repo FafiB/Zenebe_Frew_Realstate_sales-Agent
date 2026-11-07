@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { isSupabaseConfigured, supabase, uploadMedia } from "./lib/supabase.js";
+import { PropertyMedia } from "./components/PropertyMedia.jsx";
 import "./admin.css";
 
 const blankSettings = {
@@ -363,7 +364,9 @@ function AdminApp() {
             <div className="admin-panel-heading"><div><h2>Properties</h2><p>Manage the homes and business spaces on your site.</p></div><button className="admin-primary-button" type="button" onClick={startNewProperty}>Add property</button></div>
             {properties.length ? properties.map((property) => (
               <article className="admin-property-row" key={property.id}>
-                <img src={property.image_url || undefined} alt="" />
+                <span className="admin-property-media-wrap">
+                  <PropertyMedia imageUrl={property.image_url} videoUrl={property.video_url} className="admin-property-media" />
+                </span>
                 <div className="admin-property-summary"><strong>{property.title}</strong><span>{property.location} · {property.status}</span><small>{property.property_type} · {Number(property.price).toLocaleString()} {settings.currency_code}</small></div>
                 <button className="admin-secondary-button" onClick={() => editProperty(property)}>Edit</button>
                 <button className="admin-danger-button" onClick={() => deleteProperty(property)} aria-label={`Delete ${property.title}`}>Delete</button>
@@ -406,7 +409,7 @@ function AdminApp() {
               )}
               <label>Video URL<input type="url" value={propertyDraft.video_url || ""} onChange={(event) => setPropertyDraft({ ...propertyDraft, video_url: event.target.value })} placeholder="https://…" /></label>
               <label>Upload property video<input type="file" accept="video/mp4,video/webm,video/quicktime,video/x-m4v" onChange={(event) => setPropertyVideoFile(event.target.files?.[0] || null)} /></label>
-              <p className="admin-help-text">Supports MP4, WebM, MOV, and M4V videos. {propertyVideoFile && `${propertyVideoFile.name} selected.`}</p>
+              <p className="admin-help-text">Supports MP4, WebM, MOV, and M4V. This video plays in the homepage hero, listing previews, and property details. {propertyVideoFile && `${propertyVideoFile.name} selected.`}</p>
               <label>Full property description (shown in View details)<textarea rows="5" value={propertyDraft.description || ""} onChange={(event) => setPropertyDraft({ ...propertyDraft, description: event.target.value })} /></label>
               <label className="admin-checkbox"><input type="checkbox" checked={Boolean(propertyDraft.featured)} onChange={(event) => setPropertyDraft({ ...propertyDraft, featured: event.target.checked })} /> Feature this property</label>
               <button className="admin-primary-button" disabled={busy}>{editingId ? "Save property" : "Add property"}</button>

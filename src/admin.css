@@ -51,7 +51,9 @@
 .admin-checkbox input { width: 17px; min-height: 17px; margin: 0; accent-color: #174b77; }
 .admin-properties-layout { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(300px, .85fr); gap: 18px; align-items: start; }
 .admin-property-row { display: grid; grid-template-columns: 72px minmax(0, 1fr) auto auto; align-items: center; gap: 12px; padding: 13px 0; border-top: 1px solid #edf0f3; }
-.admin-property-row > img { width: 72px; height: 58px; border-radius: 8px; background: #eef2f5; object-fit: cover; }
+.admin-property-media-wrap { width: 72px; height: 58px; border-radius: 8px; background: #eef2f5; }
+.admin-property-row > .admin-property-media-wrap { overflow: hidden; }
+.admin-property-media { width: 100%; height: 100%; display: block; border-radius: inherit; object-fit: cover; }
 .admin-property-summary { min-width: 0; display: grid; gap: 3px; }
 .admin-property-summary strong { overflow: hidden; color: #233d54; font-size: 12px; text-overflow: ellipsis; white-space: nowrap; }
 .admin-property-summary span, .admin-property-summary small { overflow: hidden; color: #788696; font-size: 10px; text-overflow: ellipsis; white-space: nowrap; }
@@ -94,7 +96,7 @@
   .admin-header-actions { width: 100%; }
   .admin-field-grid, .admin-field-grid-three { grid-template-columns: 1fr; }
   .admin-property-row { grid-template-columns: 54px minmax(0, 1fr) auto; gap: 8px; }
-  .admin-property-row > img { width: 54px; height: 50px; }
+  .admin-property-media-wrap { width: 54px; height: 50px; }
   .admin-property-row .admin-danger-button { grid-column: 3; }
   .admin-property-row .admin-secondary-button { grid-column: 3; grid-row: 1; }
   .admin-inquiry-heading { align-items: start; flex-direction: column; }

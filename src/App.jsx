@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import AdminApp from "./AdminApp.jsx";
 import { supabase } from "./lib/supabase.js";
 import { localizeHome } from "./lib/format.js";
+import { PropertyMedia } from "./components/PropertyMedia.jsx";
 
 const UI_COPY = {
   en: {
@@ -484,17 +485,8 @@ function PropertyCard({ home: sourceHome, saved, onSave, onOpen, settings, langu
   return (
     <article className={`property-card property-card-${home.property_type.toLowerCase()}`}>
       <button className="image-button" onClick={() => onOpen(home)} aria-label={`${t.viewDetails}: ${home.title}`}>
-        {home.image_url
-          ? <img
-            src={apiAssetUrl(home.image_url)}
-            alt={home.title}
-            loading="lazy"
-            onError={(event) => {
-              event.currentTarget.hidden = true;
-              event.currentTarget.parentElement?.classList.add("has-image-error");
-            }}
-          />
-          : <span className="no-property-image">{home.property_type === "Apartment" ? t.apartment : t.shop}</span>}
+        <span className="no-property-image">{home.property_type === "Apartment" ? t.apartment : t.shop}</span>
+        <PropertyMedia imageUrl={home.image_url} videoUrl={home.video_url} alt={home.title} className="property-card-media" />
         <span className="status-pill">{home.status === "Under contract" ? t.underContract : home.status === "Sold" ? t.previouslySold : t.forSale}</span>
         <span className="type-pill">{home.property_type === "Apartment" ? t.apartment : t.shop}</span>
         {home.video_url && <span className="video-pill">▶ {t.videoTour}</span>}
@@ -748,7 +740,8 @@ function PublicSite() {
     .sort((first, second) => first.localeCompare(second));
   const areaCards = listingAreas.map((location) => {
     const homesInArea = homes.filter((home) => localizeHome(home, language).location?.trim() === location);
-    return { location, homes: homesInArea, image: homesInArea[0]?.image_url };
+    const mediaHome = homesInArea.find((home) => home.image_url || home.video_url);
+    return { location, homes: homesInArea, image: mediaHome?.image_url, video: mediaHome?.video_url };
   });
   const currentListings = homes.filter((home) => home.status === "For sale");
   const liveStats = [
@@ -1247,14 +1240,7 @@ function PublicSite() {
               {featuredHomes.map((home) => (
                 <button className="project-tile" key={home.id} onClick={() => setSelectedHome(home)}>
                   <span className="project-tile-placeholder" aria-hidden="true" />
-                  {home.image_url && (
-                    <img
-                      src={home.image_url}
-                      alt={home.title}
-                      loading="lazy"
-                      onError={(event) => { event.currentTarget.hidden = true; }}
-                    />
-                  )}
+                  <PropertyMedia imageUrl={home.image_url} videoUrl={home.video_url} alt={home.title} className="project-tile-media" />
                   <span className="project-tile-shade" />
                   <span className="project-tile-label">{home.property_type === "Apartment" ? t.apartment : t.shop} · {language === "am" ? (home.location_am || home.location) : home.location}</span>
                   <span className="project-tile-title">{language === "am" ? (home.title_am || home.title) : home.title}</span>
@@ -1280,14 +1266,7 @@ function PublicSite() {
               {areaCards.map((area) => (
                 <button className="area-card" type="button" key={area.location} onClick={() => browseArea(area.location)}>
                   <span className="area-card-placeholder" aria-hidden="true"><Icon name="pin" size={28} /></span>
-                  {area.image && (
-                    <img
-                      src={apiAssetUrl(area.image)}
-                      alt=""
-                      loading="lazy"
-                      onError={(event) => { event.currentTarget.hidden = true; }}
-                    />
-                  )}
+                  <PropertyMedia imageUrl={area.image} videoUrl={area.video} className="area-card-media" />
                   <span className="area-card-shade" />
                   <span className="area-card-copy"><strong>{area.location}</strong><small>{area.homes.length} {area.homes.length === 1 ? t.property : t.properties}</small><span>{t.viewArea} <Icon name="arrow" size={15} /></span></span>
                 </button>
