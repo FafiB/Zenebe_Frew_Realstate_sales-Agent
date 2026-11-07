@@ -485,7 +485,15 @@ function PropertyCard({ home: sourceHome, saved, onSave, onOpen, settings, langu
     <article className={`property-card property-card-${home.property_type.toLowerCase()}`}>
       <button className="image-button" onClick={() => onOpen(home)} aria-label={`${t.viewDetails}: ${home.title}`}>
         {home.image_url
-          ? <img src={apiAssetUrl(home.image_url)} alt={home.title} loading="lazy" />
+          ? <img
+            src={apiAssetUrl(home.image_url)}
+            alt={home.title}
+            loading="lazy"
+            onError={(event) => {
+              event.currentTarget.hidden = true;
+              event.currentTarget.parentElement?.classList.add("has-image-error");
+            }}
+          />
           : <span className="no-property-image">{home.property_type === "Apartment" ? t.apartment : t.shop}</span>}
         <span className="status-pill">{home.status === "Under contract" ? t.underContract : home.status === "Sold" ? t.previouslySold : t.forSale}</span>
         <span className="type-pill">{home.property_type === "Apartment" ? t.apartment : t.shop}</span>
@@ -1238,7 +1246,15 @@ function PublicSite() {
             <AutoCarousel itemCount={featuredHomes.length} className="project-grid featured-carousel" label={t.featuredProperties} t={t}>
               {featuredHomes.map((home) => (
                 <button className="project-tile" key={home.id} onClick={() => setSelectedHome(home)}>
-                  <img src={home.image_url} alt={home.title} loading="lazy" />
+                  <span className="project-tile-placeholder" aria-hidden="true" />
+                  {home.image_url && (
+                    <img
+                      src={home.image_url}
+                      alt={home.title}
+                      loading="lazy"
+                      onError={(event) => { event.currentTarget.hidden = true; }}
+                    />
+                  )}
                   <span className="project-tile-shade" />
                   <span className="project-tile-label">{home.property_type === "Apartment" ? t.apartment : t.shop} · {language === "am" ? (home.location_am || home.location) : home.location}</span>
                   <span className="project-tile-title">{language === "am" ? (home.title_am || home.title) : home.title}</span>
@@ -1263,7 +1279,15 @@ function PublicSite() {
             <div className="area-card-grid">
               {areaCards.map((area) => (
                 <button className="area-card" type="button" key={area.location} onClick={() => browseArea(area.location)}>
-                  {area.image ? <img src={apiAssetUrl(area.image)} alt="" loading="lazy" /> : <span className="area-card-placeholder"><Icon name="pin" size={28} /></span>}
+                  <span className="area-card-placeholder" aria-hidden="true"><Icon name="pin" size={28} /></span>
+                  {area.image && (
+                    <img
+                      src={apiAssetUrl(area.image)}
+                      alt=""
+                      loading="lazy"
+                      onError={(event) => { event.currentTarget.hidden = true; }}
+                    />
+                  )}
                   <span className="area-card-shade" />
                   <span className="area-card-copy"><strong>{area.location}</strong><small>{area.homes.length} {area.homes.length === 1 ? t.property : t.properties}</small><span>{t.viewArea} <Icon name="arrow" size={15} /></span></span>
                 </button>
