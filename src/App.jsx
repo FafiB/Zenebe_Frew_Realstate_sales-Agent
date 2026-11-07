@@ -94,7 +94,6 @@ const UI_COPY = {
     modalEyebrow: "LET’S TALK ABOUT THIS HOME", contactUnavailable: "Contact details will appear here once they’re added in Site branding.",
     formNotReady: "The contact form is not configured yet. Please use the contact links instead.",
     formSendError: "We couldn't send your note. Please try again.",
-    loadingNotice: "Listings and contact forms are being configured. Please use the contact links below.",
     pastSalesError: "Past sales could not be loaded right now. Please try again later.",
     listingsError: "Listings could not be refreshed right now. Please check back soon.",
     savedAdded: "{name} added to your saved homes.", savedRemoved: "{name} removed from your saved homes.",
@@ -192,7 +191,6 @@ const UI_COPY = {
     modalEyebrow: "ስለዚህ ቤት እንወያይ", contactUnavailable: "የመገኛ መረጃዎች በብራንዲንግ ሲጨመሩ እዚህ ይታያሉ።",
     formNotReady: "የመገኛ ቅጹ አልተዘጋጀም። እባክዎ የመገኛ አገናኞችን ይጠቀሙ።",
     formSendError: "መልዕክትዎን መላክ አልተቻለም። እባክዎ እንደገና ይሞክሩ።",
-    loadingNotice: "የንብረት ዝርዝሮችና የመገኛ ቅጾች በመዘጋጀት ላይ ናቸው። እባክዎ ከታች ያሉትን የመገኛ አገናኞች ይጠቀሙ።",
     pastSalesError: "የተሸጡ ንብረቶችን አሁን ማምጣት አልተቻለም። እባክዎ ቆይተው ይሞክሩ።",
     listingsError: "ዝርዝሮችን ማዘመን አልተቻለም። እባክዎ ቆይተው ይመልከቱ።",
     savedAdded: "{name} በተቀመጡት ንብረቶች ውስጥ ተጨምሯል።", savedRemoved: "{name} ከተቀመጡት ንብረቶች ተወግዷል።",
@@ -301,7 +299,19 @@ function AutoCarousel({ itemCount, className, label, children, t }) {
   const trackRef = React.useRef(null);
   const animationRef = React.useRef(0);
   const snapRestoreRef = React.useRef(null);
+  const cycleWidthRef = React.useRef(0);
   const [isVisible, setIsVisible] = useState(false);
+  const items = React.Children.toArray(children);
+  const loopItems = [
+    ...items,
+    ...(items.length > 1
+      ? [0, 1, 2].flatMap((copyIndex) => items.map((item, index) => (
+        <div className="carousel-loop-copy" key={`loop-copy-${copyIndex}-${index}`} aria-hidden="true">
+          {item}
+        </div>
+      )))
+      : []),
+  ];
 
   const cancelAnimation = React.useCallback(() => {
     window.cancelAnimationFrame(animationRef.current);
@@ -334,6 +344,12 @@ function AutoCarousel({ itemCount, className, label, children, t }) {
       track.scrollLeft = start + distance * eased;
       if (progress < 1) animationRef.current = window.requestAnimationFrame(animate);
       else {
+        const firstCopy = track.children[itemCount];
+        const firstCopyItem = firstCopy?.firstElementChild || firstCopy;
+        const cycleWidth = firstCopy
+          ? firstCopyItem.getBoundingClientRect().left - track.children[0].getBoundingClientRect().left
+          : 0;
+        if (cycleWidth > 0 && track.scrollLeft >= cycleWidth) track.scrollLeft %= cycleWidth;
         animationRef.current = 0;
         track.style.scrollSnapType = scrollSnapType;
         snapRestoreRef.current = null;
@@ -351,22 +367,48 @@ function AutoCarousel({ itemCount, className, label, children, t }) {
   }, []);
 
   useEffect(() => {
-    if (!isVisible || itemCount < 2 || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return undefined;
-    const timer = window.setInterval(() => {
-      const track = trackRef.current;
-      if (!track || document.hidden || track.matches(":hover, :focus-within")) return;
-      const firstItem = track.firstElementChild;
-      if (!firstItem) return;
-      const gap = Number.parseFloat(window.getComputedStyle(track).columnGap) || 0;
-      const step = firstItem.getBoundingClientRect().width + gap;
-      const atEnd = track.scrollLeft + track.clientWidth >= track.scrollWidth - 8;
-      scrollTo(track, atEnd ? 0 : track.scrollLeft + step);
-    }, 7000);
+    const track = trackRef.current;
+    if (!track) return undefined;
+    track.querySelectorAll(".carousel-loop-copy").forEach((copy) => {
+      copy.setAttribute("inert", "");
+      copy.querySelectorAll("a, button, input, select, textarea, [tabindex]").forEach((element) => {
+        element.setAttribute("tabindex", "-1");
+      });
+    });
+    return undefined;
+  }, [itemCount]);
+
+  useEffect(() => {
+    const track = trackRef.current;
+    if (!track || !isVisible || itemCount < 2 || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return undefined;
+    function measureCycle() {
+      const firstCopy = track.children[itemCount];
+      const firstCopyItem = firstCopy?.firstElementChild || firstCopy;
+      cycleWidthRef.current = firstCopy
+        ? firstCopyItem.getBoundingClientRect().left - track.children[0].getBoundingClientRect().left
+        : 0;
+    }
+    measureCycle();
+    window.addEventListener("resize", measureCycle);
+    let frame = 0;
+    let previousTime = 0;
+    function animate(now) {
+      if (previousTime && !document.hidden && !animationRef.current) {
+        const cycleWidth = cycleWidthRef.current;
+        if (cycleWidth > 0) {
+          track.scrollLeft += (now - previousTime) * 0.024;
+          if (track.scrollLeft >= cycleWidth) track.scrollLeft -= cycleWidth;
+        }
+      }
+      previousTime = now;
+      frame = window.requestAnimationFrame(animate);
+    }
+    frame = window.requestAnimationFrame(animate);
     return () => {
-      window.clearInterval(timer);
-      cancelAnimation();
+      window.cancelAnimationFrame(frame);
+      window.removeEventListener("resize", measureCycle);
     };
-  }, [isVisible, itemCount, scrollTo, cancelAnimation]);
+  }, [isVisible, itemCount]);
 
   useEffect(() => () => cancelAnimation(), [cancelAnimation]);
 
@@ -376,14 +418,11 @@ function AutoCarousel({ itemCount, className, label, children, t }) {
     if (!track || !firstItem) return;
     const gap = Number.parseFloat(window.getComputedStyle(track).columnGap) || 0;
     const step = firstItem.getBoundingClientRect().width + gap;
-    const maxScroll = track.scrollWidth - track.clientWidth;
-    const nextPosition = track.scrollLeft + direction * step;
-    scrollTo(
-      track,
-      direction > 0 && nextPosition >= maxScroll - 8
-        ? 0
-        : direction < 0 && nextPosition <= 8 ? maxScroll : nextPosition,
-    );
+    const cycleWidth = cycleWidthRef.current || track.scrollWidth / 2;
+    const target = direction > 0
+      ? track.scrollLeft + step
+      : track.scrollLeft <= 8 ? cycleWidth - step : track.scrollLeft - step;
+    scrollTo(track, target);
   }
 
   return (
@@ -402,7 +441,7 @@ function AutoCarousel({ itemCount, className, label, children, t }) {
         onPointerDown={cancelAnimation}
         onKeyDown={cancelAnimation}
       >
-        {children}
+        {loopItems}
       </div>
     </div>
   );
@@ -441,11 +480,11 @@ function PropertyCard({ home: sourceHome, saved, onSave, onOpen, settings, langu
   const price = t.fromPrice.replace("{price}", formattedPrice);
 
   return (
-    <article className="property-card">
+    <article className={`property-card property-card-${home.property_type.toLowerCase()}`}>
       <button className="image-button" onClick={() => onOpen(home)} aria-label={`${t.viewDetails}: ${home.title}`}>
         {home.image_url
           ? <img src={apiAssetUrl(home.image_url)} alt={home.title} loading="lazy" />
-          : <span className="no-property-image">{t.videoTour}</span>}
+          : <span className="no-property-image">{home.property_type === "Apartment" ? t.apartment : t.shop}</span>}
         <span className="status-pill">{home.status === "Under contract" ? t.underContract : home.status === "Sold" ? t.previouslySold : t.forSale}</span>
         <span className="type-pill">{home.property_type === "Apartment" ? t.apartment : t.shop}</span>
         {home.video_url && <span className="video-pill">▶ {t.videoTour}</span>}
@@ -668,10 +707,7 @@ function PublicSite() {
   const [menuOpen, setMenuOpen] = useState(false);
 
   useEffect(() => {
-    if (!supabase) {
-      setApiNotice(t.loadingNotice);
-      return undefined;
-    }
+    if (!supabase) return undefined;
 
     supabase.from("site_settings").select("*").eq("id", 1).maybeSingle()
       .then(({ data, error }) => {
@@ -688,7 +724,7 @@ function PublicSite() {
       .catch((error) => {
         console.error("Could not load site branding from Supabase:", error);
       });
-  }, [t.loadingNotice]);
+  }, []);
 
   const agentName = branding.agent_name || "Helen Hidbachew";
   const profileTitle = (branding.agent_title || "Real Estate Professional")
@@ -818,6 +854,26 @@ function PublicSite() {
       document.documentElement.classList.remove("hero-in-view");
     };
   }, [soldPage]);
+
+  useEffect(() => {
+    const targets = document.querySelectorAll(
+      ".stats-band, .section-heading, .project-tile, .area-card, .guide-card, .faq-panel, .contact-section",
+    );
+    if (!("IntersectionObserver" in window)) return undefined;
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add("is-visible");
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.12, rootMargin: "0px 0px -32px 0px" });
+    targets.forEach((target) => {
+      target.classList.add("scroll-reveal");
+      observer.observe(target);
+    });
+    return () => observer.disconnect();
+  }, [homes.length, soldPage]);
 
   useEffect(() => {
     if (!supabase) return undefined;
