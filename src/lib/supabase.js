@@ -17,6 +17,7 @@ export const supabase = isSupabaseConfigured
 export async function uploadMedia(file, folder) {
   if (!supabase) throw new Error("Supabase is not configured for this deployment.");
   if (!file) return "";
+  if (file.size === 0) throw new Error("Choose a media file that is not empty.");
 
   const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
   if (sessionError) throw sessionError;

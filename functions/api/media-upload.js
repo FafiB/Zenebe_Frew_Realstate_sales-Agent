@@ -82,28 +82,16 @@ export async function onRequestPost({ request, env }) {
   if (!request.body) {
     return jsonResponse({ error: "The uploaded file is empty." }, 400);
   }
-  const key = `${folder}/${crypto.randomUUID()}-${filename}`;
-  let uploadedBytes = 0;
-  const checkedBody = request.body.pipeThrough(new TransformStream({
-    transform(chunk, controller) {
-      uploadedBytes += chunk.byteLength;
-      controller.enqueue(chunk);
-    },
-    flush() {
-      if (uploadedBytes === 0) {
-        throw new Error("The uploaded file is empty.");
-      }
-    },
-  }));
+  if (request.headers.get("Content-Length") === "0") {
+    return jsonResponse({ error: "The uploaded file is empty." }, 400);
+  }
 
+  const key = `${folder}/${crypto.randomUUID()}-${filename}`;
   try {
-    await env.MEDIA_BUCKET.put(key, checkedBody, {
+    await env.MEDIA_BUCKET.put(key, request.body, {
       httpMetadata: { contentType },
     });
   } catch (error) {
-    if (uploadedBytes === 0) {
-      return jsonResponse({ error: "The uploaded file is empty." }, 400);
-    }
     console.error("Could not store media in R2:", error);
     return jsonResponse({ error: "Could not store the file in R2. Try again." }, 502);
   }
