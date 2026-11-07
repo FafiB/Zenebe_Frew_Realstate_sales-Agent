@@ -91,7 +91,7 @@ const UI_COPY = {
     propertyGallery: "Property photos", noPhotos: "More photos will be added soon.",
     bathroomsLabel: "Bathrooms", bedroomsLabel: "Bedrooms", sizeLabel: "Property size",
     descriptionLabel: "About this property", askAboutHome: "Interested in this property?",
-    modalEyebrow: "LET’S TALK ABOUT THIS HOME", contactUnavailable: "Contact details will appear here once they’re added in Site branding.",
+    modalEyebrow: "LET’S TALK ABOUT THIS HOME",
     formNotReady: "The contact form is not configured yet. Please use the contact links instead.",
     formSendError: "We couldn't send your note. Please try again.",
     pastSalesError: "Past sales could not be loaded right now. Please try again later.",
@@ -188,7 +188,7 @@ const UI_COPY = {
     propertyGallery: "የንብረቱ ፎቶዎች", noPhotos: "ተጨማሪ ፎቶዎች በቅርቡ ይጨመራሉ።",
     bathroomsLabel: "መታጠቢያ ቤቶች", bedroomsLabel: "መኝታ ክፍሎች", sizeLabel: "የንብረት ስፋት",
     descriptionLabel: "ስለዚህ ንብረት", askAboutHome: "ስለዚህ ንብረት ፍላጎት አለዎት?",
-    modalEyebrow: "ስለዚህ ቤት እንወያይ", contactUnavailable: "የመገኛ መረጃዎች በብራንዲንግ ሲጨመሩ እዚህ ይታያሉ።",
+    modalEyebrow: "ስለዚህ ቤት እንወያይ",
     formNotReady: "የመገኛ ቅጹ አልተዘጋጀም። እባክዎ የመገኛ አገናኞችን ይጠቀሙ።",
     formSendError: "መልዕክትዎን መላክ አልተቻለም። እባክዎ እንደገና ይሞክሩ።",
     pastSalesError: "የተሸጡ ንብረቶችን አሁን ማምጣት አልተቻለም። እባክዎ ቆይተው ይሞክሩ።",
@@ -1335,9 +1335,6 @@ function PublicSite() {
                 <span><small>{t.callUpper.replace("{name}", agentName.toUpperCase())}</small><strong>{branding.contact_phone}</strong></span>
                 <Icon name="arrow" size={18} />
               </a>
-            )}
-            {!phoneDigits && !configuredSocialLinks.length && (
-              <p className="contact-unavailable">{t.contactUnavailable}</p>
             )}
           </div>
           <div className="contact-card">
