@@ -98,6 +98,7 @@ h2 { font-family: var(--serif); font-weight: 400; font-size: clamp(34px, 4.1vw, 
 .property-title-row { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
 .property-title { font-family: var(--serif); font-size: 18px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .property-price { display: block; max-width: 190px; padding: 8px 11px; border: 1px solid #dcb968; border-radius: 12px; background: linear-gradient(120deg, #fff8e8, #f8e4b7); color: #664512; font-size: 12px; font-weight: 800; line-height: 1.25; white-space: normal; box-shadow: 0 4px 12px #9a6d241a; }
+.property-down-payment { display: block; margin-top: 7px; color: var(--green); font-size: 10px; font-weight: 700; line-height: 1.45; }
 .property-location { display: flex; align-items: center; gap: 5px; margin-top: 7px; color: #708094; font-size: 10px; }
 .property-description { display: -webkit-box; overflow: hidden; -webkit-box-orient: vertical; -webkit-line-clamp: 2; min-height: 34px; margin-top: 11px; color: #6c7d90; font-size: 10px; line-height: 1.65; }
 .property-specs { margin-top: 14px; padding-top: 12px; display: flex; align-items: center; gap: 14px; border-top: 1px solid #edf1f5; color: #5d7188; font-size: 9px; }
@@ -209,6 +210,7 @@ h2 { font-family: var(--serif); font-weight: 400; font-size: clamp(34px, 4.1vw, 
 .property-detail-thumbnails img { width: 100%; height: 100%; object-fit: cover; }
 .property-detail-summary { min-width: 0; }
 .property-detail-price { margin: 0; color: var(--ink); font-size: clamp(22px, 3vw, 32px); font-weight: 800; line-height: 1.2; }
+.property-detail-down-payment { margin: 7px 0 0; color: var(--green); font-size: 12px; font-weight: 700; line-height: 1.5; }
 .property-detail-location { display: flex; align-items: center; gap: 7px; margin: 18px 0; color: var(--muted); font-size: 12px; }
 .property-detail-facts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 9px; }
 .property-detail-facts > div { display: grid; gap: 5px; padding: 12px; border: 1px solid var(--line); border-radius: 10px; background: color-mix(in srgb, var(--blue) 4%, var(--paper)); }

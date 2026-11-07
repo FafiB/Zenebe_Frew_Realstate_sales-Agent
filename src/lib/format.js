@@ -59,6 +59,15 @@ export const formatPrice = (price, currencyCode, language = "en") =>
     maximumFractionDigits: 0,
   }).format(price);
 
+export const DOWN_PAYMENT_PERCENT = 10;
+
+export const calculateDownPayment = (price) => {
+  const numericPrice = Number(price);
+  return Number.isFinite(numericPrice)
+    ? Math.round(numericPrice * DOWN_PAYMENT_PERCENT / 100)
+    : 0;
+};
+
 export const formatArea = (area) => Number(area || 0).toLocaleString();
 
 export const phoneHref = (phone) => {

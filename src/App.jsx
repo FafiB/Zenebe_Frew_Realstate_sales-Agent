@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import AdminApp from "./AdminApp.jsx";
 import { supabase } from "./lib/supabase.js";
-import { localizeHome } from "./lib/format.js";
+import { calculateDownPayment, formatPrice as formatCurrency, localizeHome } from "./lib/format.js";
 import { PropertyMedia } from "./components/PropertyMedia.jsx";
 
 const UI_COPY = {
@@ -80,7 +80,7 @@ const UI_COPY = {
     areaBrowse: "Explore by area", areaBrowseIntro: "Browse properties grouped by their listed location.",
     viewArea: "View properties", bedroomsShort: "Beds", bathroomsShort: "Baths",
     statusLabel: "Status", locationLabel: "Location", typeLabel: "Type", areaLabel: "Size",
-    priceLabel: "Price", listingLabel: "Listing", noListingData: "No listing details are available for this table yet.",
+    priceLabel: "Price", downPaymentLabel: "Down payment (10%)", listingLabel: "Listing", noListingData: "No listing details are available for this table yet.",
     previousSlide: "Previous items", nextSlide: "Next items",
     unmuteVideo: "Turn on hero video sound", muteVideo: "Mute hero video",
     noAreas: "Neighborhoods will appear when listings have locations.",
@@ -89,7 +89,7 @@ const UI_COPY = {
     footerNoAreas: "Locations will appear as properties are added.",
     phoneNumber: "Phone", callBusiness: "Call",
     requestCall: "Request a call", namePlaceholder: "Your name", phonePlaceholder: "Your phone number",
-    fromPrice: "From {price}", propertyDetails: "Property details",
+    fromPrice: "From {price}", downPayment: "Down payment (10%): {amount}", propertyDetails: "Property details",
     propertyGallery: "Property photos", noPhotos: "More photos will be added soon.",
     bathroomsLabel: "Bathrooms", bedroomsLabel: "Bedrooms", sizeLabel: "Property size",
     descriptionLabel: "About this property", askAboutHome: "Interested in this property?",
@@ -178,7 +178,7 @@ const UI_COPY = {
     areaBrowse: "በአካባቢ ያስሱ", areaBrowseIntro: "ንብረቶችን በተመዘገቡበት አካባቢ ይመልከቱ።",
     viewArea: "ንብረቶቹን ይመልከቱ", bedroomsShort: "መኝታ", bathroomsShort: "መታጠቢያ",
     statusLabel: "ሁኔታ", locationLabel: "አካባቢ", typeLabel: "ዓይነት", areaLabel: "ስፋት",
-    priceLabel: "ዋጋ", listingLabel: "ንብረት", noListingData: "ለዚህ ሰንጠረዥ የሚታይ የንብረት መረጃ የለም።",
+    priceLabel: "ዋጋ", downPaymentLabel: "ቅድመ ክፍያ (10%)", listingLabel: "ንብረት", noListingData: "ለዚህ ሰንጠረዥ የሚታይ የንብረት መረጃ የለም።",
     previousSlide: "ያለፉትን ይመልከቱ", nextSlide: "ቀጣዮቹን ይመልከቱ",
     unmuteVideo: "የጀርባ ቪዲዮውን ድምፅ ያብሩ", muteVideo: "የጀርባ ቪዲዮውን ድምፅ ያጥፉ",
     noAreas: "ንብረቶች ሲጨመሩ አካባቢዎች እዚህ ይታያሉ።",
@@ -187,7 +187,7 @@ const UI_COPY = {
     footerNoAreas: "ንብረቶች ሲጨመሩ አካባቢዎች እዚህ ይታያሉ።",
     phoneNumber: "ስልክ ቁጥር", callBusiness: "ይደውሉ",
     requestCall: "እንዲደውሉልኝ ይጠይቁ", namePlaceholder: "ሙሉ ስምዎ", phonePlaceholder: "ስልክ ቁጥርዎ",
-    fromPrice: "ከ {price} ጀምሮ", propertyDetails: "የንብረት ዝርዝር",
+    fromPrice: "ከ {price} ጀምሮ", downPayment: "ቅድመ ክፍያ (10%)፦ {amount}", propertyDetails: "የንብረት ዝርዝር",
     propertyGallery: "የንብረቱ ፎቶዎች", noPhotos: "ተጨማሪ ፎቶዎች በቅርቡ ይጨመራሉ።",
     bathroomsLabel: "መታጠቢያ ቤቶች", bedroomsLabel: "መኝታ ቤቶች", sizeLabel: "የንብረቱ ስፋት",
     descriptionLabel: "ስለ ንብረቱ", askAboutHome: "ስለዚህ ንብረት መጠየቅ ይፈልጋሉ?",
@@ -475,12 +475,12 @@ function isPastSalesPage() {
 
 function PropertyCard({ home: sourceHome, saved, onSave, onOpen, settings, language, t }) {
   const home = localizeHome(sourceHome, language);
-  const formattedPrice = new Intl.NumberFormat(language === "am" ? "am-ET" : "en-ET", {
-    style: "currency",
-    currency: settings.currency_code || "ETB",
-    maximumFractionDigits: 0,
-  }).format(home.price);
+  const formattedPrice = formatCurrency(home.price, settings.currency_code, language);
   const price = t.fromPrice.replace("{price}", formattedPrice);
+  const downPayment = t.downPayment.replace(
+    "{amount}",
+    formatCurrency(calculateDownPayment(home.price), settings.currency_code, language),
+  );
 
   return (
     <article className={`property-card property-card-${home.property_type.toLowerCase()}`}>
@@ -504,6 +504,7 @@ function PropertyCard({ home: sourceHome, saved, onSave, onOpen, settings, langu
           <span className="property-title">{home.title}</span>
           <span className="property-price">{price}</span>
         </span>
+        {home.status !== "Sold" && Number(home.price) > 0 && <span className="property-down-payment">{downPayment}</span>}
         <span className="property-location"><Icon name="pin" size={15} />{home.location}</span>
         {home.description && <span className="property-description">{home.description}</span>}
         <span className="property-specs">
@@ -612,6 +613,9 @@ function InquiryModal({ home, onClose, settings, language, t }) {
                 </div>
                 <div className="property-detail-summary">
                   <p className="property-detail-price">{t.fromPrice.replace("{price}", price)}</p>
+                  {home.status !== "Sold" && Number(home.price) > 0 && (
+                    <p className="property-detail-down-payment">{displayDownPayment(home.price)}</p>
+                  )}
                   <p className="property-detail-location"><Icon name="pin" size={16} />{home.location}</p>
                   <div className="property-detail-facts">
                     {home.property_type === "Apartment" && (
@@ -946,12 +950,15 @@ function PublicSite() {
   }
 
   function displayPrice(price) {
-    const formattedPrice = new Intl.NumberFormat(language === "am" ? "am-ET" : "en-ET", {
-      style: "currency",
-      currency: branding.currency_code || "ETB",
-      maximumFractionDigits: 0,
-    }).format(price);
+    const formattedPrice = formatCurrency(price, branding.currency_code, language);
     return t.fromPrice.replace("{price}", formattedPrice);
+  }
+
+  function displayDownPayment(price) {
+    return t.downPayment.replace(
+      "{amount}",
+      formatCurrency(calculateDownPayment(price), branding.currency_code, language),
+    );
   }
 
   function searchSubmit(event) {
@@ -1162,6 +1169,7 @@ function PublicSite() {
                       <th scope="col">{t.bathroomsShort}</th>
                       <th scope="col">{t.areaLabel}</th>
                       <th scope="col">{t.priceLabel}</th>
+                      <th scope="col">{t.downPaymentLabel}</th>
                       <th scope="col">{t.statusLabel}</th>
                       <th scope="col">{t.compare}</th>
                     </tr>
@@ -1179,6 +1187,7 @@ function PublicSite() {
                           <td>{home.baths || "—"}</td>
                           <td>{Number(home.area).toLocaleString(language === "am" ? "am-ET" : "en-ET")} {branding.area_unit || "sqft"}</td>
                           <td>{displayPrice(home.price)}</td>
+                          <td>{home.status === "Sold" ? "—" : displayDownPayment(home.price)}</td>
                           <td>{home.status === "Under contract" ? t.underContract : home.status === "Sold" ? t.previouslySold : t.forSale}</td>
                           <td>
                             <button
@@ -1213,6 +1222,7 @@ function PublicSite() {
                         <tr><th scope="row">{t.bathroomsShort}</th>{compareHomes.map((home) => <td key={home.id}>{home.baths || "—"}</td>)}</tr>
                         <tr><th scope="row">{t.areaLabel}</th>{compareHomes.map((home) => <td key={home.id}>{Number(home.area).toLocaleString(language === "am" ? "am-ET" : "en-ET")} {branding.area_unit || "sqft"}</td>)}</tr>
                         <tr><th scope="row">{t.priceLabel}</th>{compareHomes.map((home) => <td key={home.id}>{displayPrice(home.price)}</td>)}</tr>
+                        <tr><th scope="row">{t.downPaymentLabel}</th>{compareHomes.map((home) => <td key={home.id}>{home.status === "Sold" ? "—" : displayDownPayment(home.price)}</td>)}</tr>
                         <tr><th scope="row">{t.statusLabel}</th>{compareHomes.map((home) => <td key={home.id}>{home.status === "Under contract" ? t.underContract : home.status === "Sold" ? t.previouslySold : t.forSale}</td>)}</tr>
                       </tbody>
                     </table>

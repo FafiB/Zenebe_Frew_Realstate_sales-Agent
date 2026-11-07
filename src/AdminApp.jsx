@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { isSupabaseConfigured, supabase, uploadMedia } from "./lib/supabase.js";
+import { calculateDownPayment, DOWN_PAYMENT_PERCENT, formatPrice } from "./lib/format.js";
 import { PropertyMedia } from "./components/PropertyMedia.jsx";
 import "./admin.css";
 
@@ -367,7 +368,7 @@ function AdminApp() {
                 <span className="admin-property-media-wrap">
                   <PropertyMedia imageUrl={property.image_url} videoUrl={property.video_url} className="admin-property-media" />
                 </span>
-                <div className="admin-property-summary"><strong>{property.title}</strong><span>{property.location} · {property.status}</span><small>{property.property_type} · {Number(property.price).toLocaleString()} {settings.currency_code}</small></div>
+                <div className="admin-property-summary"><strong>{property.title}</strong><span>{property.location} · {property.status}</span><small>{property.property_type} · {formatPrice(property.price, settings.currency_code)}</small>{property.status !== "Sold" && <small>{DOWN_PAYMENT_PERCENT}% down payment: {formatPrice(calculateDownPayment(property.price), settings.currency_code)}</small>}</div>
                 <button className="admin-secondary-button" onClick={() => editProperty(property)}>Edit</button>
                 <button className="admin-danger-button" onClick={() => deleteProperty(property)} aria-label={`Delete ${property.title}`}>Delete</button>
               </article>
@@ -387,6 +388,11 @@ function AdminApp() {
                 <label>Type<select value={propertyDraft.property_type} onChange={(event) => setPropertyDraft({ ...propertyDraft, property_type: event.target.value })}><option>Apartment</option><option>Shop</option></select></label>
                 <label>Status<select value={propertyDraft.status} onChange={(event) => setPropertyDraft({ ...propertyDraft, status: event.target.value })}><option>For sale</option><option>Under contract</option><option>Sold</option></select></label>
               </div>
+              {Number(propertyDraft.price) > 0 && propertyDraft.status !== "Sold" && (
+                <p className="admin-down-payment-preview">
+                  Down payment ({DOWN_PAYMENT_PERCENT}%): {formatPrice(calculateDownPayment(propertyDraft.price), settings.currency_code)}
+                </p>
+              )}
               <label>Photo URL<input type="url" value={propertyDraft.image_url || ""} onChange={(event) => setPropertyDraft({ ...propertyDraft, image_url: event.target.value })} placeholder="https://…" /></label>
               <label>Upload property photo<input type="file" accept="image/jpeg,image/png,image/webp,image/avif,image/gif" onChange={(event) => setPropertyImageFile(event.target.files?.[0] || null)} /></label>
               <label>Upload additional detail photos<input type="file" accept="image/jpeg,image/png,image/webp,image/avif,image/gif" multiple onChange={(event) => setPropertyGalleryFiles(Array.from(event.target.files || []))} /></label>

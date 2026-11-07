@@ -6,7 +6,7 @@
 import React from "react";
 import { Icon } from "./atoms.jsx";
 import { PropertyMedia } from "./PropertyMedia.jsx";
-import { formatArea, formatPrice, localizeHome } from "../lib/format.js";
+import { calculateDownPayment, formatArea, formatPrice, localizeHome } from "../lib/format.js";
 import { statusLabelMap } from "../lib/channels.js";
 import { PROPERTY_TYPE } from "../lib/constants.js";
 
@@ -14,6 +14,10 @@ export function PropertyCard({ home, saved, onSave, onOpen, settings, t, languag
   const displayHome = localizeHome(home, language);
   const { title: displayTitle, location: displayLocation, description: displayDescription } = displayHome;
   const price = formatPrice(home.price, settings.currency_code, language);
+  const downPayment = t.downPayment.replace(
+    "{amount}",
+    formatPrice(calculateDownPayment(home.price), settings.currency_code, language),
+  );
   const isApartment = home.property_type === PROPERTY_TYPE.APARTMENT;
 
   return (
@@ -38,6 +42,7 @@ export function PropertyCard({ home, saved, onSave, onOpen, settings, t, languag
           <span className="property-title">{displayTitle}</span>
           <span className="property-price">{price}</span>
         </span>
+        {home.status !== "Sold" && Number(home.price) > 0 && <span className="property-down-payment">{downPayment}</span>}
         <span className="property-location"><Icon name="pin" size={15} />{displayLocation}</span>
         {displayDescription && <span className="property-description">{displayDescription}</span>}
         <span className="property-specs">
