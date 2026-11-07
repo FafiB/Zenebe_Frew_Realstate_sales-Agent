@@ -2715,16 +2715,210 @@ h1, h2, h3, .property-title, .project-tile-title, .guide-card h3 {
 :root[data-theme="dark"] .comparison-table thead th { background: #2c2a37; }
 :root[data-theme="dark"] .listing-data-table tbody tr:hover { background: #292833; }
 
+/* Keep the theme contrast in the surfaces, with color reserved for accents. */
+:root:not([data-theme="dark"]) {
+  --paper: #f7f8fa;
+  --ink: #263445;
+  --muted: #6b7786;
+  --line: #e1e6eb;
+  --blue: #42627f;
+  --blue-dark: #334e68;
+  --green: #42627f;
+  color-scheme: light;
+  background: #f7f8fa;
+}
+:root:not([data-theme="dark"]) body,
+:root:not([data-theme="dark"]) .listings-section,
+:root:not([data-theme="dark"]) .sold-page { background: #f7f8fa; }
+:root:not([data-theme="dark"]) .site-header:not(.site-header-hero),
+:root:not([data-theme="dark"]) .property-card,
+:root:not([data-theme="dark"]) .property-info,
+:root:not([data-theme="dark"]) .stats-grid,
+:root:not([data-theme="dark"]) .inventory-section,
+:root:not([data-theme="dark"]) .guide-card,
+:root:not([data-theme="dark"]) .contact-card {
+  border-color: #e1e6eb;
+  background: #fff;
+  box-shadow: 0 8px 26px #2634450a;
+}
+:root:not([data-theme="dark"]) .projects-section,
+:root:not([data-theme="dark"]) .quote-band {
+  background: linear-gradient(180deg, #f0f3f6, #f5f6f8);
+}
+:root:not([data-theme="dark"]) .manifesto,
+:root:not([data-theme="dark"]) .faq-panel {
+  border-color: #e1e6eb;
+  background: #edf1f4;
+}
+:root:not([data-theme="dark"]) .contact-section {
+  background: linear-gradient(135deg, #edf1f4, #f6f7f9 58%, #e8edf2);
+}
+:root:not([data-theme="dark"]) .search-panel {
+  border-color: #dce3e9;
+  background: #fff;
+  box-shadow: 0 14px 36px #26344512;
+}
+:root:not([data-theme="dark"]) .search-panel label {
+  border-color: #e2e7ec;
+  background: #f8f9fa;
+}
+:root:not([data-theme="dark"]) .search-panel label > span:first-child,
+:root:not([data-theme="dark"]) .search-input-wrap { color: #647a8f; }
+:root:not([data-theme="dark"]) .search-panel input,
+:root:not([data-theme="dark"]) .search-panel select { color: #263b50; }
+:root:not([data-theme="dark"]) .search-panel input::placeholder { color: #7a8794; }
+:root:not([data-theme="dark"]) .search-panel select {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%23536f88' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+}
+:root:not([data-theme="dark"]) .search-panel label:hover,
+:root:not([data-theme="dark"]) .search-panel label:focus-within { border-color: #9eafbf; }
+:root:not([data-theme="dark"]) .search-submit,
+:root:not([data-theme="dark"]) .nav-contact,
+:root:not([data-theme="dark"]) .nav-call,
+:root:not([data-theme="dark"]) .mobile-header-call,
+:root:not([data-theme="dark"]) .button-dark {
+  border-color: #42627f;
+  background: #42627f;
+  box-shadow: 0 5px 14px #26344518;
+}
+:root:not([data-theme="dark"]) .search-submit:hover,
+:root:not([data-theme="dark"]) .nav-contact:hover,
+:root:not([data-theme="dark"]) .nav-call:hover,
+:root:not([data-theme="dark"]) .mobile-header-call:hover,
+:root:not([data-theme="dark"]) .button-dark:hover { background: #334e68; }
+:root:not([data-theme="dark"]) .eyebrow,
+:root:not([data-theme="dark"]) .guide-number,
+:root:not([data-theme="dark"]) .stat-card strong,
+:root:not([data-theme="dark"]) .section-heading h2 em,
+:root:not([data-theme="dark"]) .contact-copy h2 em { color: #8a7049; }
+:root:not([data-theme="dark"]) .property-price {
+  border-color: #e4d7bd;
+  background: #f4efe6;
+  color: #665538;
+}
+:root:not([data-theme="dark"]) .projects-section .section-heading h2,
+:root:not([data-theme="dark"]) .property-title,
+:root:not([data-theme="dark"]) .guide-card h3,
+:root:not([data-theme="dark"]) .contact-copy h2 { color: #263b50; }
+:root:not([data-theme="dark"]) .listing-data-table thead th,
+:root:not([data-theme="dark"]) .comparison-table thead th { background: #e8edf1; }
+:root:not([data-theme="dark"]) .listing-data-table tbody tr:hover { background: #f0f3f6; }
+
+:root[data-theme="dark"] {
+  --paper: #191d25;
+  --ink: #e9ebef;
+  --muted: #aab2be;
+  --line: #363d49;
+  --blue: #8ea3ba;
+  --blue-dark: #748aa2;
+  --green: #8299b1;
+  color-scheme: dark;
+  background: #191d25;
+}
+:root[data-theme="dark"] body,
+:root[data-theme="dark"] .listings-section,
+:root[data-theme="dark"] .sold-page { background: #191d25; }
+:root[data-theme="dark"] .site-header,
+:root[data-theme="dark"] .property-card,
+:root[data-theme="dark"] .property-info,
+:root[data-theme="dark"] .inquiry-modal,
+:root[data-theme="dark"] .stats-grid,
+:root[data-theme="dark"] .inventory-section,
+:root[data-theme="dark"] .guide-card,
+:root[data-theme="dark"] .faq-panel,
+:root[data-theme="dark"] .contact-card {
+  border-color: #363d49;
+  background: #222832;
+  color: var(--ink);
+}
+:root[data-theme="dark"] .hero { background-color: #202630; }
+:root[data-theme="dark"] .projects-section,
+:root[data-theme="dark"] .quote-band {
+  background: linear-gradient(180deg, #202630, #1b2029);
+}
+:root[data-theme="dark"] .manifesto { background: #222832; }
+:root[data-theme="dark"] .contact-section {
+  background: linear-gradient(135deg, #252c37, #1c222b 58%, #242b35);
+}
+:root[data-theme="dark"] .search-panel {
+  border-color: #3b4451;
+  background: #222832;
+  box-shadow: 0 14px 36px #090c1180;
+}
+:root[data-theme="dark"] .search-panel label {
+  border-color: #414b58;
+  background: #292f39;
+}
+:root[data-theme="dark"] .search-panel label > span:first-child,
+:root[data-theme="dark"] .search-input-wrap { color: #a7b5c5; }
+:root[data-theme="dark"] .search-panel input,
+:root[data-theme="dark"] .search-panel select { color: #edf0f4; }
+:root[data-theme="dark"] .search-panel input::placeholder { color: #adb6c2; }
+:root[data-theme="dark"] .search-panel select {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%23a7b5c5' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+}
+:root[data-theme="dark"] .search-panel label:hover,
+:root[data-theme="dark"] .search-panel label:focus-within { border-color: #748aa2; }
+:root[data-theme="dark"] .search-submit,
+:root[data-theme="dark"] .site-header .nav-contact,
+:root[data-theme="dark"] .site-header .nav-call,
+:root[data-theme="dark"] .mobile-header-call,
+:root[data-theme="dark"] .button-dark {
+  border-color: #70869e;
+  background: #536a82;
+  box-shadow: 0 5px 14px #090c113d;
+}
+:root[data-theme="dark"] .search-submit:hover,
+:root[data-theme="dark"] .site-header .nav-contact:hover,
+:root[data-theme="dark"] .site-header .nav-call:hover,
+:root[data-theme="dark"] .button-dark:hover { background: #637a91; }
+:root[data-theme="dark"] .eyebrow,
+:root[data-theme="dark"] .guide-number,
+:root[data-theme="dark"] .stat-card strong,
+:root[data-theme="dark"] .section-heading h2 em,
+:root[data-theme="dark"] .contact-copy h2 em { color: #c1a77b; }
+:root[data-theme="dark"] .property-card,
+:root[data-theme="dark"] .property-info { background: #222832; }
+:root[data-theme="dark"] .property-title,
+:root[data-theme="dark"] .projects-section .section-heading h2,
+:root[data-theme="dark"] .guide-card h3,
+:root[data-theme="dark"] .contact-copy h2 { color: #edf0f4; }
+:root[data-theme="dark"] .property-down-payment {
+  border-color: #4a5665;
+  background: #2b333e;
+  color: #dce3eb;
+}
+:root[data-theme="dark"] .property-card-link { color: #b6c4d2; }
+:root[data-theme="dark"] .saved-filter,
+:root[data-theme="dark"] .theme-toggle {
+  border-color: #46505e;
+  background: #292f39;
+  color: #e1e5eb;
+}
+:root[data-theme="dark"] .saved-filter.is-active {
+  border-color: #70869e;
+  background: #313b48;
+  color: #e6ebf0;
+}
+:root[data-theme="dark"] .site-footer {
+  border-top: 1px solid #363d49;
+  background: #1d222b;
+  color: #b7bfca;
+}
+:root[data-theme="dark"] .listing-data-table thead th,
+:root[data-theme="dark"] .comparison-table thead th { background: #2d3540; }
+:root[data-theme="dark"] .listing-data-table tbody tr:hover { background: #292f39; }
+
 @media (max-width: 620px) {
   .search-panel {
     bottom: -105px;
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
+  .search-panel .search-type,
   .search-panel .search-bedrooms,
-  .search-panel .search-budget,
   .search-panel .search-status { display: none; }
   .search-panel .search-location,
-  .search-panel .search-type {
+  .search-panel .search-budget {
     min-height: 56px;
     padding: 5px 9px;
   }
