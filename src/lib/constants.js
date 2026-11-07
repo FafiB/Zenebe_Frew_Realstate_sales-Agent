@@ -4,7 +4,7 @@
  */
 
 export const DEFAULT_BRAND_NAME = "Zenebe Frew Real Estate";
-export const DEFAULT_AGENT_NAME = "Helen Hidbachew";
+export const DEFAULT_AGENT_NAME = "";
 export const DEFAULT_AGENT_TITLE = "Real Estate Agent";
 export const DEFAULT_AGENT_BIO =
   "Buying or selling a home is a personal decision. I’m here to help you explore your options, understand the next steps, and find a home that feels right for you.";

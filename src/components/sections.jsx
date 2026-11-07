@@ -7,7 +7,7 @@ import React from "react";
 import { Icon } from "./atoms.jsx";
 import { PropertyGrid, FeaturedProjects, EmptyResults } from "./listings.jsx";
 
-export function Hero({ branding, heroImage, agentName, agentTitle, criteria, onCriteriaChange, onSearchSubmit, t }) {
+export function Hero({ branding, heroImage, agentTitle, criteria, onCriteriaChange, onSearchSubmit, t }) {
   const { query, type, bedrooms, maxPrice } = criteria;
   const change = (key) => (event) => onCriteriaChange({ ...criteria, [key]: event.target.value });
 
@@ -64,10 +64,6 @@ export function Hero({ branding, heroImage, agentName, agentTitle, criteria, onC
         </label>
         <button className="search-submit" type="submit"><Icon name="search" size={19} /><span>{t.searchHomes}</span></button>
       </form>
-      <div className="hero-bottom">
-        <span>{t.personalGuidance}</span>
-        <span>{agentName.toUpperCase()} · {(agentTitle || "REAL ESTATE AGENT").toUpperCase()}</span>
-      </div>
     </section>
   );
 }
@@ -156,21 +152,20 @@ export function ProjectsSection({ featuredHomes, onOpen, t, language }) {
   );
 }
 
-export function AgentSection({ branding, agentName, agentTitle, agentBio, t }) {
-  const firstName = agentName.split(" ")[0];
-  const restOfName = agentName.split(" ").slice(1).join(" ");
+export function AgentSection({ branding, agentTitle, agentBio, t }) {
+  const title = agentTitle || "Real Estate Professional";
   return (
     <section className="manifesto" id="about">
-      <div className={`manifesto-image profile-portrait${branding.agent_photo_url ? " has-agent-photo" : ""}`} aria-label={`Profile of ${agentName}`}>
+      <div className={`manifesto-image profile-portrait${branding.agent_photo_url ? " has-agent-photo" : ""}`} aria-label="Real estate professional profile">
         {branding.agent_photo_url
-          ? <img src={branding.agent_photo_url} alt={agentName} loading="lazy" />
-          : <span className="profile-photo-prompt">{t.uploadPhoto(firstName)}</span>}
-        <span className="profile-placeholder-caption">{agentName.toUpperCase()} <i>{(agentTitle || "REAL ESTATE AGENT").toUpperCase()}</i></span>
+          ? <img src={branding.agent_photo_url} alt="Real estate professional" loading="lazy" />
+          : <span className="profile-photo-prompt">Profile photo</span>}
+        <span className="profile-placeholder-caption">{title.toUpperCase()}</span>
       </div>
       <div className="manifesto-copy">
         <p className="eyebrow">{t.meetAgent}</p>
-        <h2>{firstName} <em>{restOfName}.</em></h2>
-        <p className="agent-role">{agentTitle}</p>
+        <h2>{title}</h2>
+        <p className="agent-role">{title}</p>
         <p>{agentBio}</p>
         <a className="text-link" href="#contact">{t.getInTouch} <Icon name="arrow" size={16} /></a>
         <div className="handwritten">{t.agentTagline}</div>
@@ -187,11 +182,11 @@ export function ContactSection({ branding, socialLinks, t }) {
       <div className="contact-copy">
         <p className="eyebrow">{t.personalHello}</p>
         <h2>{t.findPlace}<br /><em>{t.nextPlace}</em></h2>
-        <p>{t.contactIntro(branding.agent_name || "")}</p>
+        <p>{t.contactIntro}</p>
         {phoneDigits ? (
           <a className="contact-primary-action" href={`tel:${phoneDigits}`}>
             <span className="contact-action-icon"><Icon name="phone" size={19} /></span>
-            <span><small>{t.callAgentUpper(branding.agent_name || "")}</small><strong>{phone}</strong></span>
+            <span><small>{t.callNow}</small><strong>{phone}</strong></span>
             <Icon name="arrow" size={18} />
           </a>
         ) : null}
@@ -208,7 +203,7 @@ export function ContactSection({ branding, socialLinks, t }) {
           {socialLinks.length ? socialLinks.map((item) => (
             <a className="contact-channel" href={item.href} key={item.name} target="_blank" rel="noreferrer">
               <span className={`contact-channel-mark channel-${item.name.toLowerCase()}`}>{item.mark}</span>
-              <span><strong>{item.name}</strong><small>{item.account || t.connectHelen}</small></span>
+              <span><strong>{item.name}</strong><small>{item.account || t.msgUs}</small></span>
               <Icon name="arrow" size={16} />
             </a>
           )) : <p className="contact-channel-empty">{t.socialEmpty}</p>}
@@ -242,10 +237,10 @@ export function SoldPage({ homes, saved, onSave, onOpen, apiNotice, settings, t,
             <span>⌂</span>
             <h3>{t.soldHomesEmpty}</h3>
             <p>{t.soldHomesHint}</p>
-            <a className="text-link" href="/#contact">{t.askHelen} <Icon name="arrow" size={16} /></a>
+            <a className="text-link" href="/#contact">{t.getInTouch} <Icon name="arrow" size={16} /></a>
           </div>
         )}
-        <div className="center-action"><a href="/#contact" className="button button-outline">{t.talkHelen} <Icon name="arrow" size={17} /></a></div>
+        <div className="center-action"><a href="/#contact" className="button button-outline">{t.getInTouch} <Icon name="arrow" size={17} /></a></div>
       </section>
     </main>
   );

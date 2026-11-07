@@ -2041,3 +2041,167 @@ h1, h2, h3, .property-title, .project-tile-title, .guide-card h3 {
     border-radius: 24px;
   }
 }
+
+/* Keep property search calm and easy to scan instead of relying on a heavy shadow. */
+.search-panel {
+  bottom: -145px;
+  gap: 9px;
+  padding: 14px;
+  border: 1px solid #d9c9ad;
+  border-radius: 20px;
+  background: #f8f4eb;
+  box-shadow: none;
+  backdrop-filter: none;
+  z-index: 3;
+  transition: border-color .2s ease, transform .2s ease;
+}
+.search-panel:focus-within {
+  border-color: #c9a76b;
+  box-shadow: none;
+}
+.search-panel label {
+  min-width: 0;
+  min-height: 64px;
+  justify-content: center;
+  gap: 4px;
+  padding: 6px 11px;
+  border: 1px solid #e5dccd;
+  border-radius: 12px;
+  background: #fffdfa;
+  transition: border-color .2s ease, background-color .2s ease;
+}
+.search-panel label:hover,
+.search-panel label:focus-within {
+  border-color: #c9a76b;
+  background: #fff;
+}
+.search-panel .search-type,
+.search-panel .search-bedrooms,
+.search-panel .search-budget,
+.search-panel .search-status {
+  padding-left: 11px;
+}
+.search-panel label > span:first-child {
+  color: #806b4c;
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 1px;
+}
+.search-input-wrap {
+  min-width: 0;
+  min-height: 38px;
+  gap: 8px;
+  color: #896f42;
+}
+.search-panel input,
+.search-panel select {
+  min-width: 0;
+  min-height: 38px;
+  padding: 0 20px 0 0;
+  border: 0;
+  border-radius: 0;
+  outline: 0;
+  background-color: transparent;
+  color: #24394e;
+  font-size: 14px;
+  font-weight: 600;
+}
+.search-panel select {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%23735c38' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 4px center;
+  cursor: pointer;
+}
+.search-panel input::placeholder { color: #728090; opacity: 1; }
+.search-panel input:focus,
+.search-panel select:focus { color: #153651; }
+.search-panel input:focus-visible,
+.search-panel select:focus-visible {
+  outline: 2px solid #c9a76b;
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+.search-submit {
+  min-height: 48px;
+  margin-left: 10px;
+  padding: 0 18px;
+  border-radius: 13px;
+  box-shadow: none;
+}
+.search-submit:hover {
+  box-shadow: none;
+  transform: translateY(-1px);
+}
+:root[data-theme="dark"] .search-panel {
+  border-color: #d9c9ad;
+  background: #f8f4eb;
+  box-shadow: none;
+}
+:root[data-theme="dark"] .search-panel:focus-within {
+  border-color: #bd914a;
+  box-shadow: none;
+}
+:root[data-theme="dark"] .search-panel label {
+  border-color: #e5dccd;
+  background: #fffdfa;
+}
+:root[data-theme="dark"] .search-panel label:hover,
+:root[data-theme="dark"] .search-panel label:focus-within { background: #fff; }
+:root[data-theme="dark"] .search-panel label > span:first-child { color: #806b4c; }
+:root[data-theme="dark"] .search-panel input,
+:root[data-theme="dark"] .search-panel select { color: #24394e; }
+:root[data-theme="dark"] .search-panel input::placeholder { color: #728090; }
+:root[data-theme="dark"] .search-submit { box-shadow: none; }
+@media (max-width: 850px) {
+  .search-panel {
+    gap: 10px;
+    padding: 16px;
+  }
+  .search-panel label {
+    min-height: 68px;
+    padding: 7px 11px;
+  }
+  .search-panel .search-type,
+  .search-panel .search-bedrooms,
+  .search-panel .search-budget,
+  .search-panel .search-status { padding-left: 11px; }
+  .search-panel .search-input-wrap,
+  .search-panel input,
+  .search-panel select { min-height: 40px; }
+  .search-submit {
+    min-height: 50px;
+    margin: 0;
+    border-radius: 12px;
+  }
+}
+@media (max-width: 620px) {
+  .search-panel {
+    gap: 8px;
+    padding: 12px;
+    border-radius: 17px;
+  }
+  .search-panel label {
+    min-height: 64px;
+    padding: 5px 9px;
+  }
+  .search-panel label > span:first-child {
+    font-size: 8px;
+    letter-spacing: .75px;
+  }
+  .search-panel input,
+  .search-panel select { font-size: 13px; }
+  .search-panel .search-status { grid-column: 1 / -1; }
+}
+@media (min-width: 851px) {
+  .listings-section { padding-top: 180px; }
+  .hero-bottom { bottom: 75px; }
+}
+@media (max-width: 850px) {
+  .listings-section { padding-top: 200px; }
+  .hero-note { display: none; }
+  .hero-bottom { display: none; }
+}
+@media (max-width: 620px) {
+  .listings-section { padding-top: 225px; }
+}

@@ -47,6 +47,19 @@ Open the local URL printed by Vite. The public website uses `/`, and the custom 
 
 The public website can read site settings and property listings and submit inquiries. Only signed-in accounts with the server-controlled admin role can change listings, branding, or inquiries. Media uploads go through a Cloudflare Pages Function, which checks the Supabase admin session before writing to R2. Never expose an R2 credential or Supabase service-role key in the frontend.
 
+## Search engine visibility
+
+The site includes a crawlable `robots.txt`, an XML sitemap for the public home and completed-sales pages, page titles and descriptions, canonical URLs, social sharing metadata, and LocalBusiness-compatible structured data for Addis Ababa. These help search engines understand and discover the site; they do not guarantee a particular ranking.
+
+After deploying:
+
+1. Verify the production domain in [Google Search Console](https://search.google.com/search-console) and submit `https://zenebe-frew-realstate-sales-agent.pages.dev/sitemap.xml`.
+2. If you connect a custom domain, use it consistently as the canonical host and update the production URLs in `index.html`, `public/robots.txt`, and `public/sitemap.xml` before deploying.
+3. If the business serves customers in person, create or claim its Google Business Profile and keep its business name, service area, phone, and website consistent with the site. Do not add a location or contact detail that is not accurate.
+4. Replace sample listings with current, accurate property information and original photos. Keep the business profile and site updated as inventory changes.
+
+Search position depends on Google's indexing and ranking systems, local competition, and accurate real-world business information. No website code, agency, or developer can guarantee first place.
+
 ## Admin
 
 Sign in at `/admin` using the Supabase Auth account you created. The admin lets you:

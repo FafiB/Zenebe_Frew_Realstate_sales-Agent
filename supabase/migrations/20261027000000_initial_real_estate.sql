@@ -2,7 +2,7 @@ create table if not exists public.site_settings (
   id smallint primary key default 1 check (id = 1),
   brand_name text not null default 'Zenebe Frew Real Estate',
   logo_url text not null default '',
-  agent_name text not null default 'Helen Hidbachew',
+  agent_name text not null default '',
   agent_title text not null default 'Real Estate Agent',
   agent_bio text not null default '',
   agent_photo_url text not null default '',

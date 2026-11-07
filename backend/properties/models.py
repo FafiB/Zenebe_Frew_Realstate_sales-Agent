@@ -16,7 +16,7 @@ class SiteSettings(models.Model):
         verbose_name="logo URL",
         help_text="Optional public image URL; used when no uploaded logo is set.",
     )
-    agent_name = models.CharField(max_length=120, default="Helen Hidbachew")
+    agent_name = models.CharField(max_length=120, blank=True, default="")
     agent_title = models.CharField(max_length=120, default="Real Estate Agent")
     agent_bio = models.TextField(
         blank=True,

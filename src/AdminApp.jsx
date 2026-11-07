@@ -6,7 +6,7 @@ const blankSettings = {
   id: 1,
   brand_name: "Zenebe Frew Real Estate",
   logo_url: "",
-  agent_name: "Helen Hidbachew",
+  agent_name: "",
   agent_title: "Real Estate Professional",
   agent_bio: "",
   agent_photo_url: "",

@@ -18,7 +18,6 @@ const UI_COPY = {
     maxPrice: "MAXIMUM PRICE · ETB", anyBudget: "Any budget",
     availability: "AVAILABILITY", allCurrent: "All current listings",
     forSale: "For sale", underContract: "Under contract", search: "Search homes",
-    localKnowledge: "PERSONAL GUIDANCE. LOCAL KNOWLEDGE.",
     currentCollection: "THE CURRENT COLLECTION", statsNote: "Counts update from active property listings.",
     activeListings: "Active listings", apartmentsForSale: "Apartments for sale",
     shopsForSale: "Shops for sale", neighborhoods: "Neighborhoods",
@@ -52,14 +51,14 @@ const UI_COPY = {
     faqSaveAnswer: "Select the heart on a listing to add it to your saved homes on this device.",
     contactEyebrow: "A PERSONAL HELLO IS JUST A CLICK AWAY",
     contactTitle: "Let’s find your", nextPlace: "next place.",
-    contactDescription: "Whether you’re looking for a place to call home or the right space for your business, {name} is ready to help.",
+    contactDescription: "Whether you’re looking for a place to call home or the right space for your business, we’re here to help.",
     connect: "Let’s connect", chooseContact: "Choose the way that works for you.",
     socialEmpty: "Social links will appear here when they’re added in Site branding.",
-    friendlyAdvice: "Friendly advice, no pressure.", footerTagline: "Real estate with {name}.",
+    friendlyAdvice: "Friendly advice, no pressure.", footerTagline: "Your next move starts here.",
     sendInquiry: "LET’S TALK ABOUT THIS HOME", curious: "Curious about this home?",
     lookingSimilar: "Looking for a home like this?", inquireTitle: "Tell us what home means to you.",
     preferTalk: "Prefer to talk directly?", chooseContactSimple: "Choose a contact option. No form needed.",
-    msgUs: "Message {name}", visitProfile: "Visit profile",
+    msgUs: "Message us", visitProfile: "Visit profile",
     leaveNote: "Or leave a note", yourName: "Your name", email: "Email address",
     phone: "Phone", optional: "(optional)", lookingFor: "A little about what you’re looking for",
     notePlaceholder: "I’d love to know more about...",
@@ -70,8 +69,11 @@ const UI_COPY = {
     retailSpace: "Retail space", videoTour: "Video tour", soldEyebrow: "A LOOK BACK AT COMPLETED SALES",
     previouslySold: "Previously sold.", soldIntro: "Explore completed sales and get in touch to discuss your next move.",
     soldEmpty: "Completed sales will be shared here.", pastSalesAdded: "Past sales added in Admin will appear on this page.",
-    getInTouch: "Get in touch", contactAgent: "Contact {name}",
-    contactOn: "Contact on {name}", siteTitle: "{brand} — Real Estate",
+    getInTouch: "Get in touch", contactAgent: "Contact us",
+    contactOn: "Contact on {name}", siteTitle: "{brand} | Homes & Shops in Addis Ababa",
+    soldPageTitle: "Previously Sold Properties | {brand} | Addis Ababa",
+    siteDescription: "Explore apartments and commercial properties for sale in Addis Ababa. Compare locations, prices, and property details with {brand}.",
+    soldPageDescription: "Browse completed property sales in Addis Ababa from {brand}, and get in touch to discuss your next move.",
     compare: "Compare", comparing: "Comparing", selectForCompare: "Select to compare",
     compareLimit: "Compare up to 3 properties.", chooseTwo: "Choose at least two listings to compare them side by side.",
     inventoryTitle: "Sizes and prices at a glance", inventoryIntro: "Compare current listing details using the information provided for each property.",
@@ -97,7 +99,7 @@ const UI_COPY = {
     pastSalesError: "Past sales could not be loaded right now. Please try again later.",
     listingsError: "Listings could not be refreshed right now. Please check back soon.",
     savedAdded: "{name} added to your saved homes.", savedRemoved: "{name} removed from your saved homes.",
-    callUpper: "CALL {name}",
+    callUpper: "CALL NOW",
   },
   am: {
     home: "መነሻ", listings: "ዝርዝሮች", projects: "ተመራጭ", areas: "አካባቢዎች", buyingGuide: "የግዢ መመሪያ",
@@ -113,7 +115,6 @@ const UI_COPY = {
     maxPrice: "ከፍተኛ ዋጋ · ብር", anyBudget: "ማንኛውም ዋጋ",
     availability: "የንብረት ሁኔታ", allCurrent: "ሁሉም ያሉ ዝርዝሮች",
     forSale: "ለሽያጭ", underContract: "በስምምነት ላይ", search: "ቤቶችን ይፈልጉ",
-    localKnowledge: "የግል እገዛ። የአካባቢ እውቀት።",
     currentCollection: "አሁን ያሉ ንብረቶች", statsNote: "ቁጥሮቹ ከአሁኑ የንብረት ዝርዝሮች ይወሰዳሉ።",
     activeListings: "ንቁ ዝርዝሮች", apartmentsForSale: "ለሽያጭ ያሉ አፓርታማዎች",
     shopsForSale: "ለሽያጭ ያሉ ሱቆች", neighborhoods: "ሰፈሮች",
@@ -147,14 +148,14 @@ const UI_COPY = {
     faqSaveAnswer: "በንብረቱ ላይ ያለውን ልብ ምልክት በመጫን በዚህ መሳሪያ ላይ ያስቀምጡት።",
     contactEyebrow: "የግል ውይይት በአንድ ጠቅታ ብቻ",
     contactTitle: "ቀጣዩን", nextPlace: "ቦታዎን እናግኝ።",
-    contactDescription: "መኖሪያ ቤት ወይም የንግድ ቦታ እየፈለጉ ከሆነ፣ {name} ሊያግዝዎት ዝግጁ ነው።",
+    contactDescription: "መኖሪያ ቤት ወይም የንግድ ቦታ እየፈለጉ ከሆነ፣ ልንረዳዎት ዝግጁ ነን።",
     connect: "እንገናኝ", chooseContact: "የሚመችዎትን የመገናኛ መንገድ ይምረጡ።",
     socialEmpty: "የማህበራዊ ሚዲያ አገናኞች በብራንዲንግ ሲጨመሩ እዚህ ይታያሉ።",
-    friendlyAdvice: "ወዳጃዊ ምክር፣ ያለ ግዴታ።", footerTagline: "ከ{name} ጋር ሪል እስቴት።",
+    friendlyAdvice: "ወዳጃዊ ምክር፣ ያለ ግዴታ።", footerTagline: "ቀጣዩን እርምጃ ከዚህ ይጀምሩ።",
     sendInquiry: "ስለዚህ ቤት እንወያይ", curious: "ስለዚህ ቤት ጥያቄ አለዎት?",
     lookingSimilar: "እንደዚህ ያለ ቤት ይፈልጋሉ?", inquireTitle: "የሚፈልጉትን ይንገሩን።",
     preferTalk: "በቀጥታ ማነጋገር ይመርጣሉ?", chooseContactSimple: "የመገናኛ መንገድ ይምረጡ።",
-    msgUs: "{name}ን ያነጋግሩ", visitProfile: "መገለጫውን ይመልከቱ",
+    msgUs: "ያግኙን", visitProfile: "መገለጫውን ይመልከቱ",
     leaveNote: "ወይም መልዕክት ይተዉ", yourName: "ሙሉ ስም", email: "የኢሜይል አድራሻ",
     phone: "ስልክ", optional: "(አማራጭ)", lookingFor: "ስለሚፈልጉት አጭር መልዕክት",
     notePlaceholder: "ስለዚህ ንብረት ተጨማሪ ማወቅ እፈልጋለሁ...",
@@ -167,8 +168,11 @@ const UI_COPY = {
     previouslySold: "ቀደም ሲል የተሸጡ።", soldIntro: "የተጠናቀቁ ሽያጮችን ይመልከቱ፤ ስለ ቀጣይ እርምጃዎ ለመወያየትም ያግኙን።",
     soldEmpty: "የተጠናቀቁ ሽያጮች እዚህ ይታያሉ።",
     pastSalesAdded: "በአስተዳደር ገጹ የሚጨመሩ የተሸጡ ንብረቶች እዚህ ይታያሉ።",
-    getInTouch: "ያግኙን", contactAgent: "{name}ን ያግኙ",
-    contactOn: "በ{name} ያግኙን", siteTitle: "{brand} — ሪል እስቴት",
+    getInTouch: "ያግኙን", contactAgent: "ያግኙን",
+    contactOn: "በ{name} ያግኙን", siteTitle: "{brand} | ቤቶች እና ሱቆች በአዲስ አበባ",
+    soldPageTitle: "የተሸጡ ንብረቶች | {brand} | አዲስ አበባ",
+    siteDescription: "{brand} በአዲስ አበባ የሚገኙ አፓርታማዎችንና የንግድ ንብረቶችን ያስሱ። ቦታ፣ ዋጋና ዝርዝሮችን ያነጻጽሩ።",
+    soldPageDescription: "{brand} በአዲስ አበባ የተጠናቀቁ የንብረት ሽያጮችን ያስሱ፣ ስለ ቀጣይ እርምጃዎም ያግኙን።",
     compare: "አነጻጽር", comparing: "በማነጻጸር ላይ", selectForCompare: "ለማነጻጸር ይምረጡ",
     compareLimit: "እስከ 3 ንብረቶችን ያነጻጽሩ።", chooseTwo: "ከጎን ለጎን ለማነጻጸር ቢያንስ ሁለት ንብረቶችን ይምረጡ።",
     inventoryTitle: "መጠንና ዋጋ በአንድ እይታ", inventoryIntro: "ለእያንዳንዱ ንብረት በተዘረዘረው መረጃ ያነጻጽሩ።",
@@ -194,7 +198,7 @@ const UI_COPY = {
     pastSalesError: "የተሸጡ ንብረቶችን አሁን ማምጣት አልተቻለም። እባክዎ ቆይተው ይሞክሩ።",
     listingsError: "ዝርዝሮችን ማዘመን አልተቻለም። እባክዎ ቆይተው ይመልከቱ።",
     savedAdded: "{name} በተቀመጡት ንብረቶች ውስጥ ተጨምሯል።", savedRemoved: "{name} ከተቀመጡት ንብረቶች ተወግዷል።",
-    callUpper: "{name}ን ይደውሉ",
+    callUpper: "አሁን ይደውሉ",
   },
 };
 
@@ -539,7 +543,7 @@ function InquiryModal({ home, onClose, settings, language, t }) {
   const directContacts = [
     phoneDigits && { name: t.call, detail: settings.contact_phone, href: `tel:${phoneDigits}`, mark: "☎" },
     whatsappDigits && { name: "WhatsApp", detail: settings.whatsapp_number, href: `https://wa.me/${whatsappDigits}`, mark: "W" },
-    settings.telegram_url && { name: "Telegram", detail: t.msgUs.replace("{name}", settings.agent_name || "our team"), href: settings.telegram_url, mark: "➤" },
+    settings.telegram_url && { name: "Telegram", detail: t.msgUs, href: settings.telegram_url, mark: "➤" },
     settings.facebook_url && { name: "Facebook", detail: t.visitProfile, href: settings.facebook_url, mark: "f" },
     settings.instagram_url && { name: "Instagram", detail: t.visitProfile, href: settings.instagram_url, mark: "◎" },
     settings.tiktok_url && { name: "TikTok", detail: t.visitProfile, href: settings.tiktok_url, mark: "♪" },
@@ -652,7 +656,7 @@ function InquiryModal({ home, onClose, settings, language, t }) {
                   ))}
                 </div>
               ) : (
-                <p className="direct-contact-unavailable">{settings.agent_name || "Our team"}’s contact links will appear here when they’re added to Site branding.</p>
+                <p className="direct-contact-unavailable">Contact links will appear here when they’re added to Site branding.</p>
               )}
             </div>
             <form className="inquiry-form" onSubmit={submitInquiry}>
@@ -677,7 +681,7 @@ function PublicSite() {
   const [branding, setBranding] = useState({
     brand_name: "Zenebe Frew Real Estate",
     logo_url: "",
-    agent_name: "Helen Hidbachew",
+    agent_name: "",
     agent_title: "Real Estate Professional",
     agent_bio: "Buying or selling a home is a personal decision. I’m here to help you explore your options, understand the next steps, and find a home that feels right for you.",
     agent_photo_url: "",
@@ -726,10 +730,6 @@ function PublicSite() {
       });
   }, []);
 
-  const agentName = branding.agent_name || "Helen Hidbachew";
-  const profileTitle = (branding.agent_title || "Real Estate Professional")
-    .replace(/real estate agent/gi, "Real Estate Professional")
-    .replace(/\bagent\b/gi, "Professional");
   const phoneDigits = (branding.contact_phone || "").replace(/[^\d+]/g, "");
   const whatsappDigits = (branding.whatsapp_number || "").replace(/\D/g, "");
   const socialLinks = [
@@ -813,8 +813,19 @@ function PublicSite() {
   }, [soldPage]);
 
   useEffect(() => {
-    document.title = t.siteTitle.replace("{brand}", branding.brand_name);
-  }, [branding.brand_name, t.siteTitle]);
+    const brandName = branding.brand_name || "Zenebe Frew Real Estate";
+    const titleTemplate = soldPage ? t.soldPageTitle : t.siteTitle;
+    const descriptionTemplate = soldPage ? t.soldPageDescription : t.siteDescription;
+    const title = titleTemplate.replace("{brand}", brandName);
+    const description = descriptionTemplate.replace("{brand}", brandName);
+    const canonicalUrl = new URL(soldPage ? "/sold-homes" : "/", window.location.origin).href;
+    document.title = title;
+    document.querySelector('meta[name="description"]')?.setAttribute("content", description);
+    document.querySelector('meta[property="og:title"]')?.setAttribute("content", title);
+    document.querySelector('meta[property="og:description"]')?.setAttribute("content", description);
+    document.querySelector('meta[property="og:url"]')?.setAttribute("content", canonicalUrl);
+    document.querySelector('link[rel="canonical"]')?.setAttribute("href", canonicalUrl);
+  }, [branding.brand_name, soldPage, t.siteTitle, t.soldPageTitle, t.siteDescription, t.soldPageDescription]);
 
   useEffect(() => {
     const contactSection = document.getElementById("contact");
@@ -964,7 +975,7 @@ function PublicSite() {
         <a
           className="mobile-header-call"
           href={phoneDigits ? `tel:${phoneDigits}` : "#contact"}
-          aria-label={t.contactAgent.replace("{name}", agentName)}
+          aria-label={t.contactAgent}
         >
           <Icon name="phone" size={17} />
           <span>{phoneDigits ? t.callNow : t.contact}</span>
@@ -989,7 +1000,7 @@ function PublicSite() {
             href={phoneDigits ? `tel:${phoneDigits}` : (soldPage ? "/#contact" : "#contact")}
             onClick={() => setMenuOpen(false)}
           >
-            {phoneDigits ? `${t.call} ${agentName}` : t.contactAgent.replace("{name}", agentName)} <Icon name="arrow" size={16} />
+            {phoneDigits ? t.callNow : t.contactAgent} <Icon name="arrow" size={16} />
           </a>
         </nav>
       </header>
@@ -1031,7 +1042,6 @@ function PublicSite() {
               <button className="button hero-outline" type="button" onClick={() => setInquiryOpen(true)}>{t.bookViewing}</button>
             </div>
           </div>
-          <span className="hero-caption">{branding.brand_name}</span>
           <div className="hero-note" aria-hidden="true">
             <span className="hero-note-mark">✦</span>
             <span><strong>{t.planMove}</strong><small>{t.planDescription}</small></span>
@@ -1083,10 +1093,6 @@ function PublicSite() {
             </label>
             <button className="search-submit" type="submit"><Icon name="search" size={19} /><span>{t.search}</span></button>
           </form>
-          <div className="hero-bottom">
-            <span>{t.localKnowledge}</span>
-            <span>{agentName.toUpperCase()} · {profileTitle.toUpperCase()}</span>
-          </div>
         </section>
 
         {listingsLoaded && (
@@ -1328,11 +1334,11 @@ function PublicSite() {
           <div className="contact-copy">
             <p className="eyebrow">{t.contactEyebrow}</p>
             <h2>{t.contactTitle}<br /><em>{t.nextPlace}</em></h2>
-            <p>{t.contactDescription.replace("{name}", agentName)}</p>
+            <p>{t.contactDescription}</p>
             {phoneDigits && (
               <a className="contact-primary-action" href={`tel:${phoneDigits}`}>
                 <span className="contact-action-icon"><Icon name="phone" size={19} /></span>
-                <span><small>{t.callUpper.replace("{name}", agentName.toUpperCase())}</small><strong>{branding.contact_phone}</strong></span>
+                <span><small>{t.callUpper}</small><strong>{branding.contact_phone}</strong></span>
                 <Icon name="arrow" size={18} />
               </a>
             )}
@@ -1346,7 +1352,7 @@ function PublicSite() {
               {configuredSocialLinks.length ? configuredSocialLinks.map((item) => (
                 <a className="contact-channel" href={item.href} key={item.name} target="_blank" rel="noreferrer">
                   <span className={`contact-channel-mark channel-${item.name.toLowerCase()}`}>{item.mark}</span>
-                  <span><strong>{item.name}</strong><small>{item.account || t.msgUs.replace("{name}", agentName)}</small></span>
+                  <span><strong>{item.name}</strong><small>{item.account || t.msgUs}</small></span>
                   <Icon name="arrow" size={16} />
                 </a>
               )) : <p className="contact-channel-empty">{t.socialEmpty}</p>}
@@ -1362,7 +1368,7 @@ function PublicSite() {
           <div className="footer-about">
             <Brand settings={branding} footer />
             <p>{t.footerDescription}</p>
-            <span className="footer-tagline">{t.footerTagline.replace("{name}", agentName)}</span>
+            <span className="footer-tagline">{t.footerTagline}</span>
           </div>
           <nav className="footer-column" aria-label={t.footerExplore}>
             <h2>{t.footerExplore}</h2>
@@ -1413,10 +1419,10 @@ function PublicSite() {
         <a
           className="mobile-contact-bar"
           href={phoneDigits ? `tel:${phoneDigits}` : "#contact"}
-          aria-label={t.contactAgent.replace("{name}", agentName)}
+          aria-label={t.contactAgent}
         >
           <Icon name="phone" size={18} />
-          <span>{phoneDigits ? `${t.call} ${agentName}` : t.contactAgent.replace("{name}", agentName)}</span>
+          <span>{phoneDigits ? t.callNow : t.contactAgent}</span>
           <Icon name="arrow" size={17} />
         </a>
       )}

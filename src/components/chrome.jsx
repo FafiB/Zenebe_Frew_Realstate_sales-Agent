@@ -33,7 +33,6 @@ export function SiteHeader({
   onToggleMenu,
   onCloseMenu,
   soldPage,
-  agentName,
   t,
 }) {
   const phone = phoneHref(branding.contact_phone?.trim() || branding.contact_phone);
@@ -44,7 +43,7 @@ export function SiteHeader({
       <a
         className="mobile-header-call"
         href={callHref}
-        aria-label={phone ? t.callAgent(agentName) : t.contactAgent}
+        aria-label={phone ? t.callNow : t.contactAgent}
       >
         <Icon name="phone" size={17} />
         <span>{phone ? t.callNow : t.contact}</span>
@@ -74,18 +73,18 @@ export function SiteHeader({
           href={phone || (soldPage ? "/#contact" : "#contact")}
           onClick={onCloseMenu}
         >
-          {phone ? t.callAgent(agentName) : t.contactHelen} <Icon name="arrow" size={16} />
+          {phone ? t.callNow : t.contactAgent} <Icon name="arrow" size={16} />
         </a>
       </nav>
     </header>
   );
 }
 
-export function SiteFooter({ branding, agentName, t }) {
+export function SiteFooter({ branding, t }) {
   return (
     <footer className="site-footer">
       <Brand settings={branding} footer />
-      <span>{t.footerTagline(agentName)}</span>
+      <span>{t.footerTagline}</span>
       <span>© 2026 {branding.brand_name}</span>
     </footer>
   );

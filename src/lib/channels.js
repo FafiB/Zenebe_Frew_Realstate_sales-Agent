@@ -19,7 +19,7 @@ export const directContactChannels = (branding, t) => {
   return [
     phone && { name: t.callNow, href: phone, detail: branding.contact_phone, mark: "☎" },
     whatsapp && { name: "WhatsApp", href: whatsapp, detail: branding.whatsapp_number, mark: "W" },
-    branding.telegram_url && { name: "Telegram", href: branding.telegram_url, detail: "Message Helen", mark: "➤" },
+    branding.telegram_url && { name: "Telegram", href: branding.telegram_url, detail: "Message us", mark: "➤" },
     branding.facebook_url && { name: "Facebook", href: branding.facebook_url, detail: "Visit profile", mark: "f" },
     branding.instagram_url && { name: "Instagram", href: branding.instagram_url, detail: "Visit profile", mark: "◎" },
     branding.tiktok_url && { name: "TikTok", href: branding.tiktok_url, detail: "Visit profile", mark: "♪" },

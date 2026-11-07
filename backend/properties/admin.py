@@ -15,8 +15,8 @@ class SiteSettingsAdmin(admin.ModelAdmin):
 
     def formfield_for_dbfield(self, db_field, request, **kwargs):
         if db_field.name == "agent_photo":
-            kwargs["label"] = "Helen's profile photo"
-            kwargs["help_text"] = "Upload Helen's photo here. It replaces the initials placeholder in the About section."
+            kwargs["label"] = "Profile photo"
+            kwargs["help_text"] = "Upload a profile photo. It replaces the initials placeholder in the About section."
         return super().formfield_for_dbfield(db_field, request, **kwargs)
 
     def has_add_permission(self, request):

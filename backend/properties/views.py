@@ -21,7 +21,7 @@ def site_settings(request):
         return JsonResponse({
             "brand_name": "Zenebe Frew Real Estate",
             "logo_url": "",
-            "agent_name": "Helen Hidbachew",
+            "agent_name": "",
             "agent_title": "Real Estate Agent",
             "agent_bio": "",
             "agent_photo_url": "",
