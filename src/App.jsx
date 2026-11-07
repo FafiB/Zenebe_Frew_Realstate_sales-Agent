@@ -257,10 +257,11 @@ function Brand({ settings, footer = false }) {
   const [logoFailed, setLogoFailed] = useState(false);
   const brandName = settings.brand_name || "Zenebe Frew Real Estate";
   const nameParts = brandName.split("&");
+  const logoUrl = settings.logo_url || "/zenebe-frew-logo.png";
   return (
-    <a className={`brand${footer ? " footer-brand" : ""}`} href="/" aria-label={`${brandName} home`}>
-      {settings.logo_url && !logoFailed ? (
-        <img className="brand-logo" src={settings.logo_url} alt="" onError={() => setLogoFailed(true)} />
+    <a className={`brand${footer ? " footer-brand" : ""}${!logoFailed ? " has-logo" : ""}`} href="/" aria-label={`${brandName} home`}>
+      {!logoFailed ? (
+        <img className="brand-logo" src={logoUrl} alt="" onError={() => setLogoFailed(true)} />
       ) : (
         <span className="brand-mark" aria-hidden="true"><Icon name="home" size={19} /></span>
       )}

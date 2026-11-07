@@ -2591,3 +2591,126 @@ h1, h2, h3, .property-title, .project-tile-title, .guide-card h3 {
   :root .listings-section { padding-bottom: 24px; }
   :root .projects-section { padding-top: 24px; }
 }
+
+.site-header { height: 118px; }
+.site-header > .brand { max-width: 32%; }
+.brand.has-logo .brand-name { display: none; }
+.brand-logo {
+  width: 166px;
+  height: 112px;
+  flex: 0 0 auto;
+  padding: 3px;
+  border: 1px solid #e8e5f1;
+  border-radius: 9px;
+  background: #fff;
+  object-fit: contain;
+  box-shadow: 0 5px 16px #21145718;
+}
+.footer-brand .brand-logo { width: 110px; height: 74px; }
+@media (max-width: 850px) {
+  .site-header { height: 104px; }
+  .site-header > .brand { max-width: 35%; }
+  .brand-logo { width: 146px; height: 98px; }
+}
+@media (max-width: 620px) {
+  .site-header { height: 88px; }
+  .site-header > .brand { max-width: 42%; }
+  .brand-logo { width: 122px; height: 82px; padding: 2px; }
+  .site-header nav { top: 100%; }
+}
+
+:root[data-theme="dark"] {
+  --paper: #100d20;
+  --ink: #f3f0ff;
+  --muted: #b6aec9;
+  --line: #39334f;
+  --blue: #7765e8;
+  --blue-dark: #5a48c8;
+  --green: #6d5bd8;
+  color: var(--ink);
+  background: var(--paper);
+}
+:root[data-theme="dark"] body { background: var(--paper); }
+:root[data-theme="dark"] .site-header,
+:root[data-theme="dark"] .property-card,
+:root[data-theme="dark"] .property-info,
+:root[data-theme="dark"] .inquiry-modal {
+  border-color: #352c50;
+  background: linear-gradient(135deg, #1d1832, #151127);
+  color: var(--ink);
+}
+:root[data-theme="dark"] .site-header { border-bottom-color: #342b4c; }
+:root[data-theme="dark"] .site-header nav { color: #e2ddf2; }
+:root[data-theme="dark"] .site-header nav a:hover { color: #b4a9ff; }
+:root[data-theme="dark"] .hero { background-color: #17112d; }
+:root[data-theme="dark"] .listings-section,
+:root[data-theme="dark"] .sold-page { background-color: #100d20; }
+:root[data-theme="dark"] .projects-section {
+  background:
+    radial-gradient(ellipse at 86% 8%, #7765e82b, transparent 38%),
+    linear-gradient(135deg, #17132a, #100d20 78%);
+}
+:root[data-theme="dark"] .search-panel,
+:root[data-theme="dark"] .stats-grid,
+:root[data-theme="dark"] .inventory-section,
+:root[data-theme="dark"] .guide-card,
+:root[data-theme="dark"] .faq-panel,
+:root[data-theme="dark"] .contact-card {
+  border-color: #3b3158;
+  background: linear-gradient(145deg, #211b39, #17132b);
+  color: var(--ink);
+}
+:root[data-theme="dark"] .property-card { box-shadow: 0 12px 34px #07051080; }
+:root[data-theme="dark"] .property-card:hover { border-color: #8979ee; }
+:root[data-theme="dark"] .property-info { background: linear-gradient(155deg, #211b39, #17132b); }
+:root[data-theme="dark"] .property-title { color: #f4f0ff; }
+:root[data-theme="dark"] .property-down-payment {
+  border-color: #6459a3;
+  background: #302956;
+  color: #e5e0ff;
+}
+:root[data-theme="dark"] .property-card-link { color: #b9afff; }
+:root[data-theme="dark"] .section-heading h2,
+:root[data-theme="dark"] .sold-page h1,
+:root[data-theme="dark"] .inventory-heading h3,
+:root[data-theme="dark"] .comparison-table-wrap h3 { color: #f4f0ff; }
+:root[data-theme="dark"] .site-header .nav-contact,
+:root[data-theme="dark"] .site-header .nav-call,
+:root[data-theme="dark"] .search-submit,
+:root[data-theme="dark"] .mobile-header-call,
+:root[data-theme="dark"] .button-dark {
+  border-color: #8979ee;
+  background: linear-gradient(130deg, #7967e8, #5947bf);
+  color: #fff;
+  box-shadow: 0 7px 20px #21155560;
+}
+:root[data-theme="dark"] .site-header .nav-contact:hover,
+:root[data-theme="dark"] .site-header .nav-call:hover,
+:root[data-theme="dark"] .search-submit:hover,
+:root[data-theme="dark"] .button-dark:hover { background: #8979ee; }
+:root[data-theme="dark"] .saved-filter,
+:root[data-theme="dark"] .theme-toggle {
+  border-color: #4a4065;
+  background: #201a36;
+  color: #e8e3f7;
+}
+:root[data-theme="dark"] .saved-filter.is-active {
+  border-color: #8979ee;
+  background: #342b5c;
+  color: #e4dfff;
+}
+:root[data-theme="dark"] .site-footer {
+  border-top: 1px solid #3b3158;
+  background: linear-gradient(120deg, #17132a, #241b42);
+  color: #c3bbdc;
+}
+:root[data-theme="dark"] .quote-band { background: #17132a; }
+:root[data-theme="dark"] .manifesto { background: #1b1630; }
+:root[data-theme="dark"] .contact-section {
+  background:
+    radial-gradient(ellipse at 80% 10%, #7765e83d, transparent 38%),
+    linear-gradient(120deg, #211a3a, #110e21 68%, #201833);
+}
+:root[data-theme="dark"] .listing-data-table thead th,
+:root[data-theme="dark"] .comparison-table thead th { background: #282142; }
+:root[data-theme="dark"] .listing-data-table tbody tr:hover { background: #26203e; }
