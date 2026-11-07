@@ -17,7 +17,7 @@ const allowedContentTypes = new Set([
   "video/x-m4v",
 ]);
 
-const maxUploadBytes = 50 * 1024 * 1024;
+const maxUploadBytes = 80 * 1024 * 1024;
 
 function jsonResponse(body, status) {
   return new Response(JSON.stringify(body), {
@@ -82,31 +82,44 @@ export async function onRequestPost({ request, env }) {
   if (!allowedContentTypes.has(contentType)) {
     return jsonResponse({ error: "This image or video type is not allowed." }, 415);
   }
-  if (Number.isFinite(declaredLength) && declaredLength > maxUploadBytes) {
-    return jsonResponse({ error: "Media files must be 50 MB or smaller." }, 413);
-  }
-
-  let fileBody;
-  try {
-    fileBody = await request.arrayBuffer();
-  } catch (error) {
-    console.error("Could not read the media upload body:", error);
-    return jsonResponse({ error: "Could not read the uploaded file. Try again." }, 400);
-  }
-
-  if (fileBody.byteLength === 0) {
+  if (!request.body) {
     return jsonResponse({ error: "The uploaded file is empty." }, 400);
   }
-  if (fileBody.byteLength > maxUploadBytes) {
-    return jsonResponse({ error: "Media files must be 50 MB or smaller." }, 413);
+  if (Number.isFinite(declaredLength) && declaredLength > maxUploadBytes) {
+    return jsonResponse({ error: "Media files must be 80 MB or smaller." }, 413);
   }
 
   const key = `${folder}/${crypto.randomUUID()}-${filename}`;
+  let uploadedBytes = 0;
+  let uploadError = "";
+  const limitedBody = request.body.pipeThrough(new TransformStream({
+    transform(chunk, controller) {
+      uploadedBytes += chunk.byteLength;
+      if (uploadedBytes > maxUploadBytes) {
+        uploadError = "too-large";
+        throw new Error("Media files must be 80 MB or smaller.");
+      }
+      controller.enqueue(chunk);
+    },
+    flush() {
+      if (uploadedBytes === 0) {
+        uploadError = "empty";
+        throw new Error("The uploaded file is empty.");
+      }
+    },
+  }));
+
   try {
-    await env.MEDIA_BUCKET.put(key, fileBody, {
+    await env.MEDIA_BUCKET.put(key, limitedBody, {
       httpMetadata: { contentType },
     });
   } catch (error) {
+    if (uploadError === "too-large") {
+      return jsonResponse({ error: "Media files must be 80 MB or smaller." }, 413);
+    }
+    if (uploadError === "empty") {
+      return jsonResponse({ error: "The uploaded file is empty." }, 400);
+    }
     console.error("Could not store media in R2:", error);
     return jsonResponse({ error: "Could not store the file in R2. Try again." }, 502);
   }

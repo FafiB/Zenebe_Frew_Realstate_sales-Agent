@@ -2488,3 +2488,88 @@ h1, h2, h3, .property-title, .project-tile-title, .guide-card h3 {
   background: #fffdf9;
   color: #203d56;
 }
+
+:root:not([data-theme="dark"]) {
+  --blue: #1767a8;
+  --blue-dark: #104878;
+  --green: #1767a8;
+}
+:root:not([data-theme="dark"]) .section-heading h2 em,
+:root:not([data-theme="dark"]) .contact-copy h2 em {
+  color: #a85e0b;
+  font-weight: 600;
+}
+:root:not([data-theme="dark"]) .eyebrow,
+:root:not([data-theme="dark"]) .guide-number,
+:root:not([data-theme="dark"]) .stat-card strong {
+  color: #a85e0b;
+}
+:root:not([data-theme="dark"]) .search-submit,
+:root:not([data-theme="dark"]) .nav-contact,
+:root:not([data-theme="dark"]) .nav-call,
+:root:not([data-theme="dark"]) .mobile-header-call {
+  background: linear-gradient(125deg, #1d75ba, #145285);
+  color: #fff;
+  box-shadow: 0 8px 20px #14528538;
+}
+:root:not([data-theme="dark"]) .search-submit:hover,
+:root:not([data-theme="dark"]) .nav-contact:hover,
+:root:not([data-theme="dark"]) .nav-call:hover,
+:root:not([data-theme="dark"]) .mobile-header-call:hover {
+  background: linear-gradient(125deg, #155f9b, #103f68);
+}
+:root:not([data-theme="dark"]) .text-link,
+:root:not([data-theme="dark"]) .property-card-link {
+  border-color: #1767a8;
+  color: #145a93;
+}
+:root:not([data-theme="dark"]) .text-link:hover,
+:root:not([data-theme="dark"]) .property-card-link:hover {
+  color: #a85e0b;
+  border-color: #c27a1b;
+}
+:root:not([data-theme="dark"]) .stats-grid {
+  border-color: #d6a64f;
+  background: linear-gradient(145deg, #fffdf9, #f8edda);
+  box-shadow: 0 16px 38px #19344a18, inset 0 3px #d6a64f;
+}
+:root:not([data-theme="dark"]) .stat-card + .stat-card { border-color: #dfc99e; }
+:root:not([data-theme="dark"]) .property-price {
+  border-color: #d6a64f;
+  background: linear-gradient(120deg, #ffedc5, #f4d88f);
+  color: #55370c;
+}
+:root:not([data-theme="dark"]) .status-pill {
+  border: 1px solid #9fc5e4;
+  background: #eef7ffed;
+  color: #174e7a;
+}
+:root:not([data-theme="dark"]) .type-pill {
+  border: 1px solid #e8bb67;
+  background: #f7d88fed;
+  color: #50370e;
+}
+:root:not([data-theme="dark"]) .projects-section {
+  background:
+    radial-gradient(ellipse at 86% 8%, #d7a84930, transparent 35%),
+    linear-gradient(135deg, #edf5fb, #f8f0df 78%);
+}
+:root:not([data-theme="dark"]) .projects-section .section-heading h2 {
+  color: #153f63;
+}
+:root:not([data-theme="dark"]) .projects-section .project-tile {
+  box-shadow: 0 16px 38px #123b5b30, 0 0 0 1px #d6a64f45;
+}
+:root:not([data-theme="dark"]) .projects-section .project-tile:hover {
+  box-shadow: 0 22px 48px #123b5b40, 0 0 0 2px #d6a64f88;
+}
+:root .listings-section { padding-bottom: 36px; }
+:root .projects-section { padding-top: 36px; }
+@media (max-width: 850px) {
+  :root .listings-section { padding-bottom: 28px; }
+  :root .projects-section { padding-top: 28px; }
+}
+@media (max-width: 620px) {
+  :root .listings-section { padding-bottom: 24px; }
+  :root .projects-section { padding-top: 24px; }
+}

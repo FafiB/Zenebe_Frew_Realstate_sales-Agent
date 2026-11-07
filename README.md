@@ -72,7 +72,7 @@ Uploaded media is publicly readable from the configured R2 public URL. Only the 
 
 ## Deploy to Cloudflare Pages
 
-Create a Cloudflare Pages project connected to this repository with:
+Cloudflare Pages is the supported deployment target for this project. Create a Cloudflare Pages project connected to this repository with:
 
 - **Root directory:** repository root
 - **Build command:** `npm run build`
@@ -91,7 +91,7 @@ In the Pages project settings, add `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_K
    - `R2_PUBLIC_BASE_URL` — the public base URL for the R2 bucket, such as `https://media.example.com`.
 5. Redeploy after adding the binding and variables. New admin uploads will be stored in R2, while their public URLs continue to be saved in the existing Supabase rows (`image_url`, `video_url`, `logo_url`, and `agent_photo_url`).
 
-The Pages Function limits uploads to supported image/video MIME types and 50 MB per file, and checks the Supabase session's server-controlled `app_metadata.role` before writing. Do not add R2 S3 access keys to `VITE_` variables or browser code.
+The Pages Function streams supported image/video uploads to R2, up to 80 MB per file. Property videos can be MP4, WebM, MOV, or M4V. It checks the Supabase session's server-controlled `app_metadata.role` before writing. Do not add R2 S3 access keys to `VITE_` variables or browser code.
 
 Existing media URLs already saved in Supabase continue to work from their current storage provider. Moving those existing objects into R2 is a separate copy task; after copying an object, update its corresponding URL in the admin. Keep the old bucket until all its media has been copied and verified.
 
