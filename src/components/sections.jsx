@@ -206,7 +206,7 @@ export function ContactSection({ branding, socialLinks, t }) {
               <span><strong>{item.name}</strong><small>{item.account || t.msgUs}</small></span>
               <Icon name="arrow" size={16} />
             </a>
-          )) : <p className="contact-channel-empty">{t.socialEmpty}</p>}
+          )) : null}
         </div>
         <p className="contact-card-note"><span>✦</span> {t.friendlyAdvice}</p>
       </div>

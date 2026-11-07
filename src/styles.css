@@ -713,7 +713,7 @@ h2 { font-family: var(--serif); font-weight: 400; font-size: clamp(34px, 4.1vw, 
 .stats-band {
   max-width: 1270px;
   margin: 0 auto;
-  padding: 80px 7.4% 30px;
+  padding: 180px 7.4% 30px;
 }
 .stats-band-heading {
   display: flex;
@@ -834,7 +834,7 @@ h2 { font-family: var(--serif); font-weight: 400; font-size: clamp(34px, 4.1vw, 
 }
 @media (max-width: 620px) {
   .search-status { border-left: 1px solid var(--line); }
-  .stats-band { padding: 160px 5% 28px; }
+  .stats-band { padding: 180px 5% 28px; }
   .stats-band-heading { display: block; margin-bottom: 13px; }
   .stats-band-heading > span { display: block; margin-top: 7px; }
   .stats-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
@@ -2204,4 +2204,274 @@ h1, h2, h3, .property-title, .project-tile-title, .guide-card h3 {
 }
 @media (max-width: 620px) {
   .listings-section { padding-top: 225px; }
+}
+
+/* Give the light theme the same layered, editorial character as dark mode. */
+:root:not([data-theme="dark"]) {
+  --paper: #fbf8f2;
+  --ink: #1b2e42;
+  --muted: #687889;
+  --line: #e6ddd0;
+  --blue: #204866;
+  --blue-dark: #14354f;
+  --green: #204866;
+  color: var(--ink);
+  background: #fbf8f2;
+  color-scheme: light;
+}
+
+:root:not([data-theme="dark"]) body {
+  background: #fbf8f2;
+  color: var(--ink);
+}
+
+:root:not([data-theme="dark"]) .site-header:not(.site-header-hero) {
+  border-color: #e7ded2;
+  background: #fbf8f2ed;
+  box-shadow: 0 5px 22px #19344a0a;
+  backdrop-filter: blur(16px);
+}
+
+:root:not([data-theme="dark"]) .site-header nav { color: #43586b; }
+:root:not([data-theme="dark"]) .site-header nav a:hover { color: #9a6f32; }
+:root:not([data-theme="dark"]) .brand-mark {
+  background: linear-gradient(145deg, #f1d99f, #d2a65e);
+  color: #17364f;
+  box-shadow: 0 7px 18px #9b73332b;
+}
+:root:not([data-theme="dark"]) .brand-name i { color: #9a6f32; }
+:root:not([data-theme="dark"]) .theme-toggle {
+  border-color: #d9cdbb;
+  background: #fffdf9;
+  color: #244761;
+}
+:root:not([data-theme="dark"]) .theme-toggle:hover {
+  border-color: #c9a76b;
+  background: #f5ead5;
+}
+:root:not([data-theme="dark"]) .mobile-menu-toggle {
+  border: 1px solid #d9cdbb;
+  color: #244761;
+}
+:root:not([data-theme="dark"]) .mobile-header-call {
+  background: linear-gradient(135deg, #234d6b, #173951);
+}
+
+:root:not([data-theme="dark"]) .listings-section {
+  background:
+    radial-gradient(ellipse at 50% 12%, #d2a65e12, transparent 48%),
+    linear-gradient(180deg, #fbf8f2, #f6f1e8 52%, #fbf8f2);
+}
+:root:not([data-theme="dark"]) .section-heading h2 {
+  position: relative;
+  width: fit-content;
+  padding-bottom: 12px;
+}
+:root:not([data-theme="dark"]) .section-heading h2::after {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 52px;
+  height: 2px;
+  background: linear-gradient(90deg, #bd914a, #bd914a00);
+  content: "";
+}
+:root:not([data-theme="dark"]) .eyebrow,
+:root:not([data-theme="dark"]) .guide-number { color: #956b32; }
+:root:not([data-theme="dark"]) .section-intro { color: #687889; }
+
+:root:not([data-theme="dark"]) .search-panel {
+  border-color: #ddcba9;
+  background: linear-gradient(135deg, #fbf7ee, #f4eddf);
+}
+:root:not([data-theme="dark"]) .search-panel label {
+  border-color: #e5dac8;
+  background: #fffdf9;
+}
+:root:not([data-theme="dark"]) .search-panel label:hover,
+:root:not([data-theme="dark"]) .search-panel label:focus-within {
+  border-color: #bd914a;
+  background: #fffefa;
+}
+:root:not([data-theme="dark"]) .search-submit {
+  background: linear-gradient(135deg, #244f6e, #173a55);
+  color: #fffaf0;
+}
+:root:not([data-theme="dark"]) .search-submit:hover { background: #102f49; }
+
+:root:not([data-theme="dark"]) .stats-grid {
+  border-color: #e2d7c7;
+  background: linear-gradient(145deg, #fffdf9, #f4eee4);
+  box-shadow: 0 14px 40px #19344a12;
+}
+:root:not([data-theme="dark"]) .stat-card + .stat-card { border-color: #e2d7c7; }
+:root:not([data-theme="dark"]) .stat-card strong { color: #956b32; }
+:root:not([data-theme="dark"]) .stat-card span { color: #687889; }
+:root:not([data-theme="dark"]) .stat-card:hover { background: #f4ead8; }
+
+:root:not([data-theme="dark"]) .property-card {
+  border-color: #e6ddd0;
+  background: linear-gradient(160deg, #fffefa, #f7f1e8);
+  box-shadow: 0 12px 32px #19344a12;
+}
+:root:not([data-theme="dark"]) .property-card:hover {
+  border-color: #d0b77f;
+  box-shadow: 0 22px 48px #19344a20, 0 0 0 1px #d0b77f40;
+}
+:root:not([data-theme="dark"]) .property-info {
+  background: linear-gradient(160deg, #fffefa, #f7f1e8);
+}
+:root:not([data-theme="dark"]) .property-title { color: #203d56; }
+:root:not([data-theme="dark"]) .property-price {
+  border-color: #ddc58e;
+  background: linear-gradient(120deg, #fbf1d9, #f0dfb8);
+  color: #62491f;
+}
+:root:not([data-theme="dark"]) .property-location,
+:root:not([data-theme="dark"]) .property-description { color: #617386; }
+:root:not([data-theme="dark"]) .property-specs { border-color: #e7ddcf; color: #465e72; }
+:root:not([data-theme="dark"]) .property-specs span {
+  border-color: #e8dfd2;
+  background: #fffdf9;
+}
+:root:not([data-theme="dark"]) .property-specs svg { color: #9a6f32; }
+:root:not([data-theme="dark"]) .property-card-link {
+  border-color: #e7ddcf;
+  color: #204866;
+}
+:root:not([data-theme="dark"]) .property-card:hover .property-card-link {
+  border-color: #ddc58e;
+  background: #f4ead81a;
+  color: #956b32;
+}
+:root:not([data-theme="dark"]) .carousel-controls button {
+  border-color: #ddcba9;
+  background: #fffdf9;
+  color: #204866;
+}
+:root:not([data-theme="dark"]) .carousel-controls button:hover {
+  border-color: #bd914a;
+  background: #f4ead8;
+  color: #17364f;
+}
+:root:not([data-theme="dark"]) .saved-filter {
+  border-color: #dfd3c1;
+  background: #fffdf9;
+  color: #244761;
+}
+:root:not([data-theme="dark"]) .saved-filter.is-active {
+  border-color: #d0b77f;
+  background: #f4ead8;
+  color: #62491f;
+}
+
+:root:not([data-theme="dark"]) .projects-section {
+  background: linear-gradient(180deg, #fbf8f2, #f1e9dd 100%);
+}
+:root:not([data-theme="dark"]) .manifesto { background: #eee6da; }
+:root:not([data-theme="dark"]) .manifesto-copy > p:not(.eyebrow) { color: #536273; }
+:root:not([data-theme="dark"]) .quote-band {
+  background: radial-gradient(ellipse at 50% 0, #d2a65e12, transparent 62%), #f8f4ec;
+}
+:root:not([data-theme="dark"]) .quote-band blockquote { color: #233d54; }
+
+:root:not([data-theme="dark"]) .inventory-section,
+:root:not([data-theme="dark"]) .guide-card {
+  border-color: #e3d9ca;
+  background: linear-gradient(145deg, #fffdf9, #f5efe5);
+  box-shadow: 0 10px 28px #19344a0c;
+}
+:root:not([data-theme="dark"]) .guide-card:hover {
+  border-color: #d0b77f;
+  box-shadow: 0 18px 40px #19344a15;
+}
+:root:not([data-theme="dark"]) .guide-card h3 { color: #203d56; }
+:root:not([data-theme="dark"]) .faq-panel {
+  border: 1px solid #e3d8c8;
+  background: radial-gradient(ellipse at 0% 0%, #d2a65e16, transparent 55%), #f0e9df;
+}
+:root:not([data-theme="dark"]) .faq-list details,
+:root:not([data-theme="dark"]) .faq-list details:first-child { border-color: #d9d0c4; }
+:root:not([data-theme="dark"]) .faq-list summary { color: #203d56; }
+:root:not([data-theme="dark"]) .faq-list summary:hover { color: #956b32; }
+:root:not([data-theme="dark"]) .faq-list details p { color: #536273; }
+:root:not([data-theme="dark"]) .listing-data-table thead th,
+:root:not([data-theme="dark"]) .comparison-table thead th {
+  background: #eee5d7;
+  color: #203d56;
+}
+:root:not([data-theme="dark"]) .listing-data-table tbody tr:hover { background: #f6efe3; }
+
+:root:not([data-theme="dark"]) .contact-section {
+  background:
+    radial-gradient(ellipse at 82% 10%, #d2a65e30, transparent 38%),
+    linear-gradient(125deg, #f0e8dc, #fbf8f2 62%, #e8dfd1);
+  color: #203d56;
+}
+:root:not([data-theme="dark"]) .contact-section::before {
+  border-color: #98784d35;
+  box-shadow: 0 0 0 34px #98784d0d, 0 0 0 70px #98784d08;
+}
+:root:not([data-theme="dark"]) .contact-copy .eyebrow { color: #956b32; }
+:root:not([data-theme="dark"]) .contact-copy h2 { color: #203d56; }
+:root:not([data-theme="dark"]) .contact-copy h2 em { color: #956b32; }
+:root:not([data-theme="dark"]) .contact-copy > p:not(.eyebrow) { color: #596c7d; }
+:root:not([data-theme="dark"]) .contact-primary-action {
+  border-color: #d7c8b3;
+  background: #fffdf9;
+  color: #203d56;
+  box-shadow: 0 10px 28px #19344a10;
+}
+:root:not([data-theme="dark"]) .contact-primary-action:hover {
+  border-color: #c9a76b;
+  background: #fffefa;
+}
+:root:not([data-theme="dark"]) .contact-action-icon {
+  background: linear-gradient(145deg, #f1d99f, #d2a65e);
+  color: #17364f;
+}
+:root:not([data-theme="dark"]) .contact-primary-action small { color: #687889; }
+:root:not([data-theme="dark"]) .contact-primary-action > svg { color: #956b32; }
+:root:not([data-theme="dark"]) .contact-card {
+  border-color: #ddc58e;
+  background: radial-gradient(ellipse at 100% 0, #f1dfbd 0, transparent 42%), linear-gradient(145deg, #fffdf8, #f3ead9);
+  color: #203d56;
+  box-shadow: 0 24px 60px #19344a1c, inset 0 1px #fff;
+}
+:root:not([data-theme="dark"]) .contact-card-heading { border-color: #d9c6a5; }
+:root:not([data-theme="dark"]) .contact-card-icon {
+  border-color: #ddcba9;
+  background: #fbf4e7;
+  color: #79572c;
+}
+:root:not([data-theme="dark"]) .contact-card-heading small { color: #687889; }
+:root:not([data-theme="dark"]) .contact-channel {
+  border-color: #ddcba966;
+  background: #fffdf9b8;
+}
+:root:not([data-theme="dark"]) .contact-channel:hover {
+  border-color: #c9a76b;
+  background: #fffefa;
+}
+:root:not([data-theme="dark"]) .contact-channel strong { color: #203d56; }
+:root:not([data-theme="dark"]) .contact-channel small { color: #687889; }
+:root:not([data-theme="dark"]) .site-footer {
+  border-top: 1px solid #ffffff14;
+  background: linear-gradient(120deg, #102b46, #173b57);
+}
+
+:root:not([data-theme="dark"]) .direct-contact {
+  border-color: #e3d9ca;
+  background: #f5efe5;
+}
+:root:not([data-theme="dark"]) .direct-contact-button {
+  border-color: #e3d9ca;
+  background: #fffdf9;
+  color: #203d56;
+}
+:root:not([data-theme="dark"]) .inquiry-form input,
+:root:not([data-theme="dark"]) .inquiry-form textarea {
+  border-color: #d9cdbb;
+  background: #fffdf9;
+  color: #203d56;
 }

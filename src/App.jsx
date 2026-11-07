@@ -53,7 +53,6 @@ const UI_COPY = {
     contactTitle: "Let’s find your", nextPlace: "next place.",
     contactDescription: "Whether you’re looking for a place to call home or the right space for your business, we’re here to help.",
     connect: "Let’s connect", chooseContact: "Choose the way that works for you.",
-    socialEmpty: "Social links will appear here when they’re added in Site branding.",
     friendlyAdvice: "Friendly advice, no pressure.", footerTagline: "Your next move starts here.",
     sendInquiry: "LET’S TALK ABOUT THIS HOME", curious: "Curious about this home?",
     lookingSimilar: "Looking for a home like this?", inquireTitle: "Tell us what home means to you.",
@@ -102,103 +101,102 @@ const UI_COPY = {
     callUpper: "CALL NOW",
   },
   am: {
-    home: "መነሻ", listings: "ዝርዝሮች", projects: "ተመራጭ", areas: "አካባቢዎች", buyingGuide: "የግዢ መመሪያ",
-    contact: "ያግኙን", pastSales: "የተሸጡ ቤቶች", callNow: "አሁን ይደውሉ", call: "ይደውሉ",
-    close: "ዝጋ", openMenu: "ምናሌውን ይክፈቱ", closeMenu: "ምናሌውን ዝጋ",
-    language: "EN", languageTitle: "ቋንቋውን ወደ እንግሊዝኛ ይቀይሩ",
-    kicker: "ቤቶች እና ሱቆች · አዲስ አበባ", heroLead: "ቤትዎን ያግኙ",
-    heroEmphasis: "የሚመችዎትን።", heroDescription: "ቤቶችንና የንግድ ቦታዎችን ያስሱ፤ በየደረጃውም የግል እገዛ ያግኙ።",
-    exploreListings: "ዝርዝሮችን ይመልከቱ", bookViewing: "ለጉብኝት ይመዝገቡ",
-    area: "አካባቢ ወይም ሰፈር", areaPlaceholder: "የአዲስ አበባ አካባቢዎችን ይፈልጉ",
-    propertyType: "የንብረት አይነት", allSpaces: "ሁሉም", apartment: "አፓርታማ", shop: "ሱቅ",
-    bedrooms: "መኝታ ክፍሎች", anyNumber: "ማንኛውም", orMore: "ወይም ከዚያ በላይ",
+    home: "መነሻ", listings: "የንብረት ዝርዝሮች", projects: "ተለይተው የቀረቡ", areas: "አካባቢዎች", buyingGuide: "የግዢ መመሪያ",
+    contact: "ያግኙን", pastSales: "የተጠናቀቁ ሽያጮች", callNow: "አሁኑኑ ይደውሉ", call: "ይደውሉ",
+    close: "ዝጋ", openMenu: "ምናሌውን ክፈት", closeMenu: "ምናሌውን ዝጋ",
+    language: "EN", languageTitle: "ቋንቋውን ወደ እንግሊዝኛ ቀይር",
+    kicker: "ቤቶችና ሱቆች · አዲስ አበባ", heroLead: "የሚመችዎትን",
+    heroEmphasis: "ቤት ያግኙ።", heroDescription: "መኖሪያ ቤቶችንና የንግድ ቦታዎችን ያስሱ፤ በፍለጋዎ ሁሉ እናግዝዎታለን።",
+    exploreListings: "ንብረቶቹን ይመልከቱ", bookViewing: "ለጉብኝት ይጠይቁ",
+    area: "አካባቢ ወይም ሰፈር", areaPlaceholder: "በአዲስ አበባ ውስጥ ይፈልጉ",
+    propertyType: "የንብረት ዓይነት", allSpaces: "ሁሉም ዓይነቶች", apartment: "አፓርታማ", shop: "ሱቅ",
+    bedrooms: "የመኝታ ክፍሎች", anyNumber: "ማንኛውም ቁጥር", orMore: "ወይም ከዚያ በላይ",
     maxPrice: "ከፍተኛ ዋጋ · ብር", anyBudget: "ማንኛውም ዋጋ",
-    availability: "የንብረት ሁኔታ", allCurrent: "ሁሉም ያሉ ዝርዝሮች",
-    forSale: "ለሽያጭ", underContract: "በስምምነት ላይ", search: "ቤቶችን ይፈልጉ",
-    currentCollection: "አሁን ያሉ ንብረቶች", statsNote: "ቁጥሮቹ ከአሁኑ የንብረት ዝርዝሮች ይወሰዳሉ።",
-    activeListings: "ንቁ ዝርዝሮች", apartmentsForSale: "ለሽያጭ ያሉ አፓርታማዎች",
-    shopsForSale: "ለሽያጭ ያሉ ሱቆች", neighborhoods: "ሰፈሮች",
-    collectionEyebrow: "በአዲስ አበባ ያሉ ቤቶችና ሱቆች", exploreCollection: "ዝርዝሮቹን",
-    listingsWord: "ይመልከቱ።", browseCopy: "መኖሪያ አፓርታማዎችንና ለንግድ የሚሆኑ ሱቆችን ያስሱ።",
+    availability: "የሽያጭ ሁኔታ", allCurrent: "ሁሉም የአሁኑ ንብረቶች",
+    forSale: "ለሽያጭ", underContract: "በስምምነት ላይ", search: "ንብረት ይፈልጉ",
+    currentCollection: "በአሁኑ ጊዜ የቀረቡ ንብረቶች", statsNote: "ቁጥሮቹ በዚህ ገጽ ላይ ባሉ የንብረት ዝርዝሮች ላይ የተመሠረቱ ናቸው።",
+    activeListings: "የቀረቡ ንብረቶች", apartmentsForSale: "ለሽያጭ የቀረቡ አፓርታማዎች",
+    shopsForSale: "ለሽያጭ የቀረቡ ሱቆች", neighborhoods: "አካባቢዎች",
+    collectionEyebrow: "በአዲስ አበባ ያሉ ቤቶችና ሱቆች", exploreCollection: "ያሉትን",
+    listingsWord: "ንብረቶች ይመልከቱ።", browseCopy: "ለመኖሪያ የሚሆኑ አፓርታማዎችንና ለንግድ የሚሆኑ ሱቆችን ያስሱ።",
     property: "ንብረት", properties: "ንብረቶች", saved: "የተቀመጡ",
-    featuredFirst: "ተመራጮች መጀመሪያ", priceLow: "ዋጋ፦ ከዝቅተኛ ወደ ከፍተኛ", priceHigh: "ዋጋ፦ ከከፍተኛ ወደ ዝቅተኛ",
-    noSaved: "የመረጧቸው ንብረቶች እዚህ ይቀመጣሉ።",
-    removeSaved: "ከተቀመጡት ያስወግዱ", saveHome: "ንብረቱን ያስቀምጡ",
-    noMatches: "ከፍለጋዎ ጋር የሚዛመድ ንብረት የለም።",
-    savedHint: "ለማስቀመጥ በማንኛውም ንብረት ላይ ያለውን ልብ ይጫኑ።",
-    searchHint: "ሌላ አካባቢ ይሞክሩ ወይም ፍለጋዎን ያጽዱ።",
-    showAll: "ሁሉንም ይመልከቱ", completedSales: "የተጠናቀቁ ሽያጮችን ይመልከቱ",
-    closerLook: "በቅርበት ይመልከቱ", featuredProperties: "ተመራጭ ንብረቶች።",
-    featuredDescription: "የተመረጡ ቤቶችንና የንግድ ቦታዎችን ይመልከቱ።",
-    viewProperty: "ንብረቱን ይመልከቱ", featuredEmpty: "ተመራጭ ንብረቶች እዚህ ይታያሉ።",
-    featuredEmptyHint: "በአስተዳደር ገጹ ላይ ንብረትን ተመራጭ ብለው ይምረጡ።",
+    featuredFirst: "ተለይተው የቀረቡት ቀድመው", priceLow: "ዋጋ፦ ከዝቅተኛ ወደ ከፍተኛ", priceHigh: "ዋጋ፦ ከከፍተኛ ወደ ዝቅተኛ",
+    noSaved: "ያስቀመጧቸው ንብረቶች እዚህ ይታያሉ።",
+    removeSaved: "ከተቀመጡት ዝርዝር ያስወግዱ", saveHome: "ወደ ተቀመጡት ያክሉ",
+    noMatches: "ከፍለጋዎ ጋር የሚዛመድ ንብረት አልተገኘም።",
+    savedHint: "እያሰሱ ያሉትን ንብረት ለማስቀመጥ የልብ ምልክቱን ይጫኑ።",
+    searchHint: "ሌላ አካባቢ ይፈልጉ ወይም ሁሉንም ንብረቶች ለማየት ማጣሪያዎቹን ያጽዱ።",
+    showAll: "ሁሉንም ንብረቶች ይመልከቱ", completedSales: "የተጠናቀቁ ሽያጮችን ይመልከቱ",
+    closerLook: "በቅርበት ይመልከቱ", featuredProperties: "ተለይተው የቀረቡ ንብረቶች።",
+    featuredDescription: "የተመረጡ መኖሪያ ቤቶችንና የንግድ ቦታዎችን ይመልከቱ።",
+    viewProperty: "ዝርዝሩን ይመልከቱ", featuredEmpty: "ተለይተው የቀረቡ ንብረቶች እዚህ ይታያሉ።",
+    featuredEmptyHint: "በአስተዳደር ገጹ ላይ ንብረትን ተለይቶ እንዲታይ ይምረጡ።",
     clearStart: "በቀላሉ ይጀምሩ", planMove: "ቀጣዩን እርምጃ",
-    move: "ያቅዱ።", planDescription: "የንብረት መረጃዎችን ይመልከቱ፣ የሚስማማዎትን ይምረጡ፣ ስለጉብኝትም ይጠይቁ።",
-    guideExplore: "ንብረቶቹን ያስሱ", guideExploreCopy: "ቤቶችንና ሱቆችን በአካባቢ፣ በአይነት፣ በመኝታ ክፍል፣ በሁኔታ ወይም በዋጋ ያጣሩ።",
-    guideCompare: "ዝርዝሩን ያነጻጽሩ", guideCompareCopy: "የተዘረዘረውን ቦታ፣ ስፋት፣ ዋጋና የንብረት መረጃ ይመልከቱ።",
-    guideTalk: "ውይይት ያዘጋጁ", guideTalkCopy: "ንብረት ይምረጡና ጥያቄ ይላኩ፣ ወይም ስለ ጉብኝት ለመጠየቅ የመገናኛ አማራጮቹን ይጠቀሙ።",
-    goodToKnow: "ማወቅ ያለብዎት", questions: "ተደጋጋሚ ጥያቄዎች።",
-    faqTypes: "ምን አይነት ንብረቶችን ማየት እችላለሁ?",
-    faqTypesAnswer: "ዝርዝሮቹ አፓርታማዎችንና ሱቆችን ያካትታሉ። ለማጣራት የንብረት አይነት ማጣሪያውን ይጠቀሙ።",
+    move: "ያቅዱ።", planDescription: "የንብረቶቹን ዝርዝር ይመልከቱ፣ የሚስማማዎትን ይምረጡ፣ ለጉብኝትም ያግኙን።",
+    guideExplore: "ንብረቶችን ያስሱ", guideExploreCopy: "ቤቶችንና ሱቆችን በአካባቢ፣ በዓይነት፣ በመኝታ ክፍል ብዛት፣ በሽያጭ ሁኔታ ወይም በዋጋ ያጣሩ።",
+    guideCompare: "ዝርዝሮቹን ያነጻጽሩ", guideCompareCopy: "የእያንዳንዱን ንብረት አካባቢ፣ ስፋት፣ ዋጋና ሌሎች መረጃዎች ይመልከቱ።",
+    guideTalk: "ለጉብኝት ያግኙን", guideTalkCopy: "ንብረት ይምረጡና ጥያቄ ይላኩ፤ ወይም ከዚህ ገጽ የመገናኛ አማራጮች አንዱን ይጠቀሙ።",
+    goodToKnow: "ጠቃሚ መረጃ", questions: "ተደጋጋሚ ጥያቄዎች።",
+    faqTypes: "ምን ዓይነት ንብረቶችን ማየት እችላለሁ?",
+    faqTypesAnswer: "የቀረቡት ንብረቶች አፓርታማዎችንና ሱቆችን ያካትታሉ። ውጤቶቹን ለማጣራት የንብረት ዓይነት ማጣሪያውን ይጠቀሙ።",
     faqAreas: "በተወሰነ አካባቢ ያሉ ንብረቶችን እንዴት አገኛለሁ?",
-    faqAreasAnswer: "የአካባቢውን ስም በፍለጋ ቦታው ያስገቡ። የሚታዩ ጥቆማዎች ከዝርዝሮቹ የተወሰዱ ናቸው።",
+    faqAreasAnswer: "የአካባቢውን ስም በፍለጋ ሳጥኑ ውስጥ ያስገቡ። የሚታዩት ጥቆማዎች ከቀረቡት ንብረቶች አካባቢ የተወሰዱ ናቸው።",
     faqViewing: "ስለ ንብረት ወይም ጉብኝት እንዴት መጠየቅ እችላለሁ?",
-    faqViewingAnswer: "የጥያቄ ቅጹን ለመክፈት ንብረትን ይምረጡ፣ ወይም በዚህ ገጽ ያሉትን የመገናኛ አማራጮች ይጠቀሙ።",
-    faqSave: "እያነጻጸርኩ ንብረቶችን ማስቀመጥ እችላለሁ?",
-    faqSaveAnswer: "በንብረቱ ላይ ያለውን ልብ ምልክት በመጫን በዚህ መሳሪያ ላይ ያስቀምጡት።",
-    contactEyebrow: "የግል ውይይት በአንድ ጠቅታ ብቻ",
-    contactTitle: "ቀጣዩን", nextPlace: "ቦታዎን እናግኝ።",
-    contactDescription: "መኖሪያ ቤት ወይም የንግድ ቦታ እየፈለጉ ከሆነ፣ ልንረዳዎት ዝግጁ ነን።",
-    connect: "እንገናኝ", chooseContact: "የሚመችዎትን የመገናኛ መንገድ ይምረጡ።",
-    socialEmpty: "የማህበራዊ ሚዲያ አገናኞች በብራንዲንግ ሲጨመሩ እዚህ ይታያሉ።",
-    friendlyAdvice: "ወዳጃዊ ምክር፣ ያለ ግዴታ።", footerTagline: "ቀጣዩን እርምጃ ከዚህ ይጀምሩ።",
-    sendInquiry: "ስለዚህ ቤት እንወያይ", curious: "ስለዚህ ቤት ጥያቄ አለዎት?",
+    faqViewingAnswer: "የጥያቄ ቅጹን ለመክፈት ንብረት ይምረጡ፤ ወይም በዚህ ገጽ ያሉትን የመገናኛ አማራጮች ይጠቀሙ።",
+    faqSave: "እያነጻጸርኩ ያሉትን ንብረቶች ማስቀመጥ እችላለሁ?",
+    faqSaveAnswer: "ንብረትን ወደ ተቀመጡት ዝርዝር ለመጨመር በንብረቱ ላይ ያለውን የልብ ምልክት ይጫኑ።",
+    contactEyebrow: "አንድ ጠቅታ ብቻ ቀርቶታል",
+    contactTitle: "የሚቀጥለውን", nextPlace: "ቤትዎን እንፈልግ።",
+    contactDescription: "መኖሪያ ቤትም ይሁን የንግድ ቦታ እየፈለጉ ከሆነ፣ ልንረዳዎት ዝግጁ ነን።",
+    connect: "ያግኙን", chooseContact: "የሚመችዎትን የመገናኛ መንገድ ይምረጡ።",
+    friendlyAdvice: "ያለ ግፊት፣ በወዳጅነት እናግዝዎታለን።", footerTagline: "ቀጣዩ እርምጃዎ እዚህ ይጀምራል።",
+    sendInquiry: "ስለዚህ ቤት ይጠይቁ", curious: "ስለዚህ ቤት ማወቅ ይፈልጋሉ?",
     lookingSimilar: "እንደዚህ ያለ ቤት ይፈልጋሉ?", inquireTitle: "የሚፈልጉትን ይንገሩን።",
-    preferTalk: "በቀጥታ ማነጋገር ይመርጣሉ?", chooseContactSimple: "የመገናኛ መንገድ ይምረጡ።",
-    msgUs: "ያግኙን", visitProfile: "መገለጫውን ይመልከቱ",
+    preferTalk: "በቀጥታ ማነጋገር ይመርጣሉ?", chooseContactSimple: "ቅጽ መሙላት ሳያስፈልግ፣ የሚመችዎትን የመገናኛ መንገድ ይምረጡ።",
+    msgUs: "መልዕክት ይላኩልን", visitProfile: "መገለጫውን ይመልከቱ",
     leaveNote: "ወይም መልዕክት ይተዉ", yourName: "ሙሉ ስም", email: "የኢሜይል አድራሻ",
-    phone: "ስልክ", optional: "(አማራጭ)", lookingFor: "ስለሚፈልጉት አጭር መልዕክት",
-    notePlaceholder: "ስለዚህ ንብረት ተጨማሪ ማወቅ እፈልጋለሁ...",
-    sending: "በመላክ ላይ...", sendNote: "መልዕክት ይላኩ", privacy: "መረጃዎ በግል ይጠበቃል።",
-    noteReceived: "ጥያቄዎ ደርሶናል", inTouch: "እናገኝዎታለን።",
-    thanks: "ስላገኙን እናመሰግናለን። የቡድናችን አባል በቅርቡ ያነጋግርዎታል።",
+    phone: "ስልክ ቁጥር", optional: "(አማራጭ)", lookingFor: "የሚፈልጉትን በአጭሩ ይግለጹ",
+    notePlaceholder: "ስለዚህ ንብረት ተጨማሪ መረጃ እፈልጋለሁ...",
+    sending: "በመላክ ላይ...", sendNote: "መልዕክት ይላኩ", privacy: "የግል መረጃዎ በደህና ይጠበቃል።",
+    noteReceived: "ጥያቄዎ ደርሶናል", inTouch: "በቅርቡ እናገኝዎታለን።",
+    thanks: "ስላነጋገሩን እናመሰግናለን። ከቡድናችን አንዱ በቅርቡ ምላሽ ይሰጥዎታል።",
     thankYou: "እናመሰግናለን", viewDetails: "ዝርዝሩን ይመልከቱ",
-    beds: "መኝታ", baths: "መታጠቢያ", retailSpace: "የንግድ ቦታ",
-    videoTour: "የቪዲዮ ጉብኝት", soldEyebrow: "የተጠናቀቁ ሽያጮችን ይመልከቱ",
-    previouslySold: "ቀደም ሲል የተሸጡ።", soldIntro: "የተጠናቀቁ ሽያጮችን ይመልከቱ፤ ስለ ቀጣይ እርምጃዎ ለመወያየትም ያግኙን።",
+    beds: "መኝታ ቤቶች", baths: "መታጠቢያ ቤቶች", retailSpace: "የንግድ ቦታ",
+    videoTour: "የቪዲዮ ጉብኝት", soldEyebrow: "የተጠናቀቁ ሽያጮች",
+    previouslySold: "ቀደም ሲል የተሸጡ ንብረቶች።", soldIntro: "የተጠናቀቁ ሽያጮችን ይመልከቱ፤ ስለ ቀጣይ የንብረት ፍላጎትዎ ለመወያየትም ያግኙን።",
     soldEmpty: "የተጠናቀቁ ሽያጮች እዚህ ይታያሉ።",
-    pastSalesAdded: "በአስተዳደር ገጹ የሚጨመሩ የተሸጡ ንብረቶች እዚህ ይታያሉ።",
+    pastSalesAdded: "በአስተዳደር ገጹ ላይ የሚጨመሩ የተሸጡ ንብረቶች እዚህ ይታያሉ።",
     getInTouch: "ያግኙን", contactAgent: "ያግኙን",
-    contactOn: "በ{name} ያግኙን", siteTitle: "{brand} | ቤቶች እና ሱቆች በአዲስ አበባ",
+    contactOn: "በ{name} ያግኙን", siteTitle: "{brand} | ቤቶችና ሱቆች በአዲስ አበባ",
     soldPageTitle: "የተሸጡ ንብረቶች | {brand} | አዲስ አበባ",
-    siteDescription: "{brand} በአዲስ አበባ የሚገኙ አፓርታማዎችንና የንግድ ንብረቶችን ያስሱ። ቦታ፣ ዋጋና ዝርዝሮችን ያነጻጽሩ።",
-    soldPageDescription: "{brand} በአዲስ አበባ የተጠናቀቁ የንብረት ሽያጮችን ያስሱ፣ ስለ ቀጣይ እርምጃዎም ያግኙን።",
-    compare: "አነጻጽር", comparing: "በማነጻጸር ላይ", selectForCompare: "ለማነጻጸር ይምረጡ",
-    compareLimit: "እስከ 3 ንብረቶችን ያነጻጽሩ።", chooseTwo: "ከጎን ለጎን ለማነጻጸር ቢያንስ ሁለት ንብረቶችን ይምረጡ።",
-    inventoryTitle: "መጠንና ዋጋ በአንድ እይታ", inventoryIntro: "ለእያንዳንዱ ንብረት በተዘረዘረው መረጃ ያነጻጽሩ።",
-    areaBrowse: "በአካባቢ ያስሱ", areaBrowseIntro: "ንብረቶችን በተዘረዘረው ቦታ ይመልከቱ።",
-    viewArea: "ንብረቶችን ይመልከቱ", bedroomsShort: "መኝታ", bathroomsShort: "መታጠቢያ",
-    statusLabel: "ሁኔታ", locationLabel: "አካባቢ", typeLabel: "አይነት", areaLabel: "ስፋት",
-    priceLabel: "ዋጋ", listingLabel: "ንብረት", noListingData: "የንብረት መረጃ ለዚህ ሰንጠረዥ ገና አልተገኘም።",
-    previousSlide: "ወደ ቀደመው ይሂዱ", nextSlide: "ወደ ቀጣዩ ይሂዱ",
-    unmuteVideo: "የጀርባ ቪዲዮውን ድምጽ ያብሩ", muteVideo: "የጀርባ ቪዲዮውን ድምጽ ያጥፉ",
-    noAreas: "የአካባቢ መረጃ በንብረት ዝርዝሮች ሲጨመር እዚህ ይታያል።",
+    siteDescription: "{brand} በአዲስ አበባ የሚገኙ አፓርታማዎችንና የንግድ ቦታዎችን ያስሱ። አካባቢ፣ ዋጋና ዝርዝሮችን ያነጻጽሩ።",
+    soldPageDescription: "በ{brand} በኩል በአዲስ አበባ የተጠናቀቁ የንብረት ሽያጮችን ይመልከቱ፤ ስለ ቀጣይ እቅድዎም ያግኙን።",
+    compare: "ያነጻጽሩ", comparing: "እያነጻጸሩ ነው", selectForCompare: "ለማነጻጸር ይምረጡ",
+    compareLimit: "እስከ 3 ንብረቶችን ማነጻጸር ይችላሉ።", chooseTwo: "ንብረቶችን ጎን ለጎን ለማነጻጸር ቢያንስ ሁለት ይምረጡ።",
+    inventoryTitle: "መጠንና ዋጋ በአንድ እይታ", inventoryIntro: "ለእያንዳንዱ ንብረት የቀረበውን መረጃ በማነጻጸር ይመልከቱ።",
+    areaBrowse: "በአካባቢ ያስሱ", areaBrowseIntro: "ንብረቶችን በተመዘገቡበት አካባቢ ይመልከቱ።",
+    viewArea: "ንብረቶቹን ይመልከቱ", bedroomsShort: "መኝታ", bathroomsShort: "መታጠቢያ",
+    statusLabel: "ሁኔታ", locationLabel: "አካባቢ", typeLabel: "ዓይነት", areaLabel: "ስፋት",
+    priceLabel: "ዋጋ", listingLabel: "ንብረት", noListingData: "ለዚህ ሰንጠረዥ የሚታይ የንብረት መረጃ የለም።",
+    previousSlide: "ያለፉትን ይመልከቱ", nextSlide: "ቀጣዮቹን ይመልከቱ",
+    unmuteVideo: "የጀርባ ቪዲዮውን ድምፅ ያብሩ", muteVideo: "የጀርባ ቪዲዮውን ድምፅ ያጥፉ",
+    noAreas: "ንብረቶች ሲጨመሩ አካባቢዎች እዚህ ይታያሉ።",
     footerExplore: "ያስሱ", footerAreas: "አካባቢዎች", footerVisit: "ያግኙን",
-    footerDescription: "ያሉትን መኖሪያ ቤቶችና የንግድ ንብረቶች ይመልከቱ፤ ስለ ዝርዝር ለመጠየቅም ያግኙን።",
+    footerDescription: "ያሉትን መኖሪያ ቤቶችና የንግድ ቦታዎች ይመልከቱ፤ ስለ ንብረት ለመጠየቅም ያግኙን።",
     footerNoAreas: "ንብረቶች ሲጨመሩ አካባቢዎች እዚህ ይታያሉ።",
-    phoneNumber: "ስልክ", callBusiness: "ይደውሉ",
-    requestCall: "እንዲደውሉልኝ ይጠይቁ", namePlaceholder: "ስምዎ", phonePlaceholder: "ስልክ ቁጥርዎ",
+    phoneNumber: "ስልክ ቁጥር", callBusiness: "ይደውሉ",
+    requestCall: "እንዲደውሉልኝ ይጠይቁ", namePlaceholder: "ሙሉ ስምዎ", phonePlaceholder: "ስልክ ቁጥርዎ",
     fromPrice: "ከ {price} ጀምሮ", propertyDetails: "የንብረት ዝርዝር",
     propertyGallery: "የንብረቱ ፎቶዎች", noPhotos: "ተጨማሪ ፎቶዎች በቅርቡ ይጨመራሉ።",
-    bathroomsLabel: "መታጠቢያ ቤቶች", bedroomsLabel: "መኝታ ክፍሎች", sizeLabel: "የንብረት ስፋት",
-    descriptionLabel: "ስለዚህ ንብረት", askAboutHome: "ስለዚህ ንብረት ፍላጎት አለዎት?",
-    modalEyebrow: "ስለዚህ ቤት እንወያይ",
-    formNotReady: "የመገኛ ቅጹ አልተዘጋጀም። እባክዎ የመገኛ አገናኞችን ይጠቀሙ።",
+    bathroomsLabel: "መታጠቢያ ቤቶች", bedroomsLabel: "መኝታ ቤቶች", sizeLabel: "የንብረቱ ስፋት",
+    descriptionLabel: "ስለ ንብረቱ", askAboutHome: "ስለዚህ ንብረት መጠየቅ ይፈልጋሉ?",
+    modalEyebrow: "ስለዚህ ቤት ይጠይቁ",
+    formNotReady: "የመገናኛ ቅጹ ገና አልተዘጋጀም። እባክዎ የመገናኛ አገናኞቹን ይጠቀሙ።",
     formSendError: "መልዕክትዎን መላክ አልተቻለም። እባክዎ እንደገና ይሞክሩ።",
-    pastSalesError: "የተሸጡ ንብረቶችን አሁን ማምጣት አልተቻለም። እባክዎ ቆይተው ይሞክሩ።",
-    listingsError: "ዝርዝሮችን ማዘመን አልተቻለም። እባክዎ ቆይተው ይመልከቱ።",
-    savedAdded: "{name} በተቀመጡት ንብረቶች ውስጥ ተጨምሯል።", savedRemoved: "{name} ከተቀመጡት ንብረቶች ተወግዷል።",
-    callUpper: "አሁን ይደውሉ",
+    pastSalesError: "የተሸጡ ንብረቶችን አሁን ማምጣት አልተቻለም። እባክዎ ቆይተው እንደገና ይሞክሩ።",
+    listingsError: "የንብረት ዝርዝሮችን አሁን ማዘመን አልተቻለም። እባክዎ ቆይተው እንደገና ይመልከቱ።",
+    savedAdded: "{name} ወደ ተቀመጡት ዝርዝር ታክሏል።", savedRemoved: "{name} ከተቀመጡት ዝርዝር ተወግዷል።",
+    callUpper: "አሁኑኑ ይደውሉ",
   },
 };
 
@@ -655,9 +653,7 @@ function InquiryModal({ home, onClose, settings, language, t }) {
                     </a>
                   ))}
                 </div>
-              ) : (
-                <p className="direct-contact-unavailable">Contact links will appear here when they’re added to Site branding.</p>
-              )}
+              ) : null}
             </div>
             <form className="inquiry-form" onSubmit={submitInquiry}>
               <label>{t.yourName}<input name="name" required autoComplete="name" placeholder={t.namePlaceholder} /></label>
@@ -707,7 +703,6 @@ function PublicSite() {
   const [selectedHome, setSelectedHome] = useState(null);
   const [inquiryOpen, setInquiryOpen] = useState(false);
   const [apiNotice, setApiNotice] = useState("");
-  const [listingsLoaded, setListingsLoaded] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
 
   useEffect(() => {
@@ -748,12 +743,12 @@ function PublicSite() {
     return { location, homes: homesInArea, image: homesInArea[0]?.image_url };
   });
   const currentListings = homes.filter((home) => home.status === "For sale");
-  const liveStats = listingsLoaded ? [
+  const liveStats = [
     { value: homes.length, label: "activeListings" },
     { value: currentListings.filter((home) => home.property_type === "Apartment").length, label: "apartmentsForSale" },
     { value: currentListings.filter((home) => home.property_type === "Shop").length, label: "shopsForSale" },
     { value: listingAreas.length, label: "neighborhoods" },
-  ] : [];
+  ];
   const heroHome = homes.find((home) => home.video_url) || homes[0] || fallbackHomes[0];
   const heroImage = heroHome.image_url || fallbackHomes[0].image_url;
   const heroVideo = heroHome.video_url || "";
@@ -889,7 +884,6 @@ function PublicSite() {
   useEffect(() => {
     if (!supabase) return undefined;
     let active = true;
-    setListingsLoaded(false);
     let query = supabase.from("properties").select("*")
       .in("status", soldPage ? ["Sold"] : ["For sale", "Under contract"])
       .in("property_type", ["Apartment", "Shop"])
@@ -899,7 +893,6 @@ function PublicSite() {
       if (error) throw error;
       if (active) {
         setHomes(data || []);
-        setListingsLoaded(true);
       }
     }).catch((error) => {
       if (active) {
@@ -1095,7 +1088,7 @@ function PublicSite() {
           </form>
         </section>
 
-        {listingsLoaded && (
+        {!soldPage && (
           <section className="stats-band" aria-label="Current listing statistics">
             <div className="stats-band-heading">
               <p className="eyebrow">{t.currentCollection}</p>
@@ -1355,7 +1348,7 @@ function PublicSite() {
                   <span><strong>{item.name}</strong><small>{item.account || t.msgUs}</small></span>
                   <Icon name="arrow" size={16} />
                 </a>
-              )) : <p className="contact-channel-empty">{t.socialEmpty}</p>}
+              )) : null}
             </div>
             <p className="contact-card-note"><span>✦</span> {t.friendlyAdvice}</p>
           </div>
