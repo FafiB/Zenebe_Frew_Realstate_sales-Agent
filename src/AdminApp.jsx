@@ -406,7 +406,7 @@ function AdminApp() {
               )}
               <label>Video URL<input type="url" value={propertyDraft.video_url || ""} onChange={(event) => setPropertyDraft({ ...propertyDraft, video_url: event.target.value })} placeholder="https://…" /></label>
               <label>Upload property video<input type="file" accept="video/mp4,video/webm,video/quicktime,video/x-m4v" onChange={(event) => setPropertyVideoFile(event.target.files?.[0] || null)} /></label>
-              <p className="admin-help-text">Supports MP4, WebM, MOV, and M4V videos up to 80 MB. {propertyVideoFile && `${propertyVideoFile.name} selected.`}</p>
+              <p className="admin-help-text">Supports MP4, WebM, MOV, and M4V videos. {propertyVideoFile && `${propertyVideoFile.name} selected.`}</p>
               <label>Full property description (shown in View details)<textarea rows="5" value={propertyDraft.description || ""} onChange={(event) => setPropertyDraft({ ...propertyDraft, description: event.target.value })} /></label>
               <label className="admin-checkbox"><input type="checkbox" checked={Boolean(propertyDraft.featured)} onChange={(event) => setPropertyDraft({ ...propertyDraft, featured: event.target.checked })} /> Feature this property</label>
               <button className="admin-primary-button" disabled={busy}>{editingId ? "Save property" : "Add property"}</button>

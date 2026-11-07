@@ -14,14 +14,9 @@ export const supabase = isSupabaseConfigured
     })
   : null;
 
-const maxUploadBytes = 80 * 1024 * 1024;
-
 export async function uploadMedia(file, folder) {
   if (!supabase) throw new Error("Supabase is not configured for this deployment.");
   if (!file) return "";
-  if (file.size > maxUploadBytes) {
-    throw new Error("Media files must be 80 MB or smaller.");
-  }
 
   const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
   if (sessionError) throw sessionError;
