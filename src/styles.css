@@ -2599,7 +2599,7 @@ h1, h2, h3, .property-title, .project-tile-title, .guide-card h3 {
   width: 100px;
   height: 50px;
   flex: 0 0 auto;
-  padding: 3px;
+  padding: 1px;
   border: 1px solid #e8e5f1;
   border-radius: 9px;
   background: #fff;
@@ -2610,7 +2610,7 @@ h1, h2, h3, .property-title, .project-tile-title, .guide-card h3 {
 @media (max-width: 850px) {
   .site-header { height: 96px; }
   .site-header > .brand { max-width: 35%; }
-  .brand-logo { width: 132px; height: 89px; }
+  .brand-logo { width: 100px; height: 50px; }
 }
 @media (max-width: 620px) {
   .site-header { height: 82px; }
