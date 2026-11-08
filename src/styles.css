@@ -2596,17 +2596,17 @@ h1, h2, h3, .property-title, .project-tile-title, .guide-card h3 {
 .site-header > .brand { max-width: 32%; }
 .brand.has-logo .brand-name { display: none; }
 .brand-logo {
-  width: 100px;
+  width: 130px; /* Bumped slightly for horizontal text comfort */
   height: 50px;
   flex: 0 0 auto;
-  padding: 1px;
-  border: 1px solid #e8e5f1;
+  padding: 4px; /* Slightly breathing room for the edge */
+  border: 1px solid #1e293b; /* Tweaked to match dark mode borders */
   border-radius: 9px;
-  background: #fff;
+  background: #0f172a; /* Changed from #fff to match your light dark theme */
   object-fit: contain;
   box-shadow: 0 4px 12px #21145712;
 }
-.footer-brand .brand-logo { width: 104px; height: 70px; }
+.footer-brand .brand-logo { width: 100px; height: 50px; }
 @media (max-width: 850px) {
   .site-header { height: 96px; }
   .site-header > .brand { max-width: 35%; }
