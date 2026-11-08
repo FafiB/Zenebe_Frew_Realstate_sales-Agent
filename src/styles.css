@@ -2596,8 +2596,8 @@ h1, h2, h3, .property-title, .project-tile-title, .guide-card h3 {
 .site-header > .brand { max-width: 32%; }
 .brand.has-logo .brand-name { display: none; }
 .brand-logo {
-  width: 148px;
-  height: 100px;
+  width: 100px;
+  height: 50px;
   flex: 0 0 auto;
   padding: 3px;
   border: 1px solid #e8e5f1;
